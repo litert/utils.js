@@ -1,0 +1,10 @@
+node_modules/
+lib/
+app/
+tsconfig.tsbuildinfo
+*.js
+*.js.map
+*.d.ts
+*.ts.map
+!commitlint.config.js
+!/eslint.config.js

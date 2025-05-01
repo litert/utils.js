@@ -1,0 +1,28 @@
+{
+  "name": "@litert/utils-array",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "description": "The array utilities for JavaScript/TypeScript.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/litert/utils.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/litert/utils.js/issues"
+  },
+  "homepage": "https://github.com/litert/utils.js#readme",
+  "scripts": {
+    "ottoia:clean": "rm -rf lib tsconfig.tsbuildinfo",
+    "prepublishOnly": "echo \"Please use ottoia publishing this package!\"; exit 1;"
+  },
+  "private": false,
+  "dependencies": {},
+  "devDependencies": {
+    "@litert/utils-ts-types": "-"
+  },
+  "peerDependencies": {},
+  "ottoia:alias": "partials.array",
+  "access": "public"
+}

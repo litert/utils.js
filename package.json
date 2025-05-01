@@ -1,0 +1,35 @@
+{
+  "name": "@litert/utils-repo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "lint": "bash ./utils/eslint.sh",
+    "clean": "ottoia clean",
+    "rebuild": "ottoia clean && npm run build && npm run lint",
+    "ottoia:prepublish": "npm run build-libs && npm run check-deps && npm run check-build && npm run lint",
+    "build": "bash ./utils/build.sh",
+    "typecheck": "npm run build",
+    "build-watch": "bash ./utils/build-watch.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@litert/eslint-plugin-rules": "^0.2.5",
+    "@types/node": "^22.10.2",
+    "husky": "^9.1.7",
+    "typescript": "^5.7.2",
+    "@litert/ottoia": "^0.4.4"
+  },
+  "ottoia": {
+    "releases": {
+      "production": {
+        "tag": "latest"
+      }
+    }
+  },
+  "private": true
+}
