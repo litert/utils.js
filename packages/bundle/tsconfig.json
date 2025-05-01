@@ -6,6 +6,8 @@
     "outDir": "lib"
   },
   "references": [
+    { "path": "../partials/array" },
+    { "path": "../partials/object" },
     { "path": "../partials/string" },
     { "path": "../partials/ts-types" },
   ],
