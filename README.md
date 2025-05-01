@@ -7,11 +7,11 @@
 [![GitHub issues](https://img.shields.io/github/issues/litert/utils.js.svg)](https://github.com/litert/utils.js/issues)
 [![GitHub Releases](https://img.shields.io/github/release/litert/utils.js.svg)](https://github.com/litert/utils.js/releases "Stable Release")
 
-The utilities functions/classes/constants for JavaScript/TypeScript.
+The utility functions/classes/constants for JavaScript/TypeScript.
 
 ## Requirement
 
-- TypeScript v3.5.1 (or newer)
+- TypeScript v5.0.0 (or newer)
 - Node.js v18.0.0 (or newer)
 
 ## Installation

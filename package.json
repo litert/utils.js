@@ -9,7 +9,8 @@
     "ottoia:prepublish": "npm run build-libs && npm run check-deps && npm run check-build && npm run lint",
     "build": "bash ./utils/build.sh",
     "typecheck": "npm run build",
-    "build-watch": "bash ./utils/build-watch.sh"
+    "build-watch": "bash ./utils/build-watch.sh",
+    "test": "node --test packages/**/*.test.js"
   },
   "keywords": [],
   "author": "",
