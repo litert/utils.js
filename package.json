@@ -10,7 +10,7 @@
     "build": "bash ./utils/build.sh",
     "typecheck": "npm run build",
     "build-watch": "bash ./utils/build-watch.sh",
-    "test": "node --test packages/**/*.test.js"
+    "test": "node --enable-source-maps --test packages/**/*.test.js"
   },
   "keywords": [],
   "author": "",

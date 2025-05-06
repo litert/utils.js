@@ -13,6 +13,7 @@ module.exports = {
             'pkg:array',
             'pkg:object',
             'pkg:string',
+            'pkg:network',
             'pkg:ts-types',
             'deps',
             'doc',
