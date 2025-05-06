@@ -26,3 +26,14 @@ export function splitIntoLines(str: string, eol: string | RegExp = /\r\n|\r|\n/)
 
     return str.split(eol);
 }
+
+/**
+ * Convert all EOL (end of line) characters in a string to Unix-style line endings (`\n`).
+ *
+ * @param str   The string to convert
+ * @returns     The string with Unix-style line endings
+ */
+export function toUnixString(str: string): string {
+
+    return str.replace(/\r\n|\r/g, '\n');
+}
