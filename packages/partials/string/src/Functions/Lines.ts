@@ -48,3 +48,14 @@ export function toWindowsString(str: string): string {
 
     return str.replace(/\r\n|\r|\n/g, '\r\n');
 }
+
+/**
+ * Convert all EOL (end of line) characters in a string to Mac-style line endings (`\r`).
+ *
+ * @param str   The string to convert
+ * @returns     The string with Mac-style line endings
+ */
+export function toMacString(str: string): string {
+
+    return str.replace(/\r\n|\n/g, '\r');
+}
