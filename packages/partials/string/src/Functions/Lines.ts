@@ -37,3 +37,14 @@ export function toUnixString(str: string): string {
 
     return str.replace(/\r\n|\r/g, '\n');
 }
+
+/**
+ * Convert all EOL (end of line) characters in a string to Windows-style line endings (`\r\n`).
+ *
+ * @param str   The string to convert
+ * @returns     The string with Windows-style line endings
+ */
+export function toWindowsString(str: string): string {
+
+    return str.replace(/\r\n|\r|\n/g, '\r\n');
+}
