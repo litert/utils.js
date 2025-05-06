@@ -9,6 +9,7 @@
     { "path": "../partials/array" },
     { "path": "../partials/object" },
     { "path": "../partials/string" },
+    { "path": "../partials/network" },
     { "path": "../partials/ts-types" },
   ],
   "include": [

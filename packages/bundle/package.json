@@ -22,7 +22,8 @@
     "@litert/utils-array": "-",
     "@litert/utils-object": "-",
     "@litert/utils-string": "-",
-    "@litert/utils-ts-types": "-"
+    "@litert/utils-ts-types": "-",
+    "@litert/utils-network": "-"
   },
   "devDependencies": {},
   "peerDependencies": {},
