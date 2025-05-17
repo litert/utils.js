@@ -1,10 +1,10 @@
 {
-  "name": "@litert/utils",
+  "name": "@litert/utils-number",
   "version": "0.1.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
-  "description": "The utilities for JavaScript/TypeScript.",
+  "description": "The number utilities for JavaScript/TypeScript.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/litert/utils.js.git"
@@ -18,16 +18,11 @@
     "prepublishOnly": "echo \"Please use ottoia publishing this package!\"; exit 1;"
   },
   "private": false,
-  "dependencies": {
-    "@litert/utils-array": "-",
-    "@litert/utils-number": "-",
-    "@litert/utils-object": "-",
-    "@litert/utils-string": "-",
-    "@litert/utils-ts-types": "-",
-    "@litert/utils-network": "-"
+  "dependencies": {},
+  "devDependencies": {
+    "@litert/ts-types": "-"
   },
-  "devDependencies": {},
   "peerDependencies": {},
-  "ottoia:alias": "bundle",
+  "ottoia:alias": "partials.number",
   "access": "public"
 }

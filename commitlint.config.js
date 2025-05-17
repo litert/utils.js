@@ -11,9 +11,10 @@ module.exports = {
         ]],
         'scope-enum': [2, 'always', [
             'pkg:array',
+            'pkg:network',
+            'pkg:number',
             'pkg:object',
             'pkg:string',
-            'pkg:network',
             'pkg:ts-types',
             'deps',
             'doc',
