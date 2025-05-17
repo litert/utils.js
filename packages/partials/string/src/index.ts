@@ -19,3 +19,4 @@ export * from './Functions/EvilSpace';
 export * from './Functions/Random';
 export * from './Functions/RegexpEscape';
 export * from './Functions/Html';
+export * from './Classes/UnitParser';
