@@ -1,4 +1,4 @@
-# LiteRT/Utils-Number
+# LiteRT/Utils - Number
 
 [![Strict TypeScript Checked](https://badgen.net/badge/TS/Strict "Strict TypeScript Checked")](https://www.typescriptlang.org)
 [![npm version](https://img.shields.io/npm/v/@litert/utils-number.svg?colorB=brightgreen)](https://www.npmjs.com/package/@litert/utils-number "Stable Version")
@@ -7,7 +7,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/litert/utils.js.svg)](https://github.com/litert/utils.js/issues)
 [![GitHub Releases](https://img.shields.io/github/release/litert/utils.js.svg)](https://github.com/litert/utils.js/releases "Stable Release")
 
-The number utility functions/classes/constants for JavaScript/TypeScript.
+The utility functions/classes/constants about number for JavaScript/TypeScript.
 
 ## Requirement
 
@@ -19,13 +19,6 @@ The number utility functions/classes/constants for JavaScript/TypeScript.
 ```sh
 npm i @litert/utils-number --save
 ```
-## Features
-
-### Classes
-
-- `class UnitConverter`
-
-    A helper class for converting between different units of measurement.
 
 ## License
 
