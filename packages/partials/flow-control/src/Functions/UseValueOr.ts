@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-export * as Array from '@litert/utils-array';
-export * as Network from '@litert/utils-network';
-export * as Number from '@litert/utils-number';
-export * as Object from '@litert/utils-object';
-export * as String from '@litert/utils-string';
-export * from '@litert/utils-flow-control';
-export * from '@litert/utils-ts-types';
+/**
+ * Try if the `value` could make `check` return `true`, if not, return the `elseValue`.
+ *
+ * @param value         The value to check, if checked successfully, it will be returned.
+ * @param check         The check function.
+ * @param elseValue     The value to return if the check fails.
+ */
+export function useValueOr<T>(value: T, check: (v: T) => boolean, elseValue: T): T {
+
+    return check(value) ? value : elseValue;
+}

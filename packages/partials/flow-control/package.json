@@ -1,10 +1,10 @@
 {
-  "name": "@litert/utils",
+  "name": "@litert/utils-flow-control",
   "version": "0.1.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
-  "description": "The utilities for JavaScript/TypeScript.",
+  "description": "The flow-control utilities for JavaScript/TypeScript.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/litert/utils.js.git"
@@ -19,16 +19,10 @@
   },
   "private": false,
   "dependencies": {
-    "@litert/utils-array": "-",
-    "@litert/utils-flow-control": "-",
-    "@litert/utils-number": "-",
-    "@litert/utils-object": "-",
-    "@litert/utils-string": "-",
-    "@litert/utils-ts-types": "-",
-    "@litert/utils-network": "-"
+    "@litert/utils-ts-types": "-"
   },
   "devDependencies": {},
   "peerDependencies": {},
-  "ottoia:alias": "bundle",
+  "ottoia:alias": "partials.flow-control",
   "access": "public"
 }
