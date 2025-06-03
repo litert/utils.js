@@ -15,3 +15,4 @@
  */
 
 export * as Units from './Classes/UnitConverter';
+export * from './Functions/RandomBetween';

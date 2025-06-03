@@ -6,7 +6,7 @@
     "lint": "bash ./utils/eslint.sh",
     "clean": "ottoia clean",
     "rebuild": "ottoia clean && npm run build && npm run lint",
-    "ottoia:prepublish": "npm run build-libs && npm run check-deps && npm run check-build && npm run lint",
+    "ottoia:prepublish": "npm run rebuild",
     "build": "bash ./utils/build.sh",
     "typecheck": "npm run build",
     "build-watch": "bash ./utils/build-watch.sh",
