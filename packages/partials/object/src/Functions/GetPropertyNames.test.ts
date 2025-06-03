@@ -54,4 +54,18 @@ NodeTest.describe('Function Object.getPropertyNames', () => {
             ['a', 'b', 'c', s1, s2, s3]
         );
     });
+
+    NodeTest.it('Should throw exception if not a valid object', () => {
+
+        try {
+
+            getPropertyNames(null as any);
+            NodeAssert.fail('Expected TypeError to be thrown');
+        }
+        catch (e) {
+
+            NodeAssert.ok(e instanceof TypeError);
+            NodeAssert.strictEqual(e.message, 'An object is expected by "getPropertyNames" function.');
+        }
+    });
 });

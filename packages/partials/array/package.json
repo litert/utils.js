@@ -18,10 +18,10 @@
     "prepublishOnly": "echo \"Please use ottoia publishing this package!\"; exit 1;"
   },
   "private": false,
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "@litert/utils-ts-types": "-"
   },
+  "devDependencies": {},
   "peerDependencies": {},
   "ottoia:alias": "partials.array",
   "access": "public"
