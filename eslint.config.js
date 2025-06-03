@@ -2,11 +2,12 @@
 const LitertEslintRules = require('@litert/eslint-plugin-rules');
 
 module.exports = [
+    ...LitertEslintRules.configs.typescript,
     {
-
-        plugins: {
-            '@litert/rules': LitertEslintRules,
-        },
+        files: [
+            'packages/partials/*/src/**/*.ts',
+            'packages/bundle/src/**/*.ts',
+        ],
         languageOptions: {
             parserOptions: {
                 project: 'tsconfig.base.json',
@@ -14,11 +15,4 @@ module.exports = [
             },
         }
     },
-    ...LitertEslintRules.configs.typescript,
-    {
-        files: [
-            'packages/partials/*/src/**/*.ts',
-            'packages/bundle/src/**/*.ts',
-        ],
-    }
 ];
