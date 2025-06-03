@@ -72,6 +72,11 @@ export type IElementOfArray<T extends any[]> = T extends Array<infer U> ? U : ne
 export type IMaybeAsync<T> = Promise<T> | T;
 
 /**
+ * Converts a type to a `Promise` type, if it's already a `Promise`, it will return the same type.
+ */
+export type IToPromise<T> = T extends Promise<any> ? T : Promise<T>;
+
+/**
  * Asserts that a type is `any` type.
  *
  * @see https://stackoverflow.com/a/55541672
