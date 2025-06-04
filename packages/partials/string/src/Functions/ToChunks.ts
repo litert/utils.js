@@ -23,10 +23,15 @@
  * @param chunkSize The size of each chunk. Must be a positive integer.
  *
  * @returns An array of strings, each representing a chunk of the original string.
- * @throws RangeError if the chunk size is not a positive integer.
- * @example `toChunks('abcdefghij', 3)` returns `['abc', 'def', 'ghi', 'j']`
+ * @throws `RangeError` if the chunk size is not a positive integer.
+ * @example `toChunks('abcdefghij', 3) -> ['abc', 'def', 'ghi', 'j']`
  */
 export function toChunks(text: string, chunkSize: number): string[] {
+
+    if (chunkSize === 1) {
+
+        return text.split('');
+    }
 
     if (chunkSize <= 0 || !Number.isSafeInteger(chunkSize)) {
 
@@ -38,6 +43,42 @@ export function toChunks(text: string, chunkSize: number): string[] {
 
     for (let i = 0, o = 0; i < length; i += chunkSize) {
         chunks[o++] = text.slice(i, i + chunkSize);
+    }
+
+    return chunks;
+}
+
+/**
+ * This function splits a string into chunks of specified size.
+ * Different from `toChunks`, this function reverses the order of the chunks,
+ * which means the first chunk will contain the last characters of the string,
+ * when the input string is not a multiple of the chunk size,
+ *
+ * @param text      The string to be split into chunks.
+ * @param chunkSize The size of each chunk. Must be a positive integer.
+ *
+ * @returns An array of strings, each representing a chunk of the original string.
+ * @throws `RangeError` if the chunk size is not a positive integer.
+ * @example `toChunksBackward('abcdefghij', 3) -> ['a', 'bcd', 'efg', 'hij']`
+ */
+export function toChunksBackward(text: string, chunkSize: number): string[] {
+
+    if (chunkSize === 1) {
+
+        return text.split('');
+    }
+
+    if (chunkSize <= 0 || !Number.isSafeInteger(chunkSize)) {
+
+        throw new RangeError('Chunk size must be a positive integer.');
+    }
+
+    const chunks: string[] = new Array<string>(Math.ceil(text.length / chunkSize));
+    const length = text.length;
+
+    for (let i = length, o = chunks.length; i > 0; i -= chunkSize) {
+
+        chunks[--o] = text.slice(Math.max(0, i - chunkSize), i);
     }
 
     return chunks;
