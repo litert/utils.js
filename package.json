@@ -13,8 +13,15 @@
     "test": "node --enable-source-maps --test --experimental-test-coverage packages/**/*.test.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/litert/utils.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/litert/utils.js/issues"
+  },
+  "homepage": "https://github.com/litert/utils.js#readme",
+  "license": "Apache-2.0",
   "description": "",
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",

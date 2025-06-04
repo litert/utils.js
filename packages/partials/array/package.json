@@ -15,11 +15,23 @@
   "homepage": "https://github.com/litert/utils.js#readme",
   "scripts": {
     "ottoia:clean": "rm -rf lib tsconfig.tsbuildinfo",
+    "ottoia:prepublish": "cp ../../../LICENSE ./",
+    "ottoia:postpublish": "rm LICENSE",
     "prepublishOnly": "echo \"Please use ottoia publishing this package!\"; exit 1;"
   },
+  "license": "Apache-2.0",
   "private": false,
   "dependencies": {
     "@litert/utils-ts-types": "-"
+  },
+  "keywords": [
+    "utility",
+    "litert",
+    "array",
+    "helper"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
   },
   "devDependencies": {},
   "peerDependencies": {},

@@ -22,4 +22,4 @@ npm i @litert/utils-array --save
 
 ## License
 
-This library is published under [Apache-2.0](./LICENSE) license.
+This library is published under [Apache-2.0](https://github.com/litert/utils.js/blob/master/LICENSE) license.
