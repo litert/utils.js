@@ -8,3 +8,4 @@ tsconfig.tsbuildinfo
 *.ts.map
 !commitlint.config.js
 !/eslint.config.js
+/tmp/

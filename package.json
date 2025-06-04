@@ -30,6 +30,7 @@
     "@litert/ottoia": "^0.4.4",
     "@types/node": "^22.10.2",
     "husky": "^9.1.7",
+    "typedoc": "^0.28.5",
     "typescript": "^5.7.2"
   },
   "ottoia": {

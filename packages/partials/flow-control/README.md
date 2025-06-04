@@ -20,6 +20,10 @@ The utility functions/classes/constants about flow-controlling for JavaScript/Ty
 npm i @litert/utils-flow-control --save
 ```
 
+## Documentation
+
+- [en-US](https://litert.org/projects/utils.js/api-docs/flow-control/)
+
 ## License
 
 This library is published under [Apache-2.0](https://github.com/litert/utils.js/blob/master/LICENSE) license.

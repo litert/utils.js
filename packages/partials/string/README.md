@@ -20,6 +20,10 @@ The utility functions/classes/constants about string for JavaScript/TypeScript.
 npm i @litert/utils-string --save
 ```
 
+## Documentation
+
+- [en-US](https://litert.org/projects/utils.js/api-docs/string/)
+
 ## License
 
 This library is published under [Apache-2.0](https://github.com/litert/utils.js/blob/master/LICENSE) license.
