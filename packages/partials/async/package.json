@@ -1,10 +1,10 @@
 {
-  "name": "@litert/utils",
+  "name": "@litert/utils-async",
   "version": "0.1.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
-  "description": "The utilities for JavaScript/TypeScript.",
+  "description": "The utility functions/classes/constants about asynchronous operations for JavaScript/TypeScript.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/litert/utils.js.git"
@@ -15,32 +15,27 @@
   "homepage": "https://github.com/litert/utils.js#readme",
   "scripts": {
     "ottoia:clean": "rm -rf lib tsconfig.tsbuildinfo",
-    "ottoia:prepublish": "cp ../../LICENSE ./ && cp ../../README.md ./README.md",
-    "ottoia:postpublish": "rm LICENSE README.md",
+    "ottoia:prepublish": "cp ../../../LICENSE ./",
+    "ottoia:postpublish": "rm LICENSE",
     "prepublishOnly": "echo \"Please use ottoia publishing this package!\"; exit 1;"
   },
   "license": "Apache-2.0",
   "private": false,
   "dependencies": {
-    "@litert/utils-flow-control": "-",
-    "@litert/utils-number": "-",
-    "@litert/utils-object": "-",
-    "@litert/utils-string": "-",
-    "@litert/utils-ts-types": "-",
-    "@litert/utils-network": "-",
-    "@litert/utils-array": "-",
-    "@litert/utils-async": "-"
+    "@litert/utils-ts-types": "-"
   },
   "keywords": [
     "utility",
     "litert",
+    "async",
+    "asynchronous",
     "helper"
   ],
-  "devDependencies": {},
-  "peerDependencies": {},
-  "ottoia:alias": "bundle",
   "engines": {
     "node": ">=18.0.0"
   },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "ottoia:alias": "partials.async",
   "access": "public"
 }

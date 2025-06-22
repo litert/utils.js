@@ -25,6 +25,7 @@ The [bundle package `@litert/utils`](https://www.npmjs.com/package/@litert/utils
     - [@litert/utils-ts-types](https://www.npmjs.com/package/@litert/utils-ts-types)
 
 - `Namespace Array` (Sub-package: [@litert/utils-array](https://www.npmjs.com/package/@litert/utils-array))
+- `Namespace Async` (Sub-package: [@litert/utils-async](https://www.npmjs.com/package/@litert/utils-async))
 - `Namespace Network` (Sub-package: [@litert/utils-network](https://www.npmjs.com/package/@litert/utils-network))
 - `Namespace Number` (Sub-package: [@litert/utils-number](https://www.npmjs.com/package/@litert/utils-number))
 - `Namespace Object` (Sub-package: [@litert/utils-object](https://www.npmjs.com/package/@litert/utils-object))
@@ -39,12 +40,13 @@ npm i @litert/utils --save
 ## Documentation
 
 - [Array](https://litert.org/projects/utils.js/api-docs/array/)
+- [Async](https://litert.org/projects/utils.js/api-docs/async/)
 - [Flow Control](https://litert.org/projects/utils.js/api-docs/flow-control/)
 - [Network](https://litert.org/projects/utils.js/api-docs/network/)
 - [Number](https://litert.org/projects/utils.js/api-docs/number/)
 - [Object](https://litert.org/projects/utils.js/api-docs/object/)
 - [String](https://litert.org/projects/utils.js/api-docs/string/)
-- [Typescript Types](https://litert.org/projects/utils.js/api-docs/ts-types/)
+- [TypeScript Utility Types](https://litert.org/projects/utils.js/api-docs/ts-types/)
 
 ## License
 

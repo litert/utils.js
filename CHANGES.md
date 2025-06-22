@@ -3,6 +3,10 @@
 ## v1.2.0
 
 - feat(pkg:network): added API Network.isValidIPv4Address
+- feat(pkg:async): added utility class `FiberController`
+- feat(pkg:async): added utility class `PromiseController`
+- feat(pkg:async): added utility class `BackgroundRunner`
+- feat(pkg:async): added API `Async.withTimeout`
 
 ## v1.1.1
 
