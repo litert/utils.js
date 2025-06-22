@@ -1,6 +1,6 @@
 # CHANGES
 
-## v1.2.0
+## v1.2.1
 
 - feat(pkg:network): added API Network.isValidIPv4Address
 - feat(pkg:async): added utility class `FiberController`
