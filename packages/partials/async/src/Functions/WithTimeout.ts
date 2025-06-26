@@ -32,7 +32,7 @@ export class TimeoutError extends Error {
  * Bind a timeout to an asynchronous task.
  *
  * > The real asynchronous task is still running even if the timeout is reached.
- * > If you wanna cancel/abort the task, you should consider using AbortController.
+ * > If you wanna cancel/abort the task, you should consider using `AbortTimeoutController` instead.
  *
  * @param ms            The timeout duration in milliseconds.
  * @param asyncTask     The asynchronous task to execute, which can be a Promise or a function that returns a Promise.

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+export * from './Classes/AbortTimeoutController';
 export * from './Classes/FiberController';
 export * from './Classes/PromiseController';
 export * from './Classes/BackgroundRunner';
