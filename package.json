@@ -1,6 +1,6 @@
 {
   "name": "@litert/utils-repo",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "main": "index.js",
   "scripts": {
     "lint": "bash ./utils/eslint.sh",
@@ -10,6 +10,7 @@
     "build": "bash ./utils/build.sh",
     "typecheck": "npm run build",
     "build-watch": "bash ./utils/build-watch.sh",
+    "prepare": "./utils/init.sh",
     "test": "node --enable-source-maps --test --experimental-test-coverage packages/**/*.test.js"
   },
   "keywords": [],
@@ -26,6 +27,9 @@
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
+    "typedoc-plugin-markdown": "^4.6.4",
+    "typedoc-plugin-no-inherit": "^1.6.1",
+    "typedoc-vitepress-theme": "^1.1.2",
     "@litert/eslint-plugin-rules": "^0.3.1",
     "@litert/ottoia": "^0.4.4",
     "@types/node": "^22.10.2",

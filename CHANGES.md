@@ -1,8 +1,13 @@
 # CHANGES
 
+## v1.3.0
+
+- fix(pkg:network): export API `Network.isValidIPv4Address`
+- feat(pkg:network): add API `Network.isValidMacAddress`
+
 ## v1.2.1
 
-- feat(pkg:network): added API Network.isValidIPv4Address
+- feat(pkg:network): added API `Network.isValidIPv4Address`
 - feat(pkg:async): added utility class `FiberController`
 - feat(pkg:async): added utility class `PromiseController`
 - feat(pkg:async): added utility class `BackgroundRunner`

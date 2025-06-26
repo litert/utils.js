@@ -16,4 +16,6 @@
 
 export * from './Functions/NormalizeIPv6Address';
 export * from './Functions/IsValidIPv6Address';
+export * from './Functions/IsValidIPv4Address';
+export * from './Functions/IsValidMacAddress';
 export * from './Functions/ParseIPv6Address';
