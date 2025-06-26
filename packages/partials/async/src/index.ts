@@ -17,5 +17,6 @@
 export * from './Classes/FiberController';
 export * from './Classes/PromiseController';
 export * from './Classes/BackgroundRunner';
+export * from './Classes/Throttler';
 export * from './Functions/WithTimeout';
 export type * from './Typings';

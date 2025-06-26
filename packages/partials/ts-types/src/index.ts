@@ -40,6 +40,11 @@ export type IDict<
 export type IFunction<TArgs extends any[] = any, TReturn = unknown> = (...args: TArgs) => TReturn;
 
 /**
+ * The type to express an asynchronous function.
+ */
+export type IAsyncFunction<TArgs extends any[] = any, TReturn = unknown> = (...args: TArgs) => Promise<TReturn>;
+
+/**
  * Recursively makes all properties of an object type optional.
  */
 export type IDeepPartial<T extends IObject> = {
