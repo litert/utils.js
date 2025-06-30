@@ -52,8 +52,20 @@ export async function withTimeout<T>(ms: number, asyncTask: Promise<T> | (() => 
         }, ms);
 
         pr.then(
-            (result) => { resolve(result); if (timer) { clearTimeout(timer); } },
-            (error) => { reject(error); if (timer) { clearTimeout(timer); } }
+            (result) => {
+                if (timer) {
+                    clearTimeout(timer);
+                    timer = null;
+                    resolve(result);
+                }
+            },
+            (error) => {
+                if (timer) {
+                    clearTimeout(timer);
+                    timer = null;
+                    reject(error);
+                }
+            },
         );
     });
 }
