@@ -17,6 +17,7 @@ module.exports = {
             'pkg:number',
             'pkg:object',
             'pkg:string',
+            'pkg:test',
             'pkg:ts-types',
             'deps',
             'doc',

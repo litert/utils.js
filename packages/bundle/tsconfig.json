@@ -13,6 +13,7 @@
     { "path": "../partials/object" },
     { "path": "../partials/string" },
     { "path": "../partials/network" },
+    { "path": "../partials/test" },
     { "path": "../partials/ts-types" },
   ],
   "include": [

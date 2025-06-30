@@ -1,0 +1,39 @@
+{
+  "name": "@litert/utils-test",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
+  "description": "The utility functions/classes/constants about test (using node:test) for NodeJS.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/litert/utils.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/litert/utils.js/issues"
+  },
+  "homepage": "https://github.com/litert/utils.js#readme",
+  "scripts": {
+    "ottoia:clean": "rm -rf lib tsconfig.tsbuildinfo",
+    "ottoia:prepublish": "cp ../../../LICENSE ./",
+    "ottoia:postpublish": "rm LICENSE",
+    "prepublishOnly": "echo \"Please use ottoia publishing this package!\"; exit 1;"
+  },
+  "keywords": [
+    "utility",
+    "litert",
+    "test",
+    "node",
+    "helper"
+  ],
+  "license": "Apache-2.0",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "peerDependencies": {},
+  "ottoia:alias": "partials.utils",
+  "access": "public"
+}

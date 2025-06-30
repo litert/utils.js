@@ -29,7 +29,8 @@
     "@litert/utils-ts-types": "-",
     "@litert/utils-network": "-",
     "@litert/utils-array": "-",
-    "@litert/utils-async": "-"
+    "@litert/utils-async": "-",
+    "@litert/utils-test": "-"
   },
   "keywords": [
     "utility",

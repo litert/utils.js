@@ -2,6 +2,7 @@
 
 ## v1.3.0
 
+- feat(pkg:test): add API `Test.autoTick`
 - feat(pkg:async): added utility class `AbortTimeoutController`
 - feat(pkg:async): added utility class `Throttler`
 - fix(pkg:network): export API `Network.isValidIPv4Address`
