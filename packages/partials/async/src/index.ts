@@ -20,4 +20,5 @@ export * from './Classes/PromiseController';
 export * from './Classes/BackgroundRunner';
 export * from './Classes/Throttler';
 export * from './Functions/WithTimeout';
+export * from './Functions/AutoRetry';
 export type * from './Typings';

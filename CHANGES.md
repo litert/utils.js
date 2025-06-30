@@ -5,6 +5,7 @@
 - feat(pkg:test): add API `Test.autoTick`
 - feat(pkg:async): added utility class `AbortTimeoutController`
 - feat(pkg:async): added utility class `Throttler`
+- feat(pkg:async): added API `Async.autoRetry`
 - fix(pkg:network): export API `Network.isValidIPv4Address`
 - feat(pkg:network): add API `Network.isValidMacAddress`
 

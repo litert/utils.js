@@ -34,7 +34,9 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@litert/utils-test": "-"
+  },
   "peerDependencies": {},
   "ottoia:alias": "partials.async",
   "access": "public"

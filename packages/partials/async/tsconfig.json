@@ -6,7 +6,8 @@
     "outDir": "lib"
   },
   "references": [
-    { "path": "../ts-types" }
+    { "path": "../ts-types" },
+    { "path": "../test" },
   ],
   "include": [
     "./src/*.ts",
