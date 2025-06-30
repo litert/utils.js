@@ -1,13 +1,13 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import * as NodeTimer from 'node:timers/promises';
-import { Throttler } from './Throttler';
+import { ThrottleController } from './ThrottleController';
 
-NodeTest.describe('Class Throttler', async () => {
+NodeTest.describe('Class ThrottleController', async () => {
 
     await NodeTest.it('Wrapper Class: All calls during the current call done should get the same result', async () => {
 
-        const throttler = new Throttler(
+        const throttler = new ThrottleController(
             async (input: number) => {
                 await NodeTimer.setTimeout(20);
                 return input * 2;
@@ -28,7 +28,7 @@ NodeTest.describe('Class Throttler', async () => {
 
     await NodeTest.it('Wrapper Class: All calls during the current call done should get the same error result', async () => {
 
-        const throttler = new Throttler(
+        const throttler = new ThrottleController(
             async (input: number) => {
                 await NodeTimer.setTimeout(20);
                 throw new Error(`Error in call with input: ${input}`);
@@ -52,7 +52,7 @@ NodeTest.describe('Class Throttler', async () => {
 
     await NodeTest.it('Wrapper Class: calls with different args should not bother each other', async () => {
 
-        const throttler = new Throttler(
+        const throttler = new ThrottleController(
             async (input: number) => {
                 await NodeTimer.setTimeout(20);
                 return input * 2;
@@ -80,7 +80,7 @@ NodeTest.describe('Class Throttler', async () => {
 
     await NodeTest.it('Wrapper Class: null call ID maker ignores args affection', async () => {
 
-        const throttler = new Throttler(
+        const throttler = new ThrottleController(
             async (input: number) => {
                 await NodeTimer.setTimeout(20);
                 return input * 2;
@@ -108,7 +108,7 @@ NodeTest.describe('Class Throttler', async () => {
 
     await NodeTest.it('Wrapper Class: A call after one call done should starts a new call', async () => {
 
-        const throttler = new Throttler(
+        const throttler = new ThrottleController(
             async (input: number) => {
                 await NodeTimer.setTimeout(10);
                 if (input < 100) {
@@ -155,7 +155,7 @@ NodeTest.describe('Class Throttler', async () => {
 
     await NodeTest.it('Wrapped Function: All calls during the current call done should get the same result', async () => {
 
-        const fn = Throttler.wrap(
+        const fn = ThrottleController.wrap(
             async (input: number) => {
                 await NodeTimer.setTimeout(20);
                 return input * 2;
@@ -176,7 +176,7 @@ NodeTest.describe('Class Throttler', async () => {
 
     await NodeTest.it('Wrapped Function: All calls during the current call done should get the same error result', async () => {
 
-        const fn = Throttler.wrap(
+        const fn = ThrottleController.wrap(
             async (input: number) => {
                 await NodeTimer.setTimeout(20);
                 throw new Error(`Error in call with input: ${input}`);
@@ -200,7 +200,7 @@ NodeTest.describe('Class Throttler', async () => {
 
     await NodeTest.it('Wrapped Function: A call after one call done should starts a new call', async () => {
 
-        const fn = Throttler.wrap(
+        const fn = ThrottleController.wrap(
             async (input: number) => {
                 await NodeTimer.setTimeout(10);
                 if (input < 100) {

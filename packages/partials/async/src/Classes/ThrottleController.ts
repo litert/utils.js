@@ -15,20 +15,20 @@
  */
 import type { IAsyncFunction, IDict } from '@litert/utils-ts-types';
 
-type IThrottlerCallIdMaker<T extends IAsyncFunction> = (...args: Parameters<T>) => string;
+type IThrottledCallIdMaker<T extends IAsyncFunction> = (...args: Parameters<T>) => string;
 
 const DEFAULT_CALL_ID = 'default';
 
 /**
  * The wrapper class for throttling an asynchronous function call.
  */
-export class Throttler<T extends IAsyncFunction> {
+export class ThrottleController<T extends IAsyncFunction> {
 
     private readonly _fn: T;
 
     private _promises: IDict<ReturnType<T>> = {};
 
-    private readonly _makeCallId: IThrottlerCallIdMaker<T> | null;
+    private readonly _makeCallId: IThrottledCallIdMaker<T> | null;
 
     /**
      * The wrapper class for throttling an asynchronous function call.
@@ -38,7 +38,7 @@ export class Throttler<T extends IAsyncFunction> {
      *                      If `null` is passed, a default call id will be used, So all calls will be throttled as
      *                      the same call, whatever the arguments are.
      */
-    public constructor(fn: T, callIdMaker: IThrottlerCallIdMaker<T> | null) {
+    public constructor(fn: T, callIdMaker: IThrottledCallIdMaker<T> | null) {
 
         this._fn = fn;
         this._makeCallId = callIdMaker;
@@ -79,21 +79,21 @@ export class Throttler<T extends IAsyncFunction> {
     }
 
     /**
-     * Wraps the given function with a throttler.
+     * Wraps the given function with throttling.
      *
      * @param fn            The function to be wrapped.
      * @param callIdMaker   A function to generate a unique key for each call based on the arguments.
      *                      If `null` is passed, a default call id will be used, So all calls will be throttled as
      *                      the same call, whatever the arguments are.
      *
-     * @returns A new function that wrapped with a throttler.
+     * @returns A new function that wrapped with throttling.
      */
-    public static wrap<T extends IAsyncFunction>(fn: T, callIdMaker: IThrottlerCallIdMaker<T> | null): T {
+    public static wrap<T extends IAsyncFunction>(fn: T, callIdMaker: IThrottledCallIdMaker<T> | null): T {
 
-        const throttler = new Throttler(fn, callIdMaker);
+        const ctrl = new ThrottleController(fn, callIdMaker);
 
         return (function(...args: Parameters<T>): ReturnType<T> {
-            return throttler.call(...args) as ReturnType<T>;
+            return ctrl.call(...args) as ReturnType<T>;
         }) as unknown as T;
     }
 }
