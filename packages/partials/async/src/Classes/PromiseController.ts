@@ -16,6 +16,7 @@
 
 import type { IDict } from '@litert/utils-ts-types';
 import type { IPromiseRejecter, IPromiseResolver } from '../Typings';
+import { TimeoutError } from '../Functions/WithTimeout';
 
 /**
  * The controller for promises, which allows you to decouple the resolver/rejecter with the
@@ -48,12 +49,57 @@ export class PromiseController<T = unknown, TError = unknown> {
      */
     public readonly promise: Promise<T>;
 
-    public constructor() {
+    private _timer: NodeJS.Timeout | null = null;
+
+    /**
+     * The controller for promises, which allows you to decouple the resolver/rejecter with the
+     * promise object.
+     *
+     * @param timeoutMs The timeout in milliseconds. If zero is provided, the promise will not
+     *                  have a timeout.
+     *
+     * @throws {TypeError} If the `timeoutMs` is not a safe integer.
+     * @throws {TimeoutError} If the promise is not resolved or rejected within the timeout.
+     */
+    public constructor(timeoutMs: number = 0) {
+
+        if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 0) {
+
+            throw new TypeError('The "timeoutMs" must be an integer.');
+        }
 
         this.promise = new Promise<T>((resolve, reject) => {
 
-            (this as IDict).resolve = resolve;
-            (this as IDict).reject = reject;
+            if (timeoutMs > 0) {
+
+                (this as IDict).resolve = (d: T) => {
+                    if (this._timer) {
+                        clearTimeout(this._timer);
+                        this._timer = null;
+                        resolve(d);
+                    }
+                };
+
+                (this as IDict).reject = (e: unknown) => {
+                    if (this._timer) {
+                        clearTimeout(this._timer);
+                        this._timer = null;
+                        reject(e);
+                    }
+                };
+
+                this._timer = setTimeout(() => {
+
+                    this._timer = null;
+                    reject(new TimeoutError(this.promise));
+
+                }, timeoutMs);
+            }
+            else {
+
+                (this as IDict).resolve = resolve;
+                (this as IDict).reject = reject;
+            }
         });
     }
 }
