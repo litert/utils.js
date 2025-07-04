@@ -1,0 +1,16 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "lib"
+  },
+  "references": [
+    { "path": "../ts-types" },
+    { "path": "../test" },
+  ],
+  "include": [
+    "./src/*.ts",
+    "./src/**/*.ts"
+  ]
+}

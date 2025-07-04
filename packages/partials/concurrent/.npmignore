@@ -1,0 +1,16 @@
+/.git/
+/.vscode/
+/.eslintrc
+/.eslintignore
+/.npmrc
+/.npmignore
+/.gitignore
+/tsconfig.json
+/tslint.json
+/node_modules/
+*.test.ts
+*.test.d.ts
+*.test.d.ts.map
+*.test.js
+*.test.js.map
+tsconfig.tsbuildinfo

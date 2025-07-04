@@ -12,6 +12,7 @@ module.exports = {
         'scope-enum': [2, 'always', [
             'pkg:array',
             'pkg:async',
+            'pkg:concurrent',
             'pkg:flow-control',
             'pkg:network',
             'pkg:number',
