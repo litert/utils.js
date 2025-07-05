@@ -6,6 +6,7 @@
 - feat(pkg:async): added utility class `AbortTimeoutController`
 - feat(pkg:concurrent): added utility class `ThrottleController`
 - feat(pkg:concurrent): added utility class `DebounceController`
+- feat(pkg:concurrent): added utility class `FiberPool`
 - feat(pkg:async): added API `Async.autoRetry`
 - fix(pkg:network): export API `Network.isValidIPv4Address`
 - feat(pkg:network): add API `Network.isValidMacAddress`

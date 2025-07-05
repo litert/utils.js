@@ -8,6 +8,7 @@
   "references": [
     { "path": "../ts-types" },
     { "path": "../test" },
+    { "path": "../async" },
   ],
   "include": [
     "./src/*.ts",

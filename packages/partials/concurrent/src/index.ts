@@ -16,3 +16,4 @@
 
 export * from './Classes/ThrottleController';
 export * from './Classes/DebounceController';
+export * from './Classes/FiberPool';
