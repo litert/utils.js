@@ -1,7 +1,8 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import * as NodeTimer from 'node:timers/promises';
-import { withTimeout, TimeoutError } from './WithTimeout';
+import { withTimeout } from './WithTimeout';
+import { TimeoutError } from '../Errors';
 
 NodeTest.describe('Function withTimeout', async () => {
 

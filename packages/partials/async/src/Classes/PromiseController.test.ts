@@ -1,7 +1,7 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { PromiseController } from './PromiseController';
-import { TimeoutError } from '../Functions/WithTimeout';
+import { TimeoutError } from '../Errors';
 
 NodeTest.describe('Class PromiseController', async () => {
 
@@ -80,7 +80,6 @@ NodeTest.describe('Class PromiseController', async () => {
             false, NaN, Infinity, Symbol('123'),
         ]) {
 
-            console.log(invalidTimeout);
             NodeAssert.throws(() => new PromiseController<string>(invalidTimeout as any), {
                 name: 'TypeError',
                 message: 'The "timeoutMs" must be an integer.'

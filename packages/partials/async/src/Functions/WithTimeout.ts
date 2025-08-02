@@ -14,19 +14,7 @@
  * limitations under the License.
  */
 
-/**
- * The error thrown by the `withTimeout` function when the operation exceeds the specified timeout.
- */
-export class TimeoutError extends Error {
-
-    public readonly unresolvedPromise: Promise<unknown>;
-
-    public constructor(unresolvedPromise: Promise<unknown>) {
-        super('Operation timed out');
-        this.name = TimeoutError.name;
-        this.unresolvedPromise = unresolvedPromise;
-    }
-}
+import { TimeoutError } from '../Errors';
 
 /**
  * Bind a timeout to an asynchronous task.

@@ -14,12 +14,28 @@
  * limitations under the License.
  */
 
-export * from './Classes/AbortTimeoutController';
-export * from './Classes/FiberController';
-export * from './Classes/PromiseController';
-export * from './Classes/BackgroundRunner';
-export * from './Functions/WithTimeout';
-export * from './Functions/AutoRetry';
-export * from './Functions/Sleep';
-export * from './Errors';
-export type * from './Typings';
+/**
+ * The error thrown when an operation exceeds the specified timeout.
+ */
+export class TimeoutError extends Error {
+
+    public readonly unresolvedPromise: Promise<unknown>;
+
+    public constructor(unresolvedPromise: Promise<unknown>) {
+        super('Operation timed out');
+        this.name = TimeoutError.name;
+        this.unresolvedPromise = unresolvedPromise;
+    }
+}
+
+/**
+ * The error thrown when an operation is aborted.
+ */
+export class AbortedError extends Error {
+
+    public constructor() {
+
+        super('Operation aborted');
+        this.name = TimeoutError.name;
+    }
+}

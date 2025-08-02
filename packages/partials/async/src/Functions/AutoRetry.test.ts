@@ -2,7 +2,13 @@ import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import * as NodeTimer from 'node:timers/promises';
 import * as TestUtils from '@litert/utils-test';
-import { autoRetry } from './AutoRetry';
+import {
+    autoRetry,
+    createExponentialBackoffDelayGenerator,
+    DEFAULT_BEFORE_RETRY,
+    equalJitter,
+    fullJitter,
+} from './AutoRetry';
 
 NodeTest.describe('Function autoRetry', async () => {
 
@@ -72,8 +78,6 @@ NodeTest.describe('Function autoRetry', async () => {
 
         t.mock.timers.enable({'apis': ['setTimeout', 'Date']});
 
-        const t0 = Date.now();
-
         try {
             await TestUtils.autoTick(t, autoRetry({
             'maxRetries': 100,
@@ -88,7 +92,6 @@ NodeTest.describe('Function autoRetry', async () => {
             NodeAssert.ok(true);
         }
 
-        NodeAssert.strictEqual(Date.now() - t0, 5050000, 'Function should wait 3 seconds before throwing an error');
     });
 
     await NodeTest.it('Should abort retrying if "beforeRetry" throws an error', async () => {
@@ -119,7 +122,7 @@ NodeTest.describe('Function autoRetry', async () => {
 
         try {
             const ac = new AbortController();
-            setTimeout(() => ac.abort(new Error('test')), 50);
+            setTimeout(() => ac.abort(), 50);
             await autoRetry({
                 'maxRetries': 1,
                 'function': async () => {
@@ -135,6 +138,34 @@ NodeTest.describe('Function autoRetry', async () => {
         }
 
         NodeAssert.strictEqual(Math.abs((Date.now() - t0) - 50) < 10, true, 'Function should wait 50ms before throwing an error');
+    });
+
+    await NodeTest.it('DEFAULT_BEFORE_RETRY should applies exponential backoff', async (t) => {
+
+        t.mock.timers.enable({'apis': ['setTimeout', 'Date']});
+
+        for (let i = 0; i < 6; i++) {
+
+            for (let c = 0; c < 10000; c++) {
+
+                const t0 = Date.now();
+
+                await TestUtils.autoTick(t, DEFAULT_BEFORE_RETRY({
+                    'retriedTimes': i,
+                    'error': null,
+                }) as Promise<void>);
+
+                NodeAssert.strictEqual(
+                    Date.now() - t0 < (1000 * Math.pow(2, i)),
+                    true,
+                );
+
+                NodeAssert.strictEqual(
+                    Date.now() - t0 <= 30_000,
+                    true,
+                );
+            }
+        }
     });
 
     await NodeTest.it('AbortSignal should not work if not aborted', async (t) => {
@@ -161,7 +192,7 @@ NodeTest.describe('Function autoRetry', async () => {
             NodeAssert.ok(true);
         }
 
-        NodeAssert.strictEqual(Date.now() - t0, 1000, 'Function should wait about 1000ms before throwing an error');
+        NodeAssert.strictEqual(Date.now() - t0 < 1000, true, 'Function should wait no more than 1000ms before throwing an error');
     });
 
     await NodeTest.it('AbortSignal should work before "beforeRetry" if aborted insides main function', async () => {
@@ -226,5 +257,33 @@ NodeTest.describe('Function autoRetry', async () => {
         }
 
         NodeAssert.strictEqual(Math.abs((t1 - t0) - 50) < 10, true, 'Function should wait about 50ms before throwing an error');
+    });
+
+    await NodeTest.it('The created delay generators should throw error with invalid arguments', async () => {
+
+        const gen = createExponentialBackoffDelayGenerator();
+        for (const i of [-1, 1.1, NaN, Infinity, -Infinity, true] as unknown[] as number[]) {
+
+            NodeAssert.throws(() => gen(i));
+        }
+    });
+
+    await NodeTest.it('The fullJitter should always return [0, delay)', async () => {
+
+        const MAX_DELAY = 1000000;
+        for (let i = 0; i < 1000000; i++) {
+            const v = fullJitter(MAX_DELAY);
+            NodeAssert.ok(v >= 0 && v < MAX_DELAY, `Value ${v} should be in the range [0, ${MAX_DELAY})`);
+        }
+    });
+
+    await NodeTest.it('The equalJitter should always return [delay / 2, delay)', async () => {
+
+        const MAX_DELAY = 1000000;
+        const HALF_MAX_DELAY = MAX_DELAY / 2;
+        for (let i = 0; i < 1000000; i++) {
+            const v = equalJitter(MAX_DELAY);
+            NodeAssert.ok(v >= HALF_MAX_DELAY && v < MAX_DELAY, `Value ${v} should be in the range [${HALF_MAX_DELAY}, ${MAX_DELAY})`);
+        }
     });
 });

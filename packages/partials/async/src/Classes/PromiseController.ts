@@ -16,7 +16,7 @@
 
 import type { IDict } from '@litert/utils-ts-types';
 import type { IPromiseRejecter, IPromiseResolver } from '../Typings';
-import { TimeoutError } from '../Functions/WithTimeout';
+import { TimeoutError } from '../Errors';
 
 /**
  * The controller for promises, which allows you to decouple the resolver/rejecter with the

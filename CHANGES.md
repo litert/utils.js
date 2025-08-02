@@ -7,7 +7,8 @@
 - feat(pkg:concurrent): added utility class `ThrottleController`
 - feat(pkg:concurrent): added utility class `DebounceController`
 - feat(pkg:concurrent): added utility class `FiberPool`
-- feat(pkg:async): added API `Async.autoRetry`
+- feat(pkg:async): added API `Async.sleep`, with timer safety
+- feat(pkg:async): added API `Async.autoRetry`, with exponential backoff and jitter supports.
 - fix(pkg:network): export API `Network.isValidIPv4Address`
 - feat(pkg:network): add API `Network.isValidMacAddress`
 
@@ -23,6 +24,6 @@
 
 - build(doc): initialized project documents
 - feat(pkg:string): added name casing detection APIs
-- feat(pkg:string): added API String.toChunksBackward
-- feat(pkg:string): added API String.toChunks
+- feat(pkg:string): added API `String.toChunksBackward`
+- feat(pkg:string): added API `String.toChunks`
 - fix(project): added missing metadata of packages
