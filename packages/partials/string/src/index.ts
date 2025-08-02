@@ -19,6 +19,7 @@ export * from './Functions/EvilSpace';
 export * from './Functions/Random';
 export * from './Functions/RegexpEscape';
 export * from './Functions/Html';
+export * from './Functions/IsEmailAddress';
 export * from './Functions/ToChunks';
 export * from './Functions/NameCase';
 export * from './Classes/UnitParser';

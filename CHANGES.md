@@ -11,6 +11,7 @@
 - feat(pkg:async): added API `Async.autoRetry`, with exponential backoff and jitter supports.
 - fix(pkg:network): export API `Network.isValidIPv4Address`
 - feat(pkg:network): add API `Network.isValidMacAddress`
+- feat(pkg:string): add API `String.isEmailAddress`
 
 ## v1.2.1
 
