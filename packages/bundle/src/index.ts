@@ -16,6 +16,7 @@
 
 export * as Array from '@litert/utils-array';
 export * as Async from '@litert/utils-async';
+export * as Concurrent from '@litert/concurrent';
 export * as Network from '@litert/utils-network';
 export * as Number from '@litert/utils-number';
 export * as Object from '@litert/utils-object';

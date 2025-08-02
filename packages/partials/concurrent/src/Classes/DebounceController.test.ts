@@ -60,7 +60,6 @@ NodeTest.describe('Class DebounceController', () => {
         });
         controller.on('triggered', () => { triggers++; });
 
-        console.log('go');
         controller.schedule();
         ctx.mock.timers.tick(500);
         controller.schedule();

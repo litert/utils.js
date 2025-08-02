@@ -208,11 +208,6 @@ export class DebounceController extends EventEmitter<IDebounceControllerEvents> 
             clearTimeout(this._timer);
         }
 
-        // console.log('NOW=' + now);
-        // console.log('STARTED=' + this._startedAt);
-        // console.log('ELAPSED=' + elapsed);
-        // console.log(this.maxDelayMs - elapsed);
-
         this._timer = setTimeout(() => {
 
             this._startedAt = null;

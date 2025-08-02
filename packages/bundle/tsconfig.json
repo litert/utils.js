@@ -8,6 +8,7 @@
   "references": [
     { "path": "../partials/array" },
     { "path": "../partials/async" },
+    { "path": "../partials/concurrent" },
     { "path": "../partials/flow-control" },
     { "path": "../partials/number" },
     { "path": "../partials/object" },

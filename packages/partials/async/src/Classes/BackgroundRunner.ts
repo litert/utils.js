@@ -15,13 +15,16 @@
  */
 
 import { EventEmitter } from 'node:events';
-import * as NodeTimer from 'node:timers/promises';
+import { sleep } from '../Functions/Sleep';
 
 export interface IBackgroundRunnerEvents {
 
     'error': [error: unknown];
 }
 
+/**
+ * The options for the `BackgroundRunner` class.
+ */
 export interface IBackgroundRunnerOptions {
 
     /**
@@ -35,6 +38,11 @@ export interface IBackgroundRunnerOptions {
      */
     waitFn?: () => Promise<void>;
 }
+
+/**
+ * The default wait function used by `runLater` method.
+ */
+export const DEFAULT_BG_RUNNER_WAIT_FN = (): Promise<void> => sleep(0);
 
 /**
  * This class helps make the asynchronous callbacks run in the background, when you don't want to
@@ -53,7 +61,7 @@ export class BackgroundRunner extends EventEmitter<IBackgroundRunnerEvents> {
 
     public constructor(opts: IBackgroundRunnerOptions = {}) {
         super();
-        this._waitFn = opts.waitFn ?? NodeTimer.setImmediate;
+        this._waitFn = opts.waitFn ?? DEFAULT_BG_RUNNER_WAIT_FN;
     }
 
     /**

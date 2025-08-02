@@ -27,6 +27,7 @@
     "@litert/utils-object": "-",
     "@litert/utils-string": "-",
     "@litert/utils-ts-types": "-",
+    "@litert/concurrent": "-",
     "@litert/utils-network": "-",
     "@litert/utils-array": "-",
     "@litert/utils-async": "-",
