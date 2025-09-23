@@ -1,5 +1,9 @@
 # CHANGES
 
+## v1.4.0
+
+- feat(pkg:concurrent): added utility class `SlideWindowCounter`
+
 ## v1.3.0
 
 - feat(pkg:test): add API `Test.autoTick`
