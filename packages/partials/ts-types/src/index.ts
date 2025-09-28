@@ -92,3 +92,16 @@ export type IfIsAny<T, TYes, TNo> = 0 extends (1 & T) ? TYes : TNo;
  * Asserts that a type is `never` type.
  */
 export type IfIsNever<T, TYes, TNo> = [T] extends [never] ? TYes : TNo;
+
+/**
+ * The type to express a JSON safe value, which could be safely passed to `JSON.stringify`, and may be returned by `JSON.parse`.
+ *
+ * Thus, only the following types are allowed:
+ *
+ * - Basic Types: `string`, `number`, `boolean`, `null`
+ * - Array of JSON safe values
+ * - Object with string keys and JSON safe values
+ *
+ * Note that `undefined`, `function`, `symbol`, `bigint` and other non-JSON safe types are not allowed.
+ */
+export type IJsonSafeValue = string | number | boolean | null | IJsonSafeValue[] | { [key: string]: IJsonSafeValue };

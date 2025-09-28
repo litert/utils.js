@@ -4,6 +4,7 @@
 
 - feat(pkg:concurrent): added utility class `SlideWindowCounter`
 - feat(pkg:test): added utility method `asyncThrows`
+- feat(pkg:ts-types): added helper type `IJsonSafeValue`
 
 ## v1.3.0
 
