@@ -16,26 +16,13 @@
 
 import type { IConstructor } from '@litert/utils-ts-types';
 import { EventEmitter } from 'node:events';
-
-/**
- * A type alias for a simple function without parameters.
- */
-export type ISimpleFn = () => unknown;
-
-/**
- * The error thrown when a breaker is open.
- */
-export const E_BREAKER_OPENED = class extends Error {
-
-    public constructor() {
-        super('The breaker is open.');
-        this.name = 'breaker_opened';
-    }
-};
+import { E_BREAKER_OPENED, ISimpleFn } from '../Types';
 
 /**
  * A manual breaker implementation, which can be used to control the flow of
  * function calls, by manually open or close the breaker.
+ *
+ * @noInheritDoc
  */
 export class ManualBreaker extends EventEmitter {
 

@@ -1,8 +1,9 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import * as NodeTimer from 'node:timers/promises';
-import { CircuitBreaker, E_BREAKER_OPENED } from './CircuitBreaker';
+import { CircuitBreaker } from './CircuitBreaker';
 import { asyncThrows } from '@litert/utils-test';
+import { E_BREAKER_OPENED } from '../Types';
 
 NodeTest.describe('Class CircuitBreaker', async () => {
 

@@ -26,24 +26,24 @@ NodeTest.describe('Class SlideWindowCounter', () => {
         NodeAssert.strictEqual(rwc.getWindows(), 0);
 
         // Window 0
-        NodeAssert.strictEqual(rwc.count(5), 5);
+        NodeAssert.strictEqual(rwc.increase(5), 5);
         NodeAssert.strictEqual(rwc.getTotal(), 5);
         NodeAssert.strictEqual(rwc.getWindows(), 1);
 
-        NodeAssert.strictEqual(rwc.count(), 6);
+        NodeAssert.strictEqual(rwc.increase(), 6);
         NodeAssert.strictEqual(rwc.getTotal(), 6);
 
         ctx.mock.timers.tick(100);
 
         NodeAssert.strictEqual(rwc.getWindows(), 1);
 
-        NodeAssert.strictEqual(rwc.count(), 7);
+        NodeAssert.strictEqual(rwc.increase(), 7);
         NodeAssert.strictEqual(rwc.getTotal(), 7);
         ctx.mock.timers.tick(900);
 
         // Window 1
 
-        NodeAssert.strictEqual(rwc.count(), 8);
+        NodeAssert.strictEqual(rwc.increase(), 8);
         NodeAssert.strictEqual(rwc.getTotal(), 8);
         NodeAssert.strictEqual(rwc.getWindows(), 2);
 
@@ -51,7 +51,7 @@ NodeTest.describe('Class SlideWindowCounter', () => {
 
         // Window 2
 
-        NodeAssert.strictEqual(rwc.count(), 9);
+        NodeAssert.strictEqual(rwc.increase(), 9);
         NodeAssert.strictEqual(rwc.getTotal(), 9);
         NodeAssert.strictEqual(rwc.getWindows(), 3);
     });
@@ -65,15 +65,15 @@ NodeTest.describe('Class SlideWindowCounter', () => {
             windowQty: 3,
         });
 
-        NodeAssert.strictEqual(rwc.count(), 1); // [1]
+        NodeAssert.strictEqual(rwc.increase(), 1); // [1]
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.count(), 2); // [1, 1]
+        NodeAssert.strictEqual(rwc.increase(), 2); // [1, 1]
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.count(), 3); // [1, 1, 1]
+        NodeAssert.strictEqual(rwc.increase(), 3); // [1, 1, 1]
 
         ctx.mock.timers.tick(3000);
 
-        NodeAssert.strictEqual(rwc.count(), 1); // [1]
+        NodeAssert.strictEqual(rwc.increase(), 1); // [1]
 
     });
 
@@ -88,35 +88,35 @@ NodeTest.describe('Class SlideWindowCounter', () => {
 
         NodeAssert.strictEqual(rwc.getWindows(), 0);
 
-        NodeAssert.strictEqual(rwc.count(), 1); // [1]
+        NodeAssert.strictEqual(rwc.increase(), 1); // [1]
         NodeAssert.strictEqual(rwc.getWindows(), 1);
 
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.count(), 2); // [1, 1]
+        NodeAssert.strictEqual(rwc.increase(), 2); // [1, 1]
         NodeAssert.strictEqual(rwc.getWindows(), 2);
 
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.count(), 3); // [1, 1, 1]
+        NodeAssert.strictEqual(rwc.increase(), 3); // [1, 1, 1]
         NodeAssert.strictEqual(rwc.getWindows(), 3);
 
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.count(1), 3); // [1, 1, 1]
+        NodeAssert.strictEqual(rwc.increase(1), 3); // [1, 1, 1]
         NodeAssert.strictEqual(rwc.getWindows(), 3);
 
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.count(2), 4); // [1, 1, 2]
+        NodeAssert.strictEqual(rwc.increase(2), 4); // [1, 1, 2]
         NodeAssert.strictEqual(rwc.getWindows(), 3);
 
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.count(3), 6); // [1, 2, 3]
+        NodeAssert.strictEqual(rwc.increase(3), 6); // [1, 2, 3]
         NodeAssert.strictEqual(rwc.getWindows(), 3);
 
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.count(4), 9); // [2, 3, 4]
+        NodeAssert.strictEqual(rwc.increase(4), 9); // [2, 3, 4]
         NodeAssert.strictEqual(rwc.getWindows(), 3);
 
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.count(5), 12); // [3, 4, 5]
+        NodeAssert.strictEqual(rwc.increase(5), 12); // [3, 4, 5]
         NodeAssert.strictEqual(rwc.getWindows(), 3);
     });
 
@@ -129,22 +129,22 @@ NodeTest.describe('Class SlideWindowCounter', () => {
             windowQty: 3,
         });
 
-        NodeAssert.strictEqual(rwc.count(), 1); // [1]
+        NodeAssert.strictEqual(rwc.increase(), 1); // [1]
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.count(), 2); // [1, 1]
+        NodeAssert.strictEqual(rwc.increase(), 2); // [1, 1]
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.count(), 3); // [1, 1, 1]
+        NodeAssert.strictEqual(rwc.increase(), 3); // [1, 1, 1]
 
         rwc.reset();
 
         NodeAssert.strictEqual(rwc.getTotal(), 0);
         NodeAssert.strictEqual(rwc.getWindows(), 0);
 
-        NodeAssert.strictEqual(rwc.count(), 1); // [1]
+        NodeAssert.strictEqual(rwc.increase(), 1); // [1]
         
         ctx.mock.timers.tick(3000);
 
-        NodeAssert.strictEqual(rwc.count(), 1); // [1]
+        NodeAssert.strictEqual(rwc.increase(), 1); // [1]
     });
 
     NodeTest.it('should drop the oldest window once a new boundary was reached', (ctx) => {
@@ -156,18 +156,18 @@ NodeTest.describe('Class SlideWindowCounter', () => {
             windowQty: 3,
         });
 
-        NodeAssert.strictEqual(rwc.count(), 1); // [1]
+        NodeAssert.strictEqual(rwc.increase(), 1); // [1]
         ctx.mock.timers.tick(1);
-        NodeAssert.strictEqual(rwc.count(), 2); // [1, 1]
+        NodeAssert.strictEqual(rwc.increase(), 2); // [1, 1]
         ctx.mock.timers.tick(1);
-        NodeAssert.strictEqual(rwc.count(), 3); // [1, 1, 1]
-        NodeAssert.strictEqual(rwc.count(), 4); // [1, 1, 2]
+        NodeAssert.strictEqual(rwc.increase(), 3); // [1, 1, 1]
+        NodeAssert.strictEqual(rwc.increase(), 4); // [1, 1, 2]
         ctx.mock.timers.tick(1);
-        NodeAssert.strictEqual(rwc.count(), 4); // [1, 2, 1]
+        NodeAssert.strictEqual(rwc.increase(), 4); // [1, 2, 1]
         ctx.mock.timers.tick(1);
-        NodeAssert.strictEqual(rwc.count(), 4); // [2, 1, 1]
+        NodeAssert.strictEqual(rwc.increase(), 4); // [2, 1, 1]
         ctx.mock.timers.tick(1);
-        NodeAssert.strictEqual(rwc.count(), 3); // [1, 1, 1]
+        NodeAssert.strictEqual(rwc.increase(), 3); // [1, 1, 1]
     });
 
     NodeTest.it('should throw error if incorrect settings were used', () => {

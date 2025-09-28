@@ -48,6 +48,8 @@ const EMPTY_RING_INDEX = -1;
 /**
  * A counter that based on a slide time window.
  * The counts are divided into several windows, which are organized in a circular array (ring)
+ *
+ * @noInheritDoc
  */
 export class SlideWindowCounter {
 
@@ -125,7 +127,7 @@ export class SlideWindowCounter {
      *
      * @returns the total of the valid counts after counting up.
      */
-    public count(step: number = 1): number {
+    public increase(step: number = 1): number {
 
         const NOW = Date.now();
 

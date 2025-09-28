@@ -97,6 +97,65 @@ catch (err) {
 }
 ```
 
+### CircuitBreaker
+
+The `CircuitBreaker` class can be used to control the flow of function calls,
+by automatically open or close the breaker based on the success or failure of the function calls.
+
+```ts
+import { CircuitBreaker } from '@litert/concurrent';
+import * as NodeTimers from 'node:timers/promises';
+
+const breaker = new CircuitBreaker({
+    'cooldownTimeMs': 30000, // Cooldown for 30 seconds when opened
+    'breakThreshold': 3, // Break the circuit after 3 failures (in counter)
+    'warmupThreshold': 2, // Close the circuit after 2 consecutive successes
+});
+
+breaker.call(() => {
+    console.log('This will be called.');
+});
+```
+
+### SlideWindowCounter
+
+The `SlideWindowCounter` class can be used to count the number of events in a sliding window.
+
+```ts
+import { SlideWindowCounter } from '@litert/concurrent';
+
+const counter = new SlideWindowCounter({
+    windowSizeMs: 1000,
+    windowQty: 10,
+});
+
+counter.count();
+```
+
+### CountingRateLimiter
+
+The `CountingRateLimiter` class can be used to limit the rate of function calls,
+with a counter.
+
+```ts
+import { CountingRateLimiter } from '@litert/concurrent';
+import { SlideWindowCounter } from '@litert/concurrent';
+
+const limiter = new CountingRateLimiter({
+    limits: 5,
+    counter: new SlideWindowCounter({
+        windowSizeMs: 1000,
+        windowQty: 10,
+    }),
+});
+
+for (let i = 0; i < 5; ++i) {
+    limiter.challenge();
+}
+
+limiter.challenge(); // This will throw an error, because the limit is reached.
+```
+
 ## Documentation
 
 - [en-US](https://litert.org/projects/utils.js/api-docs/concurrent/)

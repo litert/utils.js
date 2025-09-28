@@ -17,10 +17,11 @@
 import type { IConstructor } from '@litert/utils-ts-types';
 import { EventEmitter } from 'node:events';
 import { SlideWindowCounter } from './SlideWindowCounter';
-import { E_BREAKER_OPENED, ISimpleFn } from './ManualBreaker';
+import { E_BREAKER_OPENED, ICounter, ISimpleFn } from '../Types';
 
-export { E_BREAKER_OPENED, ISimpleFn };
-
+/**
+ * The events emitted by `CircuitBreaker`.
+ */
 export interface ICircuitBreakerEvents {
 
     'error': [error: unknown];
@@ -38,8 +39,9 @@ enum EState {
     HALF_OPENED
 }
 
-export type IStrategyFn = (failures: number, openedAt: number) => number;
-
+/**
+ * The options for `CircuitBreaker`.
+ */
 export interface ICircuitBreakerOptions {
 
     /**
@@ -58,8 +60,8 @@ export interface ICircuitBreakerOptions {
     breakThreshold?: number;
 
     /**
-     * How many successful calls are needed to close the circuit breaker
-     * after it has been half-opened.
+     * How many consecutive successful calls are needed to close the circuit
+     * breaker after it has been half-opened.
      *
      * Default: 3
      */
@@ -94,31 +96,6 @@ export interface ICircuitBreakerOptions {
     counter?: ICounter;
 }
 
-/**
- * The interface type of a counter.
- */
-export interface ICounter {
-
-    /**
-     * Count up by the specified quantity.
-     *
-     * @param qty The quantity to count up with, always a positive integer. [Default: 1]
-     *
-     * @returns the total of the valid counts after counting up.
-     */
-    count(): number;
-
-    /**
-     * Reset the counter to zero.
-     */
-    reset(): void;
-
-    /**
-     * Get the total of the valid counts within the Slide window.
-     */
-    getTotal(): number;
-}
-
 const DEFAULT_OPTIONS: Required<ICircuitBreakerOptions> = {
     'cooldownTimeMs': 60000,
     'breakThreshold': 5,
@@ -128,6 +105,10 @@ const DEFAULT_OPTIONS: Required<ICircuitBreakerOptions> = {
     'counter': null as unknown as ICounter,
 };
 
+/**
+ * A circuit breaker implementation, which can be used to control the flow of
+ * function calls, based on the success/failure of the calls.
+ */
 export class CircuitBreaker extends EventEmitter<ICircuitBreakerEvents> {
 
     private readonly _cooldownTimeMs: number;
@@ -208,6 +189,15 @@ export class CircuitBreaker extends EventEmitter<ICircuitBreakerEvents> {
         });
     }
 
+    /**
+     * Call the given function if the breaker is closed, or throw an error if
+     * the breaker is open or half-open.
+     *
+     * @param fn    The function to be called.
+     * @returns     The result of the function call.
+     *
+     * @throws An error if the breaker is open, or if the given function throws an error.
+     */
     public call<TFn extends ISimpleFn>(fn: TFn): ReturnType<TFn> {
 
         switch (this._state) {
@@ -220,6 +210,11 @@ export class CircuitBreaker extends EventEmitter<ICircuitBreakerEvents> {
         }
     }
 
+    /**
+     * Open the circuit breaker immediately, no matter what state it is in now.
+     *
+     * @param until     The timestamp (in milliseconds) until which the breaker will remain open.
+     */
     public open(until: number = Date.now() + this._cooldownTimeMs): void {
 
         this._nextAttemptAt = until;
@@ -298,7 +293,7 @@ export class CircuitBreaker extends EventEmitter<ICircuitBreakerEvents> {
             return;
         }
 
-        if (this._failureCount.count() >= this._breakThreshold) {
+        if (this._failureCount.increase() >= this._breakThreshold) {
 
             this.open();
         }
@@ -374,6 +369,11 @@ export class CircuitBreaker extends EventEmitter<ICircuitBreakerEvents> {
         }
     }
 
+    /**
+     * Test whether the circuit breaker is opened now.
+     *
+     * @returns     `true` if the breaker is opened, `false` otherwise.
+     */
     public isOpened(): boolean {
 
         if (this._state === EState.OPENED) {
@@ -389,11 +389,21 @@ export class CircuitBreaker extends EventEmitter<ICircuitBreakerEvents> {
         return false;
     }
 
+    /**
+     * Test whether the circuit breaker is closed now.
+     *
+     * @returns   `true` if the breaker is closed, `false` otherwise.
+     */
     public isClosed(): boolean {
 
         return this._state === EState.CLOSED;
     }
 
+    /**
+     * Test whether the circuit breaker is half-opened now.
+     *
+     * @returns     `true` if the breaker is half-opened, `false` otherwise.
+     */
     public isHalfOpened(): boolean {
 
         switch (this._state) {
@@ -411,6 +421,12 @@ export class CircuitBreaker extends EventEmitter<ICircuitBreakerEvents> {
         }
     }
 
+    /**
+     * Wrap the given function with the circuit breaker.
+     *
+     * @param fn    The function to be wrapped.
+     * @returns   The new wrapped function.
+     */
     public wrap<TFn extends ISimpleFn>(fn: TFn): TFn {
 
         return ((): unknown => this.call(fn)) as TFn;
