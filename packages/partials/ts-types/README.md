@@ -24,9 +24,16 @@ npm i @litert/utils-ts-types --save
 
 ### Type `IJsonSafeValue`
 
-The `IJsonSafeValue` type is a TypeScript type that represents values that can be safely serialized to JSON.
-This includes primitive types like `string`, `number`, `boolean`, and `null`, as well as arrays and objects 
-that contain only these types.
+The `IJsonSafeValue` type is a TypeScript type that express a JSON safe value, which could be safely passed to
+`JSON.stringify`, and may be returned by `JSON.parse`.
+
+Thus, only the following types are allowed:
+
+- Basic Types: `string`, `number`, `boolean`, `null`
+- Array of JSON safe values
+- Object with string keys and JSON safe values
+
+Note that `undefined`, `function`, `symbol`, `bigint` and other non-JSON safe types are not allowed.
 
 ### Type `IObject`
 
@@ -89,6 +96,25 @@ type MyArray = string[];
 const arr: MyArray = ['a', 'b', 'c'];
 
 const el0: IElementOfArray<MyArray> = arr[0];
+```
+
+### Type `IMaybeArray`
+
+The `IMaybeArray<T>` type is a utility type that represents a value that can be either a single value of type `T` or an array of type `T`.
+
+This type is useful for function parameters or some options that can accept either a single value or multiple values.
+
+```ts
+interface IOptions {
+
+    tag: IMaybeArray<string>;
+}
+
+function processItems(items: IMaybeArray<string>) {
+
+    const itemArray = Array.isArray(items) ? items : [items];
+    // ...
+}
 ```
 
 ### Type `IMaybeAsync`
