@@ -7,6 +7,7 @@
 - feat(pkg:ts-types): added helper type `IJsonSafeValue`
 - feat(pkg:ts-types): added helper type `IMaybeArray`
 - feat(pkg:concurrent): added utility class `ManualBreaker`
+- feat(pkg:concurrent): added utility class `CircuitBreaker`
 
 ## v1.3.0
 

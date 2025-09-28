@@ -19,3 +19,4 @@ export * from './Classes/DebounceController';
 export * from './Classes/SlideWindowCounter';
 export * from './Classes/FiberPool';
 export * from './Classes/ManualBreaker';
+export * from './Classes/CircuitBreaker';
