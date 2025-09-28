@@ -20,6 +20,43 @@ The utility functions/classes/constants about test (using `node:test`) for NodeJ
 npm i @litert/utils-test --save
 ```
 
+## APIs
+
+### Function `asyncThrows`
+
+The `asyncThrows` function is used to assert that an asynchronous function throws an error when executed.
+It can also validate the type of the thrown error or check if the error message matches a specific string
+or the instance of a given error constructor.
+
+```ts
+import { asyncThrows } from '@litert/utils-test';
+
+await asyncThrows(
+    async () => {
+        // Some asynchronous operation that is expected to throw an error
+        throw new TypeError('This is a type error');
+    },
+    TypeError // Expecting the error to be an instance of TypeError
+);
+```
+
+### Function `autoTick`
+
+The `autoTick` function is a utility for testing asynchronous code that relies on mocked timers.
+It automatically advances the timer and executes any pending asynchronous operations,
+making it easier to write tests for code that uses `setTimeout`, `setInterval`, or
+other timer-based functions.
+
+```ts
+import { autoTick } from '@litert/utils-test';
+
+await autoTick(async () => {
+    // Some asynchronous operation that uses timers
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    console.log('This will be logged after the timer is advanced');
+});
+```
+
 ## Documentation
 
 - [en-US](https://litert.org/projects/utils.js/api-docs/test/)

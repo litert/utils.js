@@ -14,4 +14,5 @@
  * limitations under the License.
  */
 
+export * from './Functions/AsyncThrows';
 export * from './Functions/AutoTick';

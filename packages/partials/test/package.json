@@ -32,7 +32,9 @@
     "node": ">=18.0.0"
   },
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "@litert/utils-ts-types": "-"
+  },
   "peerDependencies": {},
   "ottoia:alias": "partials.utils",
   "access": "public"

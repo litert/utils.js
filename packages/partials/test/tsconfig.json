@@ -5,6 +5,9 @@
     "rootDir": "src",
     "outDir": "lib"
   },
+  "references": [
+    { "path": "../ts-types" },
+  ],
   "include": [
     "./src/*.ts",
     "./src/**/*.ts"

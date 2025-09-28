@@ -3,6 +3,7 @@
 ## v1.4.0
 
 - feat(pkg:concurrent): added utility class `SlideWindowCounter`
+- feat(pkg:test): added utility method `asyncThrows`
 
 ## v1.3.0
 
