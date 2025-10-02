@@ -156,6 +156,26 @@ for (let i = 0; i < 5; ++i) {
 limiter.challenge(); // This will throw an error, because the limit is reached.
 ```
 
+### TokenBucketRateLimiter
+
+The `TokenBucketRateLimiter` class can be used to limit the rate of function calls,
+with a token bucket algorithm.
+
+```ts
+import { TokenBucketRateLimiter } from '@litert/concurrent';
+
+const limiter = new TokenBucketRateLimiter({
+    capacity: 5,
+    refillIntervalMs: 1000,
+});
+
+for (let i = 0; i < 5; ++i) {
+    limiter.challenge();
+}
+
+limiter.call(() => { return; }); // This will throw an error, because the bucket is empty.
+```
+
 ## Documentation
 
 - [en-US](https://litert.org/projects/utils.js/api-docs/concurrent/)

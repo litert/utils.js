@@ -4,6 +4,7 @@
 
 - feat(pkg:concurrent): added utility class `SlideWindowCounter`
 - feat(pkg:concurrent): added utility class `CountingRateLimiter`
+- feat(pkg:concurrent): added utility class `TokenBucketRateLimiter`
 - feat(pkg:ts-types): added helper type `IJsonSafeValue`
 - feat(pkg:ts-types): added helper type `IMaybeArray`
 - feat(pkg:concurrent): added utility class `ManualBreaker`

@@ -18,6 +18,7 @@ export * from './Classes/ThrottleController';
 export * from './Classes/DebounceController';
 export * from './Classes/SlideWindowCounter';
 export * from './Classes/CountingRateLimiter';
+export * from './Classes/TokenBucketRateLimiter';
 export * from './Classes/FiberPool';
 export * from './Classes/ManualBreaker';
 export * from './Classes/CircuitBreaker';
