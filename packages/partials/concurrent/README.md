@@ -176,6 +176,30 @@ for (let i = 0; i < 5; ++i) {
 limiter.call(() => { return; }); // This will throw an error, because the bucket is empty.
 ```
 
+### LeakyBucketRateLimiter
+
+The `LeakyBucketRateLimiter` class can be used to limit the rate of function calls,
+with a leaky bucket algorithm.
+
+```ts
+import { LeakyBucketRateLimiter } from '@litert/concurrent';
+
+const limiter = new LeakyBucketRateLimiter({
+    leakIntervalMs: 200,
+    capacity: 5,
+});
+
+await Promise.allSettled([
+    limiter.call(() => { console.log('A'); }), // This will be executed immediately.
+    limiter.call(() => { console.log('B'); }), // This will be executed after 200ms.
+    limiter.call(() => { console.log('C'); }), // This will be executed after 400ms.
+    limiter.call(() => { console.log('D'); }), // This will be executed after 600ms.
+    limiter.call(() => { console.log('E'); }), // This will be executed after 800ms.
+    limiter.call(() => { console.log('F'); }), // This will throw an error, because the bucket is full.
+]);
+
+```
+
 ## Documentation
 
 - [en-US](https://litert.org/projects/utils.js/api-docs/concurrent/)

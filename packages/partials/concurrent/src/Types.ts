@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { IFunction } from '@litert/utils-ts-types';
+import type { IFunction, IMaybeAsync, IToPromise } from '@litert/utils-ts-types';
 
 /**
  * The interface for counter.
@@ -40,7 +40,7 @@ export interface ICounter {
 /**
  * A type alias for a simple function without parameters.
  */
-export type ISimpleFn = () => unknown;
+export type ISimpleFn = IFunction<[]>;
 
 /**
  * The interface for breakers.
@@ -67,6 +67,101 @@ export interface IBreaker {
      * @returns     The wrapped function.
      */
     wrap<T extends IFunction>(fn: T): T;
+}
+
+/**
+ * The interface for synchronous rate limiters.
+ */
+export interface ISyncRateLimiter {
+
+    /**
+     * Check whether the limiter is blocking all access now.
+     */
+    isLimited(): boolean;
+
+    /**
+     * Manually challenge the rate limiter. If it's limited, an error will be
+     * thrown, so that the request is rejected.
+     * Otherwise, the function will consume a token and return normally, which
+     * means that the request is allowed to proceed.
+     */
+    challenge(): void;
+
+    /**
+     * Reset the internal context to unlimited state.
+     */
+    reset(): void;
+
+    /**
+     * Call the given function if the limiter is not limited, or throw an error if
+     * the limiter is limited.
+     *
+     * @param cb    The function to be called.
+     *
+     * @returns     The return value of the given function.
+     *
+     * @throws      An error if the limiter is limited, or if the given function throws an error.
+     */
+    call<T extends IFunction>(fn: T): ReturnType<T>;
+
+    /**
+     * Wrap the given function with rate limiting challenge.
+     *
+     * @param fn    The function to be wrapped.
+     *
+     * @returns     The new wrapped function.
+     */
+    wrap<T extends IFunction>(fn: T): T;
+}
+
+/**
+ * The interface for asynchronous rate limiters.
+ */
+export interface IAsyncRateLimiter {
+
+    /**
+     * Check whether the limiter is blocking all access now.
+     */
+    isLimited(): IMaybeAsync<boolean>;
+
+    /**
+     * Manually challenge the rate limiter. If it's limited, an error will be
+     * thrown, so that the request is rejected.
+     *
+     * Otherwise, the function will consume a token and return normally, which
+     * means that the request is allowed to proceed.
+     */
+    challenge(): Promise<void>;
+
+    /**
+     * Reset the internal context to unlimited state.
+     */
+    reset(): IMaybeAsync<void>;
+
+    /**
+     * Call the given function if the limiter is not limited, or throw an error if
+     * the limiter is limited.
+     *
+     * @param cb    The function to be called.
+     *
+     * @returns     The return value of the given function.
+     *
+     * @throws      An error if the limiter is limited, or if the given function throws an error.
+     */
+    call<T extends IFunction>(fn: T): Promise<
+        ReturnType<T> extends Promise<any> ?
+            Awaited<ReturnType<T>> :
+            ReturnType<T>
+    >;
+
+    /**
+     * Wrap the given function with rate limiting challenge.
+     *
+     * @param fn    The function to be wrapped.
+     *
+     * @returns     The new wrapped function.
+     */
+    wrap<T extends IFunction>(fn: T): IFunction<Parameters<T>, IToPromise<ReturnType<T>>>;
 }
 
 /**

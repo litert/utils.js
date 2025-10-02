@@ -15,7 +15,7 @@
  */
 
 import type { IConstructor, IFunction } from '@litert/utils-ts-types';
-import { E_RATE_LIMITED, IBreaker, ICounter } from '../Types';
+import { E_RATE_LIMITED, ICounter, ISyncRateLimiter } from '../Types';
 
 /**
  * The options for `CountingRateLimiter`.
@@ -44,7 +44,7 @@ export interface ICountingRateLimiterOptions {
 /**
  * A rate limiter implementation working with a counter.
  */
-export class CountingRateLimiter implements IBreaker {
+export class CountingRateLimiter implements ISyncRateLimiter {
 
     private readonly _counter: ICounter;
 
@@ -98,7 +98,7 @@ export class CountingRateLimiter implements IBreaker {
     }
 
     /**
-     * Check whether the rate limiter is limited now.
+     * Check whether the rate limiter is blocking all access now.
      */
     public isLimited(): boolean {
 

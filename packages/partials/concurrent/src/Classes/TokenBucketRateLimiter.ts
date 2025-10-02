@@ -15,7 +15,7 @@
  */
 
 import type { IConstructor, IFunction } from '@litert/utils-ts-types';
-import { E_RATE_LIMITED, IBreaker } from '../Types';
+import { E_RATE_LIMITED, ISyncRateLimiter } from '../Types';
 
 /**
  * The options for `TokenBucketRateLimiter`.
@@ -51,7 +51,7 @@ export interface ITokenBucketRateLimiterOptions {
 /**
  * A rate limiter implementation, using token bucket algorithm.
  */
-export class TokenBucketRateLimiter implements IBreaker {
+export class TokenBucketRateLimiter implements ISyncRateLimiter {
 
     private _qty: number;
 
@@ -134,15 +134,15 @@ export class TokenBucketRateLimiter implements IBreaker {
      * @returns     The return value of the given function.
      * @throws      An error if the limiter is limited, or if the given function throws an error.
      */
-    public call<TFn extends IFunction>(fn: TFn): ReturnType<TFn> {
+    public call<T extends IFunction>(fn: T): ReturnType<T> {
 
         this.challenge();
 
-        return fn() as ReturnType<TFn>;
+        return fn() as ReturnType<T>;
     }
 
     /**
-     * Reset the internal counter.
+     * Reset the internal context.
      */
     public reset(): void {
 
@@ -151,7 +151,7 @@ export class TokenBucketRateLimiter implements IBreaker {
     }
 
     /**
-     * Check whether the rate limiter is limited now.
+     * Check whether the rate limiter is blocking all access now.
      */
     public isLimited(): boolean {
 
