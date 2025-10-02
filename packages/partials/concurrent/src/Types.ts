@@ -80,6 +80,11 @@ export interface ISyncRateLimiter {
     isLimited(): boolean;
 
     /**
+     * Check whether the limiter is empty now.
+     */
+    isEmpty(): boolean;
+
+    /**
      * Manually challenge the rate limiter. If it's limited, an error will be
      * thrown, so that the request is rejected.
      * Otherwise, the function will consume a token and return normally, which

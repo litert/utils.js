@@ -101,6 +101,13 @@ export class TokenBucketRateLimiter implements ISyncRateLimiter {
         this._qty--;
     }
 
+    public isEmpty(): boolean {
+
+        this._tryRefill();
+
+        return this._qty === this._capacity;
+    }
+
     private _tryRefill(): void {
 
         const now = Date.now();

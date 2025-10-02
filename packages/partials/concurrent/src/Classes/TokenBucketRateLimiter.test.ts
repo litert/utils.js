@@ -208,6 +208,9 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
             refillIntervalMs: 1000,
         });
 
+        NodeAssert.strictEqual(limiter.isLimited(), false);
+        NodeAssert.strictEqual(limiter.isEmpty(), true);
+
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());

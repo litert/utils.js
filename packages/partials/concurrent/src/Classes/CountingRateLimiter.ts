@@ -74,6 +74,11 @@ export class CountingRateLimiter implements ISyncRateLimiter {
         this._counter.increase();
     }
 
+    public isEmpty(): boolean {
+
+        return this._counter.getTotal() === 0;
+    }
+
     /**
      * Call the given function if the limiter is not limited, or throw an error if
      * the limiter is limited.
