@@ -17,7 +17,7 @@
 import type { IConstructor } from '@litert/utils-ts-types';
 import { EventEmitter } from 'node:events';
 import { SlideWindowCounter } from './SlideWindowCounter';
-import { E_BREAKER_OPENED, ICounter, ISimpleFn } from '../Types';
+import { E_BREAKER_OPENED, IBreaker, ICounter, ISimpleFn } from '../Types';
 
 /**
  * The events emitted by `CircuitBreaker`.
@@ -109,7 +109,9 @@ const DEFAULT_OPTIONS: Required<ICircuitBreakerOptions> = {
  * A circuit breaker implementation, which can be used to control the flow of
  * function calls, based on the success/failure of the calls.
  */
-export class CircuitBreaker extends EventEmitter<ICircuitBreakerEvents> {
+export class CircuitBreaker
+    extends EventEmitter<ICircuitBreakerEvents>
+    implements IBreaker {
 
     private readonly _cooldownTimeMs: number;
 

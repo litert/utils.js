@@ -93,7 +93,33 @@ export class SlideWindowCounter {
      */
     public getTotal(): number {
 
+        this._recycle();
+
         return this._total;
+    }
+
+    private _recycle(now: number = Date.now()): void {
+
+        if (this._curOffset === EMPTY_RING_INDEX) {
+            return;
+        }
+
+        // All windows can not starts before the valid time
+        const wndValidAfter = now - this._maxWindowAge;
+
+        // Cleanup expired windows
+        for (let i = this._headOffset; i !== this._curOffset; i = (i + 1) % this.windowQty) {
+
+            const w = this._windows[i];
+
+            if (w.time > wndValidAfter) {
+                break;
+            }
+
+            this._total -= w.count;
+            this._headOffset = (this._headOffset + 1) % this.windowQty;
+        }
+
     }
 
     /**
@@ -147,21 +173,7 @@ export class SlideWindowCounter {
             return this._total = curWnd.count = step;
         }
 
-        // All windows can not starts before the valid time
-        const wndValidAfter = NOW - this._maxWindowAge;
-
-        // Cleanup expired windows
-        for (let i = this._headOffset; i !== this._curOffset; i = (i + 1) % this.windowQty) {
-
-            const w = this._windows[i];
-
-            if (w.time > wndValidAfter) {
-                break;
-            }
-
-            this._total -= w.count;
-            this._headOffset = (this._headOffset + 1) % this.windowQty;
-        }
+        this._recycle(NOW);
 
         let w = this._windows[this._curOffset];
 

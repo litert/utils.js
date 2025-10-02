@@ -23,6 +23,7 @@ NodeTest.describe('Class CountingRateLimiter', () => {
         }
 
         NodeAssert.throws(() => { limiter.challenge(); });
+        NodeAssert.throws(() => { limiter.call(() => { return 'ok'; }) });
         
         ctx.mock.timers.tick(500);
 

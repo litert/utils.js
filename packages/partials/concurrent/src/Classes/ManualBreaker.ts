@@ -16,7 +16,7 @@
 
 import type { IConstructor } from '@litert/utils-ts-types';
 import { EventEmitter } from 'node:events';
-import { E_BREAKER_OPENED, ISimpleFn } from '../Types';
+import { E_BREAKER_OPENED, IBreaker, ISimpleFn } from '../Types';
 
 /**
  * A manual breaker implementation, which can be used to control the flow of
@@ -24,7 +24,7 @@ import { E_BREAKER_OPENED, ISimpleFn } from '../Types';
  *
  * @noInheritDoc
  */
-export class ManualBreaker extends EventEmitter {
+export class ManualBreaker extends EventEmitter implements IBreaker {
 
     private _closed: boolean;
 

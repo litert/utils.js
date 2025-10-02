@@ -15,7 +15,7 @@
  */
 
 import type { IConstructor, IFunction } from '@litert/utils-ts-types';
-import { E_RATE_LIMITED, ICounter } from '../Types';
+import { E_RATE_LIMITED, IBreaker, ICounter } from '../Types';
 
 /**
  * The options for `CountingRateLimiter`.
@@ -44,7 +44,7 @@ export interface ICountingRateLimiterOptions {
 /**
  * A rate limiter implementation working with a counter.
  */
-export class CountingRateLimiter {
+export class CountingRateLimiter implements IBreaker {
 
     private readonly _counter: ICounter;
 
@@ -66,12 +66,27 @@ export class CountingRateLimiter {
      */
     public challenge(): void {
 
-        this._counter.increase();
-
         if (this.isLimited()) {
 
             throw new this._errCtor();
         }
+
+        this._counter.increase();
+    }
+
+    /**
+     * Call the given function if the limiter is not limited, or throw an error if
+     * the limiter is limited.
+     *
+     * @param cb    The function to be called.
+     * @returns     The return value of the given function.
+     * @throws      An error if the limiter is limited, or if the given function throws an error.
+     */
+    public call<TFn extends IFunction>(fn: TFn): ReturnType<TFn> {
+
+        this.challenge();
+
+        return fn() as ReturnType<TFn>;
     }
 
     /**
@@ -87,7 +102,7 @@ export class CountingRateLimiter {
      */
     public isLimited(): boolean {
 
-        return this._counter.getTotal() > this._limits;
+        return this._counter.getTotal() >= this._limits;
     }
 
     /**

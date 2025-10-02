@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import type { IFunction } from '@litert/utils-ts-types';
+
 /**
  * The interface for counter.
  */
@@ -39,6 +41,33 @@ export interface ICounter {
  * A type alias for a simple function without parameters.
  */
 export type ISimpleFn = () => unknown;
+
+/**
+ * The interface for breakers.
+ */
+export interface IBreaker {
+
+    /**
+     * Call the given function if the breaker is closed, or throw an error if
+     * the breaker is open.
+     *
+     * @param cb    The function to be called.
+     *
+     * @returns     The return value of the given function.
+     *
+     * @throws      An error if the breaker is open, or if the given function throws an error.
+     */
+    call<T extends IFunction>(fn: T): ReturnType<T>;
+
+    /**
+     * Wrap the given function, returning a new function that limited by the breaker.
+     *
+     * @param fn    The function to be wrapped.
+     *
+     * @returns     The wrapped function.
+     */
+    wrap<T extends IFunction>(fn: T): T;
+}
 
 /**
  * The default error thrown when the rate limit is exceeded.
