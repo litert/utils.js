@@ -2,7 +2,6 @@ import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import * as NodeTimer from 'node:timers/promises';
 import { ManualBreaker } from './ManualBreaker';
-import { asyncThrows } from '@litert/utils-test';
 import { E_BREAKER_OPENED } from '../Types';
 
 NodeTest.describe('Class ManualBreaker', async () => {
@@ -36,9 +35,9 @@ NodeTest.describe('Class ManualBreaker', async () => {
             { message: '123' }
         );
 
-        await asyncThrows(
+        await NodeAssert.rejects(
             async () => { await breaker.call(async () => { throw new Error('123'); }); },
-            '123'
+            { message: '123' }
         );
     });
 
@@ -48,7 +47,7 @@ NodeTest.describe('Class ManualBreaker', async () => {
 
         breaker.open();
 
-        await asyncThrows(
+        await NodeAssert.rejects(
             async () => { await breaker.call(async () => { return; }); },
             E_BREAKER_OPENED
         );
@@ -84,7 +83,7 @@ NodeTest.describe('Class ManualBreaker', async () => {
 
         breaker.open();
 
-        await asyncThrows(
+        await NodeAssert.rejects(
             async () => { await asyncFn(); },
             E_BREAKER_OPENED
         );
@@ -101,7 +100,7 @@ NodeTest.describe('Class ManualBreaker', async () => {
 
         const breaker = new ManualBreaker(false, CustomError);
 
-        await asyncThrows(
+        await NodeAssert.rejects(
             async () => { await breaker.call(async () => { return; }); },
             CustomError
         );

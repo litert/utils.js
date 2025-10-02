@@ -22,24 +22,6 @@ npm i @litert/utils-test --save
 
 ## APIs
 
-### Function `asyncThrows`
-
-The `asyncThrows` function is used to assert that an asynchronous function throws an error when executed.
-It can also validate the type of the thrown error or check if the error message matches a specific string
-or the instance of a given error constructor.
-
-```ts
-import { asyncThrows } from '@litert/utils-test';
-
-await asyncThrows(
-    async () => {
-        // Some asynchronous operation that is expected to throw an error
-        throw new TypeError('This is a type error');
-    },
-    TypeError // Expecting the error to be an instance of TypeError
-);
-```
-
 ### Function `autoTick`
 
 The `autoTick` function is a utility for testing asynchronous code that relies on mocked timers.

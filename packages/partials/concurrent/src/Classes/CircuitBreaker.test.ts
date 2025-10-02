@@ -2,7 +2,6 @@ import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import * as NodeTimer from 'node:timers/promises';
 import { CircuitBreaker } from './CircuitBreaker';
-import { asyncThrows } from '@litert/utils-test';
 import { E_BREAKER_OPENED } from '../Types';
 
 NodeTest.describe('Class CircuitBreaker', async () => {
@@ -176,14 +175,17 @@ NodeTest.describe('Class CircuitBreaker', async () => {
             NodeAssert.strictEqual(asyncBreaker.isHalfOpened(), false);
             NodeAssert.strictEqual(asyncBreaker.isClosed(), true);
 
-            await asyncThrows(async () => { await asyncBreaker.call(asyncFn); }, 'Service failed');
+            await NodeAssert.rejects(
+                async () => { await asyncBreaker.call(asyncFn); },
+                { message: 'Service failed' }
+            );
         }
 
         NodeAssert.strictEqual(asyncBreaker.isOpened(), true);
         NodeAssert.strictEqual(asyncBreaker.isHalfOpened(), false);
         NodeAssert.strictEqual(asyncBreaker.isClosed(), false);
 
-        await asyncThrows(async () => { await asyncBreaker.call(asyncFn); }, E_BREAKER_OPENED);
+        await NodeAssert.rejects(async () => { await asyncBreaker.call(asyncFn); }, E_BREAKER_OPENED);
     });
 
     await NodeTest.it('isOpen method should return false after cooldown', async (ctx) => {
@@ -334,7 +336,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         breaker.open();
         ctx.mock.timers.tick(COOLDOWN_MS);
         NodeAssert.strictEqual(breaker.isHalfOpened(), true);
-        await asyncThrows(async () => { await breaker.call(async () => { throw new Error('123'); }); });
+        await NodeAssert.rejects(async () => { await breaker.call(async () => { throw new Error('123'); }); });
         NodeAssert.strictEqual(breaker.isOpened(), true);
     });
 
