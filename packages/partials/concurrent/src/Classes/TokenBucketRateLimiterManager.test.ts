@@ -247,43 +247,6 @@ NodeTest.describe('Class TokenBucketRateLimiterManager', () => {
         NodeAssert.throws(() => limiter.call('b', () => '123'));
     });
 
-    NodeTest.it('wrap method should make wrapped function works as same as call', (ctx) => {
-
-        ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'] });
-
-        const limiter = new TokenBucketRateLimiterManager({
-            capacity: 3,
-            refillIntervalMs: 1000,
-        });
-
-        const fnA = limiter.wrap('a', (a: string) => a);
-        const fnB = limiter.wrap('b', (a: string) => a);
-
-        NodeAssert.strictEqual('123', fnA('123'));
-        NodeAssert.strictEqual('123', fnB('123'));
-        NodeAssert.strictEqual('233', fnA('233'));
-        NodeAssert.strictEqual('233', fnB('233'));
-        NodeAssert.strictEqual('666', fnA('666'));
-        NodeAssert.strictEqual('666', fnB('666'));
-        NodeAssert.strictEqual(limiter.isBlocking('a'), true);
-        NodeAssert.strictEqual(limiter.isBlocking('b'), true);
-        NodeAssert.throws(() => fnA('1234'));
-        NodeAssert.throws(() => fnB('1234'));
-
-        ctx.mock.timers.tick(3000);
-
-        NodeAssert.strictEqual('123', limiter.call('a', () => '123'));
-        NodeAssert.strictEqual('123', limiter.call('b', () => '123'));
-        NodeAssert.strictEqual('123', limiter.call('a', () => '123'));
-        NodeAssert.strictEqual('123', limiter.call('b', () => '123'));
-        NodeAssert.strictEqual('123', limiter.call('a', () => '123'));
-        NodeAssert.strictEqual('123', limiter.call('b', () => '123'));
-        NodeAssert.strictEqual(limiter.isBlocking('a'), true);
-        NodeAssert.strictEqual(limiter.isBlocking('b'), true);
-        NodeAssert.throws(() => limiter.call('a', () => '123'));
-        NodeAssert.throws(() => limiter.call('b', () => '123'));
-    });
-
     NodeTest.it('should process the case if time reversed', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 1000000 });

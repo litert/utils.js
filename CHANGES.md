@@ -7,6 +7,7 @@
 - feat(pkg:concurrent): added utility class `TokenBucketRateLimiter`
 - feat(pkg:concurrent): added utility class `TokenBucketRateLimiterManager`
 - feat(pkg:concurrent): added utility class `LeakyBucketRateLimiter`
+- feat(pkg:concurrent): added utility class `LeakyBucketRateLimiterManager`
 - feat(pkg:ts-types): added helper type `IJsonSafeValue`
 - feat(pkg:ts-types): added helper type `IMaybeArray`
 - feat(pkg:concurrent): added utility class `ManualBreaker`

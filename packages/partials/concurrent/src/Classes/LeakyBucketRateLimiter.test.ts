@@ -38,7 +38,7 @@ NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
         await autoTick(ctx, limiter.challenge());
 
         const pr = limiter.challenge();
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         // the second one, should wait 100ms.
         // The next leaking time should be at 200ms later.
         await autoTick(ctx, pr);
@@ -105,7 +105,7 @@ NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
         NodeAssert.strictEqual(Date.now() - start, 0);
 
         const pr = limiter.call(() => 'second');
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
 
         // the second one, should wait 100ms.
         // The next leaking time should be at 200ms later.
@@ -142,7 +142,7 @@ NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
         NodeAssert.strictEqual(Date.now() - start, 0);
 
         const pr = wrapped(10, 20);
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
 
         // the second one, should wait 100ms.
         // The next leaking time should be at 200ms later.
@@ -204,7 +204,7 @@ NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
 
         prAllowed.push(limiter.challenge());
         prAllowed.push(limiter.challenge());
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         prAllowed.push(NodeAssert.rejects(limiter.challenge()));
 
         limiter.reset();

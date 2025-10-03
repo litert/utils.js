@@ -85,10 +85,6 @@ export class TokenBucketRateLimiter implements ISyncRateLimiter {
         }
     }
 
-    /**
-     * Challenge the rate limiter. If it's limited, an error will be thrown.
-     * Otherwise, the function will consume a token and return normally.
-     */
     public challenge(): void {
 
         this._tryRefill();
@@ -134,14 +130,6 @@ export class TokenBucketRateLimiter implements ISyncRateLimiter {
         }
     }
 
-    /**
-     * Call the given function if the limiter is not limited, or throw an error if
-     * the limiter is limited.
-     *
-     * @param fn    The function to be called.
-     * @returns     The return value of the given function.
-     * @throws      An error if the limiter is limited, or if the given function throws an error.
-     */
     public call<T extends IFunction>(fn: T): ReturnType<T> {
 
         this.challenge();
@@ -149,18 +137,12 @@ export class TokenBucketRateLimiter implements ISyncRateLimiter {
         return fn() as ReturnType<T>;
     }
 
-    /**
-     * Reset the internal context.
-     */
     public reset(): void {
 
         this._qty = this._capacity;
         this._filledAt = Date.now();
     }
 
-    /**
-     * Check whether the rate limiter is blocking all access now.
-     */
     public isBlocking(): boolean {
 
         this._tryRefill();
@@ -168,12 +150,6 @@ export class TokenBucketRateLimiter implements ISyncRateLimiter {
         return this._qty === 0;
     }
 
-    /**
-     * Wrap the given function with rate limiting challenge.
-     *
-     * @param fn    The function to be wrapped.
-     * @returns     The new wrapped function.
-     */
     public wrap<T extends IFunction>(fn: T): T {
 
         return ((...args: unknown[]) => {

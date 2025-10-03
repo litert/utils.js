@@ -51,7 +51,7 @@ export interface IBreaker {
      * Call the given function if the breaker is closed, or throw an error if
      * the breaker is open.
      *
-     * @param cb    The function to be called.
+     * @param fn    The function to be called.
      *
      * @returns     The return value of the given function.
      *
@@ -101,7 +101,7 @@ export interface ISyncRateLimiter {
      * Call the given function if the limiter is not limited, or throw an error if
      * the limiter is limited.
      *
-     * @param cb    The function to be called.
+     * @param fn    The function to be called.
      *
      * @returns     The return value of the given function.
      *
@@ -159,23 +159,13 @@ export interface ISyncRateLimiterManager {
      * a limiter is limited.
      *
      * @param key   The key to identify the specific limiter.
-     * @param cb    The function to be called.
+     * @param fn    The function to be called.
      *
      * @returns     The return value of the given function.
      *
      * @throws      An error if a limiter is limited, or if the given function throws an error.
      */
     call<T extends IFunction>(key: string, fn: T): ReturnType<T>;
-
-    /**
-     * Wrap the given function with rate limiting challenge.
-     *
-     * @param key   The key to identify the specific limiter.
-     * @param fn    The function to be wrapped.
-     *
-     * @returns     The new wrapped function.
-     */
-    wrap<T extends IFunction>(key: string, fn: T): T;
 }
 
 /**
@@ -186,7 +176,12 @@ export interface IAsyncRateLimiter {
     /**
      * Check whether the limiter is blocking all access now.
      */
-    isLimited(): IMaybeAsync<boolean>;
+    isBlocking(): IMaybeAsync<boolean>;
+
+    /**
+     * Check whether the limiter is completely idle now.
+     */
+    isIdle(): IMaybeAsync<boolean>;
 
     /**
      * Manually challenge the rate limiter. If it's limited, an error will be
@@ -206,7 +201,7 @@ export interface IAsyncRateLimiter {
      * Call the given function if the limiter is not limited, or throw an error if
      * the limiter is limited.
      *
-     * @param cb    The function to be called.
+     * @param fn    The function to be called.
      *
      * @returns     The return value of the given function.
      *
@@ -226,6 +221,60 @@ export interface IAsyncRateLimiter {
      * @returns     The new wrapped function.
      */
     wrap<T extends IFunction>(fn: T): IFunction<Parameters<T>, IToPromise<ReturnType<T>>>;
+}
+
+/**
+ * The interface for asynchronous rate limiter manager, that manages multiple
+ * rate limiters identified by keys.
+ */
+export interface IAsyncRateLimiterManager {
+
+    /**
+     * Check whether the limiter is blocking all access now.
+     *
+     * @param key   The key to identify the specific limiter.
+     */
+    isBlocking(key: string): IMaybeAsync<boolean>;
+
+    /**
+     * Manually challenge the rate limiter. If it's limited, an error will be
+     * thrown, so that the request is rejected.
+     *
+     * Otherwise, the function will consume a token and return normally, which
+     * means that the request is allowed to proceed.
+     *
+     * @param key   The key to identify the specific limiter.
+     */
+    challenge(key: string): Promise<void>;
+
+    /**
+     * Reset the internal context to unlimited state.
+     *
+     * @param key   The key to identify the specific limiter.
+     */
+    reset(key: string): IMaybeAsync<void>;
+
+    /**
+     * Clean up all internal contexts that are not used for a long time.
+     */
+    clean(): IMaybeAsync<void>;
+
+    /**
+     * Call the given function if the limiter is not limited, or throw an error if
+     * the limiter is limited.
+     *
+     * @param key   The key to identify the specific limiter.
+     * @param fn    The function to be called.
+     *
+     * @returns     The return value of the given function.
+     *
+     * @throws      An error if the limiter is limited, or if the given function throws an error.
+     */
+    call<T extends IFunction>(key: string, fn: T): Promise<
+        ReturnType<T> extends Promise<any> ?
+            Awaited<ReturnType<T>> :
+            ReturnType<T>
+    >;
 }
 
 /**

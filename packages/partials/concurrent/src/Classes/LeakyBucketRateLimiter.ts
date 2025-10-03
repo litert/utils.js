@@ -70,10 +70,11 @@ export class LeakyBucketRateLimiter implements IAsyncRateLimiter {
         this._errCtor = opts.errorCtorOnLimited ?? E_RATE_LIMITED;
     }
 
-    /**
-     * Challenge the rate limiter. If it's limited, an error will be thrown.
-     * Otherwise, the function will wait until the task is able to be processed.
-     */
+    public isIdle(): boolean {
+
+        return this._nextLeakingAt <= Date.now();
+    }
+
     public async challenge(): Promise<void> {
 
         const ttl = this._leak();
@@ -106,14 +107,6 @@ export class LeakyBucketRateLimiter implements IAsyncRateLimiter {
         return elapsed;
     }
 
-    /**
-     * Call the given function if the limiter is not limited, or throw an error if
-     * the limiter is limited.
-     *
-     * @param fn    The function to be called.
-     * @returns     The return value of the given function.
-     * @throws      An error if the limiter is limited, or if the given function throws an error.
-     */
     public async call<TFn extends IFunction>(fn: TFn): Promise<Awaited<ReturnType<TFn>>> {
 
         await this.challenge();
@@ -121,28 +114,16 @@ export class LeakyBucketRateLimiter implements IAsyncRateLimiter {
         return fn() as Awaited<ReturnType<TFn>>;
     }
 
-    /**
-     * Reset the internal context.
-     */
     public reset(): void {
 
         this._nextLeakingAt = Date.now();
     }
 
-    /**
-     * Check whether the rate limiter is blocking all access now.
-     */
-    public isLimited(): boolean {
+    public isBlocking(): boolean {
 
         return this._nextLeakingAt - Date.now() > this._maxWaitMs - this._leakIntervalMs;
     }
 
-    /**
-     * Wrap the given function with rate limiting challenge.
-     *
-     * @param fn    The function to be wrapped.
-     * @returns     The new wrapped function.
-     */
     public wrap<T extends IFunction>(fn: T): IFunction<Parameters<T>, IToPromise<ReturnType<T>>> {
 
         return (async (...args: unknown[]) => {

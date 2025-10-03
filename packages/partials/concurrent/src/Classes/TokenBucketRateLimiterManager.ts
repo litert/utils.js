@@ -20,7 +20,7 @@ import { E_RATE_LIMITED, ISyncRateLimiterManager } from '../Types';
 /**
  * The options for `TokenBucketRateLimiter`.
  */
-export interface ITokenBucketRateLimiterOptions {
+export interface ITokenBucketRateLimiterManagerOptions {
 
     /**
      * The maximum token quantity in the bucket.
@@ -43,6 +43,11 @@ export interface ITokenBucketRateLimiterOptions {
      * How long will an unused context be kept (in milliseconds) even after
      * it is full (i.e. no tokens have been consumed, so that it could be
      * cleaned up).
+     *
+     * Increasing this value will make the rate limiter consume more memory,
+     * but will reduce the chance of re-allocation of contexts if the
+     * same keys are used frequently. You should balance this value according to
+     * your actual use cases.
      *
      * @default 0 (disabled)
      */
@@ -84,7 +89,7 @@ export class TokenBucketRateLimiterManager implements ISyncRateLimiterManager {
 
     private readonly _buckets: IDict<IBucket> = {};
 
-    public constructor(opts: ITokenBucketRateLimiterOptions) {
+    public constructor(opts: ITokenBucketRateLimiterManagerOptions) {
 
         this._capacity = opts.capacity;
         this._refillIntervalMs = opts.refillIntervalMs;
@@ -122,12 +127,6 @@ export class TokenBucketRateLimiterManager implements ISyncRateLimiterManager {
         };
     }
 
-    /**
-     * Challenge the rate limiter. If it's limited, an error will be thrown.
-     * Otherwise, the function will consume a token and return normally.
-     *
-     * @param key   The key to identify the specific limiter.
-     */
     public challenge(key: string): void {
 
         const b = this._getContext(key);
@@ -186,15 +185,6 @@ export class TokenBucketRateLimiterManager implements ISyncRateLimiterManager {
         }
     }
 
-    /**
-     * Call the given function if the limiter is not limited, or throw an error if
-     * the limiter is limited.
-     *
-     * @param key   The key to identify the specific limiter.
-     * @param fn    The function to be called.
-     * @returns     The return value of the given function.
-     * @throws      An error if the limiter is limited, or if the given function throws an error.
-     */
     public call<T extends IFunction>(key: string, fn: T): ReturnType<T> {
 
         this.challenge(key);
@@ -202,21 +192,11 @@ export class TokenBucketRateLimiterManager implements ISyncRateLimiterManager {
         return fn() as ReturnType<T>;
     }
 
-    /**
-     * Reset the internal context.
-     *
-     * @param key   The key to identify the specific limiter.
-     */
     public reset(key: string): void {
 
         delete this._buckets[key];
     }
 
-    /**
-     * Check whether the rate limiter is blocking all access now.
-     *
-     * @param key   The key to identify the specific limiter.
-     */
     public isBlocking(key: string): boolean {
 
         if (!this._buckets[key]) {
@@ -229,23 +209,5 @@ export class TokenBucketRateLimiterManager implements ISyncRateLimiterManager {
         this._tryRefill(b);
 
         return b.qty === 0;
-    }
-
-    /**
-     * Wrap the given function with rate limiting challenge.
-     *
-     * @param key   The key to identify the specific limiter.
-     * @param fn    The function to be wrapped.
-     * @returns     The new wrapped function.
-     */
-    public wrap<T extends IFunction>(key: string, fn: T): T {
-
-        return ((...args: unknown[]) => {
-
-            this.challenge(key);
-
-            return fn(...args);
-
-        }) as T;
     }
 }
