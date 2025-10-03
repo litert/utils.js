@@ -17,8 +17,8 @@ NodeTest.describe('Class CountingRateLimiter', () => {
             limits: 10,
         });
 
-        NodeAssert.strictEqual(limiter.isLimited(), false);
-        NodeAssert.strictEqual(limiter.isEmpty(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), false);
+        NodeAssert.strictEqual(limiter.isIdle(), true);
 
         for (let i = 0; i < 10; ++i) {
             ctx.mock.timers.tick(500);

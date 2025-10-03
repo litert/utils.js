@@ -66,7 +66,7 @@ export class CountingRateLimiter implements ISyncRateLimiter {
      */
     public challenge(): void {
 
-        if (this.isLimited()) {
+        if (this.isBlocking()) {
 
             throw new this._errCtor();
         }
@@ -74,7 +74,7 @@ export class CountingRateLimiter implements ISyncRateLimiter {
         this._counter.increase();
     }
 
-    public isEmpty(): boolean {
+    public isIdle(): boolean {
 
         return this._counter.getTotal() === 0;
     }
@@ -105,7 +105,7 @@ export class CountingRateLimiter implements ISyncRateLimiter {
     /**
      * Check whether the rate limiter is blocking all access now.
      */
-    public isLimited(): boolean {
+    public isBlocking(): boolean {
 
         return this._counter.getTotal() >= this._limits;
     }

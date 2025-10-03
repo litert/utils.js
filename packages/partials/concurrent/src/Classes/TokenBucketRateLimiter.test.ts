@@ -16,7 +16,7 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
     });
 
@@ -32,15 +32,15 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
 
         ctx.mock.timers.tick(1000);
 
-        NodeAssert.strictEqual(limiter.isLimited(), false);
+        NodeAssert.strictEqual(limiter.isBlocking(), false);
 
         NodeAssert.doesNotThrow(() => limiter.challenge());
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
     });
 
@@ -56,18 +56,18 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
 
         ctx.mock.timers.tick(2000);
 
-        NodeAssert.strictEqual(limiter.isLimited(), false);
+        NodeAssert.strictEqual(limiter.isBlocking(), false);
         NodeAssert.doesNotThrow(() => limiter.challenge());
 
-        NodeAssert.strictEqual(limiter.isLimited(), false);
+        NodeAssert.strictEqual(limiter.isBlocking(), false);
         NodeAssert.doesNotThrow(() => limiter.challenge());
 
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
     });
 
@@ -83,19 +83,19 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
 
         for (let i = 0; i < 9; i++) {
             ctx.mock.timers.tick(100);
-            NodeAssert.strictEqual(limiter.isLimited(), true);
+            NodeAssert.strictEqual(limiter.isBlocking(), true);
             NodeAssert.throws(() => limiter.challenge());
         }
 
         ctx.mock.timers.tick(100);
-        NodeAssert.strictEqual(limiter.isLimited(), false);
+        NodeAssert.strictEqual(limiter.isBlocking(), false);
         NodeAssert.doesNotThrow(() => limiter.challenge());
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
     });
 
     NodeTest.it('should reset last refill-time to now if a long gap passed', (ctx) => {
@@ -116,11 +116,11 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
 
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
 
         ctx.mock.timers.tick(1000000);
 
-        NodeAssert.strictEqual(limiter.isLimited(), false);
+        NodeAssert.strictEqual(limiter.isBlocking(), false);
 
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
@@ -136,15 +136,15 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
 
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
-        NodeAssert.strictEqual(limiter.isLimited(), false);
+        NodeAssert.strictEqual(limiter.isBlocking(), false);
 
         limiter.reset();
 
-        NodeAssert.strictEqual(limiter.isLimited(), false);
+        NodeAssert.strictEqual(limiter.isBlocking(), false);
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
     });
 
@@ -160,7 +160,7 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
 
         ctx.mock.timers.tick(3000);
@@ -168,7 +168,7 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
         NodeAssert.strictEqual('123', limiter.call(() => '123'));
         NodeAssert.strictEqual('123', limiter.call(() => '123'));
         NodeAssert.strictEqual('123', limiter.call(() => '123'));
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
 
         NodeAssert.throws(() => limiter.call(() => '123'));
     });
@@ -187,7 +187,7 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
         NodeAssert.strictEqual('123', fn('123'));
         NodeAssert.strictEqual('233', fn('233'));
         NodeAssert.strictEqual('666', fn('666'));
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => fn('1234'));
 
         ctx.mock.timers.tick(3000);
@@ -195,7 +195,7 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
         NodeAssert.strictEqual('123', limiter.call(() => '123'));
         NodeAssert.strictEqual('123', limiter.call(() => '123'));
         NodeAssert.strictEqual('123', limiter.call(() => '123'));
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.call(() => '123'));
     });
 
@@ -208,33 +208,33 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
             refillIntervalMs: 1000,
         });
 
-        NodeAssert.strictEqual(limiter.isLimited(), false);
-        NodeAssert.strictEqual(limiter.isEmpty(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), false);
+        NodeAssert.strictEqual(limiter.isIdle(), true);
 
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
         NodeAssert.doesNotThrow(() => limiter.challenge());
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
 
         ctx.mock.timers.setTime(900000);
 
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
         ctx.mock.timers.setTime(999000);
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(limiter.isLimited(), true);
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
         NodeAssert.throws(() => limiter.challenge());
         ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(limiter.isLimited(), false);
+        NodeAssert.strictEqual(limiter.isBlocking(), false);
         NodeAssert.doesNotThrow(() => limiter.challenge());
     });
 
     NodeTest.it('should throw error if any option value is invalid', () => {
 
-        for (const v of [ -1, 0, 1.5, NaN, 1n, Symbol('sss'), Infinity, -Infinity, '1', {}, [], true, false ]) {
+        for (const v of [ -1, 1.5, NaN, 1n, Symbol('sss'), Infinity, -Infinity, '1', {}, [], true, false ]) {
 
             NodeAssert.throws(() => {
 
@@ -259,6 +259,20 @@ NodeTest.describe('Class TokenBucketRateLimiter', () => {
                 });
             });
         }
+        NodeAssert.throws(() => {
+
+            new TokenBucketRateLimiter({
+                capacity: 0,
+                refillIntervalMs: 1000,
+            });
+        });
+        NodeAssert.throws(() => {
+
+            new TokenBucketRateLimiter({
+                capacity: 123,
+                refillIntervalMs: 0,
+            });
+        });
         NodeAssert.throws(() => {
 
             new TokenBucketRateLimiter({

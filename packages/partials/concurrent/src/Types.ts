@@ -77,12 +77,12 @@ export interface ISyncRateLimiter {
     /**
      * Check whether the limiter is blocking all access now.
      */
-    isLimited(): boolean;
+    isBlocking(): boolean;
 
     /**
-     * Check whether the limiter is empty now.
+     * Check whether the limiter is completely idle now.
      */
-    isEmpty(): boolean;
+    isIdle(): boolean;
 
     /**
      * Manually challenge the rate limiter. If it's limited, an error will be
@@ -117,6 +117,65 @@ export interface ISyncRateLimiter {
      * @returns     The new wrapped function.
      */
     wrap<T extends IFunction>(fn: T): T;
+}
+
+/**
+ * The interface for synchronous rate limiter manager, that manages multiple
+ * rate limiters identified by keys.
+ */
+export interface ISyncRateLimiterManager {
+
+    /**
+     * Clean up all internal contexts that are not used for a long time.
+     */
+    clean(): void;
+
+    /**
+     * Check whether a limiter is blocking all access now.
+     *
+     * @param key   The key to identify a specific limiter.
+     */
+    isBlocking(key: string): boolean;
+
+    /**
+     * Manually challenge a rate limiter. If it's limited, an error will be
+     * thrown, so that the request is rejected.
+     * Otherwise, the function will consume a token and return normally, which
+     * means that the request is allowed to proceed.
+     *
+     * @param key   The key to identify a specific limiter.
+     */
+    challenge(key: string): void;
+
+    /**
+     * Reset the internal context to unlimited state.
+     *
+     * @param key   The key to identify the specific limiter.
+     */
+    reset(key: string): void;
+
+    /**
+     * Call the given function if a limiter is not limited, or throw an error if
+     * a limiter is limited.
+     *
+     * @param key   The key to identify the specific limiter.
+     * @param cb    The function to be called.
+     *
+     * @returns     The return value of the given function.
+     *
+     * @throws      An error if a limiter is limited, or if the given function throws an error.
+     */
+    call<T extends IFunction>(key: string, fn: T): ReturnType<T>;
+
+    /**
+     * Wrap the given function with rate limiting challenge.
+     *
+     * @param key   The key to identify the specific limiter.
+     * @param fn    The function to be wrapped.
+     *
+     * @returns     The new wrapped function.
+     */
+    wrap<T extends IFunction>(key: string, fn: T): T;
 }
 
 /**

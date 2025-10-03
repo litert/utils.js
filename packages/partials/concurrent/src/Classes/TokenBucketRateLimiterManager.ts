@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import type { IConstructor, IFunction } from '@litert/utils-ts-types';
-import { E_RATE_LIMITED, ISyncRateLimiter } from '../Types';
+import type { IConstructor, IDict, IFunction } from '@litert/utils-ts-types';
+import { E_RATE_LIMITED, ISyncRateLimiterManager } from '../Types';
 
 /**
  * The options for `TokenBucketRateLimiter`.
@@ -40,6 +40,15 @@ export interface ITokenBucketRateLimiterOptions {
     refillIntervalMs: number;
 
     /**
+     * How long will an unused context be kept (in milliseconds) even after
+     * it is full (i.e. no tokens have been consumed, so that it could be
+     * cleaned up).
+     *
+     * @default 0 (disabled)
+     */
+    cleanDelayMs?: number;
+
+    /**
      * The error constructor to be used when the rate limit is exceeded.
      *
      * @default E_RATE_LIMITED
@@ -48,27 +57,39 @@ export interface ITokenBucketRateLimiterOptions {
     errorCtorOnLimited?: IConstructor<Error>;
 }
 
+interface IBucket {
+
+    qty: number;
+
+    filledAt: number;
+}
+
 /**
  * A rate limiter implementation, using token bucket algorithm.
+ *
+ * This is a limiter manager that could manage multiple limiters
+ * identified by keys, for convenience of usage in multiple contexts.
  */
-export class TokenBucketRateLimiter implements ISyncRateLimiter {
-
-    private _qty: number;
-
-    private _filledAt: number;
+export class TokenBucketRateLimiterManager implements ISyncRateLimiterManager {
 
     private readonly _capacity: number;
 
     private readonly _refillIntervalMs: number;
 
+    private readonly _initialTokens: number;
+
+    private readonly _cleanDelayMs: number;
+
     private readonly _errCtor: IConstructor<Error>;
+
+    private readonly _buckets: IDict<IBucket> = {};
 
     public constructor(opts: ITokenBucketRateLimiterOptions) {
 
         this._capacity = opts.capacity;
         this._refillIntervalMs = opts.refillIntervalMs;
-        this._qty = opts.initialTokens ?? opts.capacity;
-        this._filledAt = Date.now();
+        this._initialTokens = opts.initialTokens ?? opts.capacity;
+        this._cleanDelayMs = opts.cleanDelayMs ?? 0;
         this._errCtor = opts.errorCtorOnLimited ?? E_RATE_LIMITED;
 
         for (const k of ['capacity', 'refillIntervalMs'] as const) {
@@ -79,58 +100,89 @@ export class TokenBucketRateLimiter implements ISyncRateLimiter {
             }
         }
 
-        if (!Number.isSafeInteger(this._qty) || this._qty > this._capacity || this._qty < 0) {
+        for (const k of ['initialTokens', 'cleanDelayMs'] as const) {
+
+            if (!Number.isSafeInteger(this[`_${k}`]) || this[`_${k}`] < 0) {
+
+                throw new TypeError(`Invalid option: ${k}`);
+            }
+        }
+
+        if (this._initialTokens > this._capacity) {
 
             throw new TypeError('Invalid option: initialTokens');
         }
     }
 
+    private _getContext(key: string): IBucket {
+
+        return this._buckets[key] ??= {
+            qty: this._initialTokens,
+            filledAt: Date.now()
+        };
+    }
+
     /**
      * Challenge the rate limiter. If it's limited, an error will be thrown.
      * Otherwise, the function will consume a token and return normally.
+     *
+     * @param key   The key to identify the specific limiter.
      */
-    public challenge(): void {
+    public challenge(key: string): void {
 
-        this._tryRefill();
+        const b = this._getContext(key);
 
-        if (!this._qty) {
+        this._tryRefill(b);
+
+        if (!b.qty) {
 
             throw new this._errCtor();
         }
 
-        this._qty--;
+        b.qty--;
     }
 
-    public isIdle(): boolean {
+    public clean(): void {
 
-        this._tryRefill();
+        for (const k in this._buckets) {
 
-        return this._qty === this._capacity;
+            const b = this._buckets[k];
+
+            if (
+                // if the bucket is full
+                b.qty === this._capacity ||
+                Date.now() - b.filledAt >= (this._capacity - b.qty) * this._refillIntervalMs + this._cleanDelayMs
+            ) {
+
+                delete this._buckets[k];
+            }
+        }
     }
 
-    private _tryRefill(): void {
+    private _tryRefill(b: IBucket): void {
 
         const now = Date.now();
 
-        if (this._qty < this._capacity) {
+        if (b.qty < this._capacity) {
 
             const fills = Math.max(
                 Math.min(
-                    this._capacity - this._qty,
-                    Math.floor((now - this._filledAt) / this._refillIntervalMs)
+                    this._capacity - b.qty,
+                    Math.floor((now - b.filledAt) / this._refillIntervalMs)
                 ),
                 0, // in case of time going backwards
             );
 
             if (!fills) {
+
                 return;
             }
 
-            this._qty += fills;
+            b.qty += fills;
 
-            this._filledAt = this._qty === this._capacity ?
+            b.filledAt = b.qty === this._capacity ?
                 now :
-                this._filledAt + fills * this._refillIntervalMs;
+                b.filledAt + fills * this._refillIntervalMs;
         }
     }
 
@@ -138,47 +190,59 @@ export class TokenBucketRateLimiter implements ISyncRateLimiter {
      * Call the given function if the limiter is not limited, or throw an error if
      * the limiter is limited.
      *
+     * @param key   The key to identify the specific limiter.
      * @param fn    The function to be called.
      * @returns     The return value of the given function.
      * @throws      An error if the limiter is limited, or if the given function throws an error.
      */
-    public call<T extends IFunction>(fn: T): ReturnType<T> {
+    public call<T extends IFunction>(key: string, fn: T): ReturnType<T> {
 
-        this.challenge();
+        this.challenge(key);
 
         return fn() as ReturnType<T>;
     }
 
     /**
      * Reset the internal context.
+     *
+     * @param key   The key to identify the specific limiter.
      */
-    public reset(): void {
+    public reset(key: string): void {
 
-        this._qty = this._capacity;
-        this._filledAt = Date.now();
+        delete this._buckets[key];
     }
 
     /**
      * Check whether the rate limiter is blocking all access now.
+     *
+     * @param key   The key to identify the specific limiter.
      */
-    public isBlocking(): boolean {
+    public isBlocking(key: string): boolean {
 
-        this._tryRefill();
+        if (!this._buckets[key]) {
 
-        return this._qty === 0;
+            return false;
+        }
+
+        const b = this._getContext(key);
+
+        this._tryRefill(b);
+
+        return b.qty === 0;
     }
 
     /**
      * Wrap the given function with rate limiting challenge.
      *
+     * @param key   The key to identify the specific limiter.
      * @param fn    The function to be wrapped.
      * @returns     The new wrapped function.
      */
-    public wrap<T extends IFunction>(fn: T): T {
+    public wrap<T extends IFunction>(key: string, fn: T): T {
 
         return ((...args: unknown[]) => {
 
-            this.challenge();
+            this.challenge(key);
 
             return fn(...args);
 

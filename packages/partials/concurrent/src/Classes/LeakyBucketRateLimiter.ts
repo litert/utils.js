@@ -110,7 +110,7 @@ export class LeakyBucketRateLimiter implements IAsyncRateLimiter {
      * Call the given function if the limiter is not limited, or throw an error if
      * the limiter is limited.
      *
-     * @param cb    The function to be called.
+     * @param fn    The function to be called.
      * @returns     The return value of the given function.
      * @throws      An error if the limiter is limited, or if the given function throws an error.
      */
