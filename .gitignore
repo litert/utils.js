@@ -9,3 +9,4 @@ tsconfig.tsbuildinfo
 !commitlint.config.js
 !/eslint.config.js
 /tmp/
+/.ottoia/
