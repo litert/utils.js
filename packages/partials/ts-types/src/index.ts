@@ -139,3 +139,20 @@ export type IfIsNever<T, TYes, TNo> = [T] extends [never] ? TYes : TNo;
  * safe types are not allowed.
  */
 export type IJsonSafeValue = string | number | boolean | null | IJsonSafeValue[] | { [key: string]: IJsonSafeValue; };
+
+/**
+ * The utility type that extracts the instance type from a class constructor
+ * type `T`, the opposite of `IConstructor`.
+ *
+ * @example
+ * ```ts
+ * class MyClass {}
+ * type IMyClassConstructor = IConstructor<MyClass>;
+ * type IMyClass = IInstanceOf<IMyClassConstructor>; // MyClass
+ * const ctor: IMyClassConstructor = MyClass;
+ * const inst: IMyClass = new MyClass();
+ * ```
+ *
+ * @see {@link IConstructor}
+ */
+export type IInstanceOf<T> = T extends IConstructor<infer U> ? U : never;

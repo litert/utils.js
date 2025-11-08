@@ -95,3 +95,11 @@ const a1: unknown = new c1();
 const a2: A = new c2();
 
 console.log(a1, a2);
+
+// Type IInstanceType
+
+type T1 = dTS.IInstanceOf<typeof A>;
+
+const a3: T1 = new A();
+
+console.log(a3);
