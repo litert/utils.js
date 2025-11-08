@@ -3,6 +3,13 @@
 ## v1.5.0
 
 - feat(pkg:ts-types): added helper type `IInstanceOf`
+- fix(pkg:string): renamed API `String.includeEvilSpaceChars` to `String.includeEvilWhitespaceChars`
+
+    > The old API is kept for backward compatibility, but will be removed in future releases.
+
+- fix(pkg:string): renamed API `String.replaceEvilSpaceChars` to `String.replaceEvilWhitespaceChars`
+
+    > The old API is kept for backward compatibility, but will be removed in future releases.
 
 ## v1.4.0
 
