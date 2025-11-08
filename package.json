@@ -27,14 +27,14 @@
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
-    "typedoc-plugin-markdown": "^4.6.4",
-    "typedoc-plugin-no-inherit": "^1.6.1",
-    "typedoc-vitepress-theme": "^1.1.2",
     "@litert/eslint-plugin-rules": "^0.3.1",
-    "@litert/ottoia": "^0.4.4",
+    "@litert/ottoia": "^0.4.5",
     "@types/node": "^22.10.2",
     "husky": "^9.1.7",
     "typedoc": "^0.28.5",
+    "typedoc-plugin-markdown": "^4.6.4",
+    "typedoc-plugin-no-inherit": "^1.6.1",
+    "typedoc-vitepress-theme": "^1.1.2",
     "typescript": "^5.7.2"
   },
   "ottoia": {
