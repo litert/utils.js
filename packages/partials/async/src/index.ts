@@ -19,6 +19,7 @@ export * from './Classes/FiberController';
 export * from './Classes/PromiseController';
 export * from './Classes/BackgroundRunner';
 export * from './Functions/WithTimeout';
+export * from './Functions/WithAbortSignal';
 export * from './Functions/AutoRetry';
 export * from './Functions/Sleep';
 export * from './Errors';
