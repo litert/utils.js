@@ -1,5 +1,7 @@
 # CHANGES
 
+## v1.6.0
+
 ## v1.5.0
 
 - feat(pkg:ts-types): added helper type `IInstanceOf`

@@ -10,3 +10,5 @@ tsconfig.tsbuildinfo
 !/eslint.config.js
 /tmp/
 /.ottoia/
+/.github/*.md
+/.github/**/*.md
