@@ -4,6 +4,8 @@
 
 - feat(pkg:concurrent): added utility class `MemoryMutex`
 - fix(pkg:concurrent): `DebounceController.schedule` should clear existing timer when maxDelay is reached
+- fix(pkg:array): ignore empty arrays in `Deduplicate` function
+- test(pkg:array): added unit tests for `Deduplicate` function
 
 ## v1.5.0
 

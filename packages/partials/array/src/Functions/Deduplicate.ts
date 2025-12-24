@@ -74,6 +74,11 @@ export const deduplicate = function<T extends any[]>(
     makeKey?: (v: IElementOfArray<T>) => IElementOfArray<T>
 ): T {
 
+    if (!items?.length) {
+
+        return [] as unknown as T;
+    }
+
     if (makeKey) {
 
         const m = new Map<any, any>();
