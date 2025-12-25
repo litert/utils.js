@@ -2,6 +2,8 @@
 
 ## v1.6.0
 
+- feat(pkg:concurrent): added utility class `MemoryMutex`
+
 ## v1.5.0
 
 - feat(pkg:ts-types): added helper type `IInstanceOf`

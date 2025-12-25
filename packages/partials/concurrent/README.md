@@ -200,6 +200,27 @@ await Promise.allSettled([
 
 ```
 
+## MemoryMutex
+
+The `MemoryMutex` class can be used to create a mutex lock in memory.
+
+```ts
+import { MemoryMutex } from '@litert/concurrent';
+
+const mutex = new MemoryMutex();
+
+if (!mutex.lock()) {
+    throw new Error('Failed to acquire the mutex lock.');
+}
+
+try {
+    // do something protected by the mutex
+}
+finally {
+    mutex.unlock();
+}
+```
+
 ## Documentation
 
 - [en-US](https://litert.org/projects/utils.js/api-docs/concurrent/)

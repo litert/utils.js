@@ -22,6 +22,7 @@ export * from './Classes/TokenBucketRateLimiter';
 export * from './Classes/LeakyBucketRateLimiter';
 export * from './Classes/TokenBucketRateLimiterManager';
 export * from './Classes/LeakyBucketRateLimiterManager';
+export * from './Classes/MemoryMutex';
 export * from './Classes/FiberPool';
 export * from './Classes/ManualBreaker';
 export * from './Classes/CircuitBreaker';
