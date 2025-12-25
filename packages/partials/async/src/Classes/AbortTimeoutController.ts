@@ -31,19 +31,20 @@ export class AbortTimeoutController {
 
     public readonly signal: AbortSignal;
 
-    private readonly _ac: AbortController;
+    private _ac: AbortController | null;
 
-    private _timer: NodeJS.Timeout | null = null;
+    private _timer: NodeJS.Timeout | null;
 
     public constructor(timeoutMs: number) {
 
-        const ac = new AbortController();
-        this.signal = ac.signal;
-        this._ac = ac;
+        this._ac = new AbortController();
+
+        this.signal = this._ac.signal;
 
         this._timer = setTimeout(() => {
             this._timer = null;
-            this._ac.abort('timeout');
+            this._ac!.abort('timeout');
+            this._ac = null;
         }, timeoutMs);
     }
 
@@ -51,9 +52,38 @@ export class AbortTimeoutController {
      * Invoking this method will set this object's AbortSignal's aborted flag and signal to any
      * observers that the associated activity is to be aborted.
      * Calling this method multiple times will have no effect.
-     * If the timeout is already reached, this method will not change the state of the controller.
+     * If the timeout is already reached or the method `destroy` has been called, this method
+     * will not change the state of the controller.
+     *
+     * @example
+     * ```ts
+     * const atc = new AbortTimeoutController(1000);
+     *
+     * (async () => {
+     *     await asyncJob({ signal: atc.signal });
+     * })();
+     *
+     * atc.abort();
+     * ```
      */
     public abort(reason: any): void {
+
+        if (!this._ac) {
+
+            return;
+        }
+
+        this._ac.abort(reason);
+
+        this.destroy();
+    }
+
+    /**
+     * Destroy the controller and clear the timeout if exists.
+     *
+     * After calling this method, the controller cannot be used anymore.
+     */
+    public destroy(): void {
 
         if (this._timer) {
 
@@ -61,6 +91,6 @@ export class AbortTimeoutController {
             this._timer = null;
         }
 
-        this._ac.abort(reason);
+        this._ac = null;
     }
 }

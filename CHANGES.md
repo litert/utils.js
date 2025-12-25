@@ -6,6 +6,8 @@
 - fix(pkg:concurrent): `DebounceController.schedule` should clear existing timer when maxDelay is reached
 - fix(pkg:array): ignore empty arrays in `Deduplicate` function
 - test(pkg:array): added unit tests for `Deduplicate` function
+- fix(pkg:async): added `destroy` method to `AbortTimeoutController` to release resources in time
+- fix(pkg:async): modified `abort` method of `AbortTimeoutController` to prevent aborting multiple times
 
 ## v1.5.0
 
