@@ -78,6 +78,10 @@ NodeTest.describe('Class BatchBuffer', async () => {
         NodeAssert.deepStrictEqual(recv, [1, 4, 5, 6]);
 
         buffer.push([1]);
-        NodeAssert.deepStrictEqual(recv, []);
+        NodeAssert.deepStrictEqual(recv, [1, 4, 5, 6]); // no change
+
+        ctx.mock.timers.runAll();
+
+        NodeAssert.deepStrictEqual(recv, [1, 4, 5, 6, 1]);
     });
 });
