@@ -182,10 +182,15 @@ export class DebounceController extends EventEmitter<IDebounceControllerEvents> 
 
         const elapsed = now - this._startedAt;
 
+        if (this._timer) {
+
+            clearTimeout(this._timer);
+            this._timer = null;
+        }
+
         if (elapsed >= this.maxDelayMs) {
 
             this._startedAt = null;
-            this._timer = null;
 
             try {
 
@@ -201,11 +206,6 @@ export class DebounceController extends EventEmitter<IDebounceControllerEvents> 
             }
 
             return;
-        }
-
-        if (this._timer) {
-
-            clearTimeout(this._timer);
         }
 
         this._timer = setTimeout(() => {

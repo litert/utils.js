@@ -3,6 +3,7 @@
 ## v1.6.0
 
 - feat(pkg:concurrent): added utility class `MemoryMutex`
+- fix(pkg:concurrent): `DebounceController.schedule` should clear existing timer when maxDelay is reached
 
 ## v1.5.0
 

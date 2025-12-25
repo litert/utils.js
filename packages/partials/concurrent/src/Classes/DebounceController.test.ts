@@ -1,8 +1,9 @@
 import * as NodeTest from 'node:test';
+import * as NodeTimers from 'timers/promises';
 import * as NodeAssert from 'node:assert';
 import { DebounceController } from './DebounceController';
 
-NodeTest.describe('Class DebounceController', () => {
+NodeTest.describe('Class DebounceController', async () => {
 
     NodeTest.it('Method "schedule" should (re)schedule the function call', (ctx) => {
 
@@ -107,7 +108,12 @@ NodeTest.describe('Class DebounceController', () => {
         controller.schedule();
         controller.schedule();
         controller.schedule();
+        NodeAssert.strictEqual(v, 0, 'The function should not be called yet');
+        NodeAssert.strictEqual(controller.isScheduled(), true, 'The function should be scheduled.');
         controller.callNow();
+
+        NodeAssert.strictEqual(v, 1, 'The function should be called once');
+        NodeAssert.strictEqual(controller.isScheduled(), false, 'The function should not be scheduled after callNow.');
 
         ctx.mock.timers.runAll();
 
@@ -121,6 +127,7 @@ NodeTest.describe('Class DebounceController', () => {
         NodeAssert.strictEqual(v, 2, 'The function should be called only once');
         NodeAssert.strictEqual(triggers, 2, 'The triggered event should be emitted again');
         NodeAssert.strictEqual(Date.now() - startedAt, 0, 'The function should have been called immediately.');
+
     });
 
     NodeTest.it('Invalid delay should make error occur', () => {
@@ -214,4 +221,34 @@ NodeTest.describe('Class DebounceController', () => {
 
         NodeAssert.strictEqual(v, 1, 'The function should be called after the delay');
     });
+
+    await NodeTest.it('[BUG] Method "schedule" should clean existing timeout maxDelay', async () => {
+
+        let v = 0;
+
+        const controller = new DebounceController({
+            function: () => { v++; },
+            delayMs: 3,
+            maxDelayMs: 5,
+        });
+
+        controller.schedule();
+        let st0 = Date.now();
+        while (Date.now() - st0 < 2) {  };
+        NodeAssert.strictEqual(v, 0, 'The function should not be called yet');
+
+        controller.schedule();
+        while (Date.now() - st0 < 4) {  };
+        NodeAssert.strictEqual(v, 0, 'The function should not be called yet');
+
+        while (Date.now() - st0 < 5) {  };
+        controller.schedule();
+
+        NodeAssert.strictEqual(v, 1, 'The function should be called once');
+
+        await NodeTimers.setTimeout(10);
+
+        NodeAssert.strictEqual(v, 1, 'The function should not be called again because the maxDelay triggered callNow and cancelled the scheduled call');
+    });
+
 });
