@@ -12,3 +12,7 @@ tsconfig.tsbuildinfo
 /.ottoia/
 /.github/*.md
 /.github/**/*.md
+/.cursor/*.mdc
+/.cursor/*.md
+/.cursor/**/*.mdc
+/.cursor/**/*.md
