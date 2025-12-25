@@ -9,6 +9,7 @@
 - fix(pkg:async): added `destroy` method to `AbortTimeoutController` to release resources in time
 - fix(pkg:async): modified `abort` method of `AbortTimeoutController` to prevent aborting multiple times
 - feat(pkg:async): added API `Async.withAbortSignal`
+- feat(pkg:concurrent): added utility class `BatchBuffer`
 
 ## v1.5.0
 

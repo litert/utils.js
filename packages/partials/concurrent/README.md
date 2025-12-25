@@ -221,6 +221,36 @@ finally {
 }
 ```
 
+### BatchBuffer
+
+The batch buffer is a buffer that stores the batch of data in an array,
+and passes the buffered batch data to the target function callback once the buffer
+is full, or the timeout is reached since the last data was saved to the buffer.
+
+> For example, this class is especially useful when you receive data one by one,
+> but you don't want to process them one by one, instead, you want to process them in batch.
+> In this case, you can use this class to buffer the data, and process them in batch
+> when the buffer is full or the timeout is reached.
+
+```ts
+import { BatchBuffer } from '@litert/concurrent';
+
+const buffer = new BatchBuffer({
+    'delayMs': 1000,
+    'maxSize': 5,
+    'callback': (items) => { console.log(items); },
+});
+
+buffer.push(1); // Not full yet, do nothing.
+buffer.push(2); // Not full yet, do nothing.
+buffer.push([3, 4, 5]); // Full now, pass the data [1, 2, 3, 4, 5] to the callback function immediately.
+
+buffer.push(6); // Not full yet, do nothing.
+await sleep(1000); // Wait for 1 second.
+
+// The callback function will be called with [6] since the timeout is reached.
+```
+
 ## Documentation
 
 - [en-US](https://litert.org/projects/utils.js/api-docs/concurrent/)
