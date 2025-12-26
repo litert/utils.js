@@ -1,5 +1,7 @@
 # CHANGES
 
+## v1.7.0
+
 ## v1.6.0
 
 - feat(pkg:concurrent): added utility class `MemoryMutex`
