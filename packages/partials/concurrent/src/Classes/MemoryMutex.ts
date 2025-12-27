@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import type { IFunction } from '@litert/utils-ts-types';
+
 /**
  * The state data container interface for MemoryMutex.
  */
@@ -23,6 +25,18 @@ interface IMutexStoreData {
      * The lock holder identifier.
      */
     lockedBy: symbol | null;
+}
+
+/**
+ * The error thrown when failed to acquire the lock.
+ */
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export class E_LOCK_FAILED extends Error {
+
+    public constructor() {
+        super('Failed to acquire the lock.');
+        this.name = 'lock_failed';
+    }
 }
 
 /**
@@ -171,5 +185,82 @@ export class MemoryMutex {
     public isLocked(): boolean {
 
         return this._store.lockedBy === this._lockId;
+    }
+
+    /**
+     * Runs the given function with the protection of the mutex lock.
+     *
+     * This method will try to acquire the mutex lock, before executing the function.
+     * If it fails to acquire the lock, the method will throw an error, and the function will not be executed.
+     *
+     * @param fn  The function to run.
+     * @returns The result of the function.
+     *
+     * @throws {E_LOCK_FAILED} If the mutex is not locked.
+     *
+     * @example
+     * ```ts
+     * const mutex = new MemoryMutex();
+     * const result = mutex.run(() => {
+     *     doSth();
+     * });
+     * ```
+     */
+    public run<T extends IFunction>(fn: T): ReturnType<T> {
+
+        if (!this.lock()) {
+
+            throw new E_LOCK_FAILED();
+        }
+
+        let ret: unknown;
+
+        try {
+
+            ret = fn();
+        }
+        catch (e) {
+
+            this.unlock();
+            throw e;
+        }
+
+        if (ret instanceof Promise) {
+
+            ret.then(
+                () => { this.unlock(); },
+                () => { this.unlock(); },
+            );
+        }
+        else {
+
+            this.unlock();
+        }
+
+        return ret as ReturnType<T>;
+    }
+
+    /**
+     * This method creates a new function with the same signature as the given function,
+     * who will be executed with the protection of the mutex lock.
+     *
+     * If the new function is called, it will try to acquire the mutex lock, before executing the original function.
+     * If it fails to acquire the lock, it will throw `E_LOCK_FAILED` error, and the original function will not be executed.
+     *
+     * @param fn    The function to be wrapped.
+     * @returns     A new function with the same signature as the given function, with the protection of the mutex lock.
+     *
+     * @example
+     * ```ts
+     * const mutex = new MemoryMutex();
+     * const wrapped = mutex.wrap(() => {
+     *     doSth();
+     * });
+     * wrapped();
+     * ```
+     */
+    public wrap<T extends IFunction>(fn: T): T {
+
+        return ((...args: Parameters<T>) => this.run(() => fn(...args))) as T;
     }
 }
