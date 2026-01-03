@@ -5,6 +5,8 @@
 - fix(pkg:ts-types): corrected the helper type `IJsonSafeValue` to whitelist `undefined` as a valid JSON safe value
 - feat(pkg:concurrent): added method `MemoryMutex.wrap`
 - feat(pkg:concurrent): added method `MemoryMutex.run`
+- fix(pkg:concurrent): the `MemoryMutex` should be non-reentrant by default,
+    but an option is added to reenable reentrant behavior.
 
 ## v1.6.0
 

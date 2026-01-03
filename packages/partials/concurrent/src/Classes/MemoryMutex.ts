@@ -39,6 +39,19 @@ export class E_LOCK_FAILED extends Error {
     }
 }
 
+export interface IMemoryMutexOptions {
+
+    /**
+     * Indicates whether the mutex is reentrant.
+     *
+     * When a mutex is reentrant, the same instance can reacquire the lock when
+     * it is already holding the lock.
+     *
+     * @default false
+     */
+    reentrant?: boolean;
+}
+
 /**
  * The class for a simple memory mutex manager object.
  *
@@ -73,11 +86,26 @@ export class MemoryMutex {
     private readonly _lockId: symbol = Symbol('MemoryMutexLockId');
 
     /**
+     * Indicates whether the mutex is reentrant.
+     *
+     * When a mutex is reentrant, the same instance can reacquire the lock when
+     * it is already holding the lock.
+     */
+    public readonly reentrant: boolean;
+
+    public constructor(opts?: IMemoryMutexOptions) {
+
+        this.reentrant = opts?.reentrant === true;
+    }
+
+    /**
      * Attempts to acquire the mutex lock.
      *
-     * If the mutex is unlocked or already held by the current instance,
-     * it will be locked by the current instance, and the method returns true.
+     * If the mutex is unlocked it will be locked by the current instance,
+     * and this method returns true.
      * If the mutex is held by another instance, the method returns false.
+     *
+     * > If you want a reentrant lock, you can set the `reentrant` option to true.
      *
      * @returns True if the lock is successfully acquired; otherwise, false.
      *
@@ -107,7 +135,8 @@ export class MemoryMutex {
                 return true;
 
             case this._lockId:
-                return true;
+
+                return this.reentrant;
 
             default:
                 return false;
@@ -162,7 +191,7 @@ export class MemoryMutex {
      */
     public share(): MemoryMutex {
 
-        const ret = new MemoryMutex();
+        const ret = new MemoryMutex({ reentrant: this.reentrant });
 
         Object.assign(ret, { _store: this._store });
 
