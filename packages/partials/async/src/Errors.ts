@@ -31,11 +31,13 @@ export class TimeoutError extends Error {
 /**
  * The error thrown when an operation is aborted.
  */
-export class AbortedError extends Error {
+export class AbortedError extends DOMException {
 
-    public constructor() {
+    public readonly unresolvedPromise: Promise<unknown> | null;
 
-        super('Operation aborted');
-        this.name = TimeoutError.name;
+    public constructor(unresolvedPromise: Promise<unknown> | null) {
+
+        super('Operation aborted.', 'AbortError');
+        this.unresolvedPromise = unresolvedPromise;
     }
 }

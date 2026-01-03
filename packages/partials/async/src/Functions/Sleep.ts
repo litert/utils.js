@@ -26,7 +26,7 @@ function doSleep(delayMs: number, signal?: AbortSignal): Promise<void> {
 
             signal.addEventListener('abort', () => {
                 clearTimeout(timer);
-                reject(new AbortedError());
+                reject(new AbortedError(null));
             }, { once: true, });
         }
     });

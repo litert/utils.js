@@ -7,6 +7,7 @@
 - feat(pkg:concurrent): added method `MemoryMutex.run`
 - fix(pkg:concurrent): the `MemoryMutex` should be non-reentrant by default,
     but an option is added to reenable reentrant behavior.
+- feat(pkg:async): added extra options `collectResult` to `Async.withAbortSignal` API
 
 ## v1.6.0
 

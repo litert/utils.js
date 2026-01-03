@@ -14,6 +14,22 @@
  * limitations under the License.
  */
 
+import { AbortedError } from '../Errors';
+
+/**
+ * The extended options for `withAbortSignal` function.
+ */
+export interface IWithAbortSignalOptions<T> {
+
+    /**
+     * The callback function to receive the result of the asynchronous task if it completes
+     * after the signal is aborted.
+     *
+     * @param result The result of the asynchronous task.
+     */
+    collectResult?: (error: unknown | null, result?: T) => void;
+}
+
 /**
  * Bind an AbortSignal to an asynchronous task.
  *
@@ -41,11 +57,32 @@
  * });
  * ```
  */
-export function withAbortSignal<T>(signal: AbortSignal, asyncTask: Promise<T> | (() => Promise<T>)): Promise<T> {
+export function withAbortSignal<T>(
+    signal: AbortSignal,
+    asyncTask: Promise<T> | (() => Promise<T>),
+    opts?: IWithAbortSignalOptions<T>,
+): Promise<T> {
 
     if (signal.aborted) {
 
-        return Promise.reject(new DOMException('The operation was aborted.', 'AbortError'));
+        if (asyncTask instanceof Promise) {
+
+            if (opts?.collectResult) {
+
+                asyncTask.then(
+                    (result) => {
+                        opts.collectResult!(null, result);
+                    },
+                    (error) => {
+                        opts.collectResult!(error);
+                    },
+                );
+            }
+
+            return Promise.reject(new AbortedError(asyncTask));
+        }
+
+        return Promise.reject(new AbortedError(null));
     }
 
     let pr: Promise<T>;
@@ -62,17 +99,25 @@ export function withAbortSignal<T>(signal: AbortSignal, asyncTask: Promise<T> | 
     return new Promise<T>((resolve, reject) => {
 
         const onAbort = (): void => {
-            reject(new DOMException('The operation was aborted.', 'AbortError'));
+            reject(new AbortedError(pr));
         };
 
         signal.addEventListener('abort', onAbort);
 
         pr.then(
             (result) => {
+                if (signal.aborted) {
+                    opts?.collectResult?.(null, result);
+                    return;
+                }
                 signal.removeEventListener('abort', onAbort);
                 resolve(result);
             },
             (error) => {
+                if (signal.aborted) {
+                    opts?.collectResult?.(error);
+                    return;
+                }
                 signal.removeEventListener('abort', onAbort);
                 reject(error);
             },

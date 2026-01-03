@@ -155,4 +155,209 @@ NodeTest.describe('Function withAbortSignal', async () => {
             NodeAssert.strictEqual((e as Error).message, 'Synchronous error');
         }
     });
+
+    await NodeTest.it('Should collect result after aborted', async () => {
+
+        const controller = new AbortController();
+
+        let collectedError: Error | null = null;
+        let collectedResult: number | null = null;
+
+        const promise = new Promise<number>(async (resolve) => {
+            // Simulate a task that fails
+            await NodeTimer.setTimeout(200);
+            resolve(123);
+        });
+
+        const t = withAbortSignal(
+            controller.signal,
+            promise,
+            {
+                collectResult: (err, res) => {
+                    collectedError = err as Error | null;
+                    collectedResult = res as number | null;
+                },
+            },
+        );
+
+        setTimeout(() => { controller.abort(); }, 100); // Abort after 100ms
+
+        try {
+            await t;
+            NodeAssert.fail('Expected to throw AbortError');
+        } catch (e) {
+            NodeAssert.strictEqual(e instanceof DOMException, true);
+            NodeAssert.strictEqual((e as DOMException).name, 'AbortError');
+        }
+
+        // Wait a bit to ensure the original promise settles
+        await NodeTimer.setTimeout(150);
+
+        NodeAssert.strictEqual(collectedError, null);
+        NodeAssert.strictEqual(collectedResult, 123);
+    });
+
+    await NodeTest.it('Should collect error after aborted', async () => {
+
+        const controller = new AbortController();
+
+        let collectedError: unknown = null;
+        let collectedResult: number | null = null;
+
+        const promise = new Promise<number>(async (_resolve, reject) => {
+            // Simulate a task that fails
+            await NodeTimer.setTimeout(200);
+            reject(new Error('Task failed'));
+        });
+
+        const t = withAbortSignal(
+            controller.signal,
+            promise,
+            {
+                collectResult: (err, res) => {
+                    collectedError = err as Error | null;
+                    collectedResult = res ?? null;
+                },
+            },
+        );
+
+        setTimeout(() => { controller.abort(); }, 100);
+
+        try {
+            await t;
+            NodeAssert.fail('Expected to throw AbortError');
+        } catch (e) {
+            NodeAssert.strictEqual(e instanceof DOMException, true);
+            NodeAssert.strictEqual((e as DOMException).name, 'AbortError');
+        }
+
+        // Wait a bit to ensure the original promise settles
+        await NodeTimer.setTimeout(150);
+
+        NodeAssert.ok(collectedError instanceof Error);
+        NodeAssert.strictEqual(collectedError!.message, 'Task failed');
+        NodeAssert.strictEqual(collectedResult, null);
+    });
+
+    await NodeTest.it('Should not collect result if not aborted', async () => {
+
+        const controller = new AbortController();
+
+        let collectorCalled = false;
+
+        const promise = new Promise<number>(async (resolve) => {
+            // Simulate a quick task
+            await NodeTimer.setTimeout(50);
+            resolve(456);
+        });
+
+        const result = await withAbortSignal(
+            controller.signal,
+            promise,
+            {
+                collectResult: () => {
+                    collectorCalled = true;
+                },
+            },
+        );
+
+        NodeAssert.strictEqual(result, 456);
+        NodeAssert.strictEqual(collectorCalled, false);
+    });
+
+    await NodeTest.it('Should not execute asyncTask function when signal already aborted', async () => {
+
+        const controller = new AbortController();
+        controller.abort();
+
+        let functionExecuted = false;
+
+        async function taskFunction(): Promise<number> {
+            functionExecuted = true;
+            return 321;
+        }
+
+        try {
+            await withAbortSignal(controller.signal, taskFunction);
+            NodeAssert.fail('Expected to throw AbortError');
+        } catch (e) {
+            NodeAssert.strictEqual(e instanceof DOMException, true);
+            NodeAssert.strictEqual((e as DOMException).name, 'AbortError');
+        }
+
+        await NodeTimer.setTimeout(100); // Wait to ensure function is not executed
+
+        NodeAssert.strictEqual(functionExecuted, false);
+    });
+
+    await NodeTest.it('Should collect result if already aborted with Promise task', async () => {
+
+        const controller = new AbortController();
+        controller.abort();
+
+        let collectedError: unknown = null;
+        let collectedResult: number | null = null;
+
+        const okPromise = new Promise<number>(async (resolve) => {
+            // Simulate a quick task
+            await NodeTimer.setTimeout(50);
+            resolve(789);
+        });
+
+        try {
+            await withAbortSignal(
+                controller.signal,
+                okPromise,
+                {
+                    collectResult: (err, res) => {
+                        collectedError = err;
+                        collectedResult = res ?? null;
+                    },
+                },
+            );
+            NodeAssert.fail('Expected to throw AbortError');
+        } catch (e) {
+            NodeAssert.strictEqual(e instanceof DOMException, true);
+            NodeAssert.strictEqual((e as DOMException).name, 'AbortError');
+        }
+
+        // Wait a bit to ensure the original promise settles
+        await NodeTimer.setTimeout(100);
+
+        NodeAssert.strictEqual(collectedError, null);
+        NodeAssert.strictEqual(collectedResult, 789);
+
+        const errPromise = new Promise<number>(async (_resolve, reject) => {
+            // Simulate a task that fails
+            await NodeTimer.setTimeout(50);
+            reject(new Error('Task failed'));
+        });
+
+        collectedError = null;
+        collectedResult = null;
+
+        try {
+            await withAbortSignal(
+                controller.signal,
+                errPromise,
+                {
+                    collectResult: (err, res) => {
+                        collectedError = err;
+                        collectedResult = res ?? null;
+                    },
+                },
+            );
+            NodeAssert.fail('Expected to throw AbortError');
+        } catch (e) {
+            NodeAssert.strictEqual(e instanceof DOMException, true);
+            NodeAssert.strictEqual((e as DOMException).name, 'AbortError');
+        }
+
+        // Wait a bit to ensure the original promise settles
+        await NodeTimer.setTimeout(100);
+
+        NodeAssert.ok(collectedError instanceof Error);
+        NodeAssert.strictEqual((collectedError as Error).message, 'Task failed');
+        NodeAssert.strictEqual(collectedResult, null);
+    });
 });
