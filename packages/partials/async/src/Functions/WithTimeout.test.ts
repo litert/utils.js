@@ -144,4 +144,66 @@ NodeTest.describe('Function withTimeout', async () => {
             NodeAssert.strictEqual(e instanceof Error && e.message === 'Task failed', true);
         }
     });
+
+    await NodeTest.it('Should collect result after timeout', async () => {
+
+        let collectedError: unknown | null = null;
+        let collectedResult: number | undefined = undefined;
+
+        async function slowTask(): Promise<number> {
+
+            await NodeTimer.setTimeout(50); // Simulate a slow task
+            return 6789;
+        }
+
+        try {
+            await withTimeout(10, slowTask(), {
+                collectResult: (error, result) => {
+                    collectedError = error;
+                    collectedResult = result;
+                },
+            });
+            NodeAssert.fail('The task should have timed out');
+        }
+        catch (e) {
+            NodeAssert.strictEqual(e instanceof TimeoutError, true);
+        }
+
+        // Wait a bit to ensure the slowTask has completed
+        await NodeTimer.setTimeout(100);
+
+        NodeAssert.strictEqual(collectedError, null);
+        NodeAssert.strictEqual(collectedResult, 6789);
+    });
+
+    await NodeTest.it('Should collect error after timeout', async () => {
+
+        let collectedError: unknown | null = null;
+        let collectedResult: number | undefined = undefined;
+
+        async function slowFailedTask(): Promise<number> {
+
+            await NodeTimer.setTimeout(50); // Simulate a slow task
+            throw new Error('Slow task failed');
+        }
+
+        try {
+            await withTimeout(10, slowFailedTask(), {
+                collectResult: (error, result) => {
+                    collectedError = error;
+                    collectedResult = result;
+                },
+            });
+            NodeAssert.fail('The task should have timed out');
+        }
+        catch (e) {
+            NodeAssert.strictEqual(e instanceof TimeoutError, true);
+        }
+
+        // Wait a bit to ensure the slowFailedTask has completed
+        await NodeTimer.setTimeout(100);
+
+        NodeAssert.strictEqual(collectedError instanceof Error && (collectedError as Error).message === 'Slow task failed', true);
+        NodeAssert.strictEqual(collectedResult, undefined);
+    });
 });

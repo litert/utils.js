@@ -8,6 +8,8 @@
 - fix(pkg:concurrent): the `MemoryMutex` should be non-reentrant by default,
     but an option is added to reenable reentrant behavior.
 - feat(pkg:async): added extra options `collectResult` to `Async.withAbortSignal` API
+- feat(pkg:async): added extra option `opts.collectResult` to `Async.withTimeout`
+    to collect the result of the asynchronous task after timeout.
 
 ## v1.6.0
 
