@@ -2,6 +2,8 @@
 
 ## v1.7.0
 
+- fix(pkg:ts-types): corrected the helper type `IJsonSafeValue` to whitelist `undefined` as a valid JSON safe value
+
 ## v1.6.0
 
 - feat(pkg:concurrent): added utility class `MemoryMutex`

@@ -135,10 +135,12 @@ export type IfIsNever<T, TYes, TNo> = [T] extends [never] ? TYes : TNo;
  * - Array of JSON safe values
  * - Object with string keys and JSON safe values
  *
- * Note that `undefined`, `function`, `symbol`, `bigint` and other non-JSON
- * safe types are not allowed.
+ * Note that `function`, `symbol`, `bigint` and other non-JSON safe types are
+ * disallowed.
  */
-export type IJsonSafeValue = string | number | boolean | null | IJsonSafeValue[] | { [key: string]: IJsonSafeValue; };
+export type IJsonSafeValue = string | number | boolean | null | undefined | IJsonSafeValue[] | {
+    [key: string]: IJsonSafeValue;
+};
 
 /**
  * The utility type that extracts the instance type from a class constructor
