@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { SlideWindowCounter } from './SlideWindowCounter';
+import { SlideWindowCounter } from './SlideWindowCounter.js';
 
 NodeTest.describe('Class SlideWindowCounter', () => {
 

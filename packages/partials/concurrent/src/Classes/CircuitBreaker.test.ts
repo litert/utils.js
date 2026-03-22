@@ -1,8 +1,8 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimer from 'node:timers/promises';
-import { CircuitBreaker } from './CircuitBreaker';
-import { E_BREAKER_OPENED } from '../Types';
+import { sleep } from '@litert/utils-async';
+import { CircuitBreaker } from './CircuitBreaker.js';
+import { E_BREAKER_OPENED } from '../Types.js';
 
 NodeTest.describe('Class CircuitBreaker', async () => {
 
@@ -370,14 +370,14 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         // [batch#1] the pending call (should succeed)
         const pr1 = breaker.call(async () => {
 
-            await NodeTimer.setTimeout(COOLDOWN_MS + 100);
+            await sleep(COOLDOWN_MS + 100);
             prevBatchCallDone++;
         });
 
         // [batch#1] the pending call (should fail)
         const pr2 = breaker.call(async () => {
 
-            await NodeTimer.setTimeout(COOLDOWN_MS + 100);
+            await sleep(COOLDOWN_MS + 100);
             prevBatchCallDone++;
             throw new Error('123');
         });
@@ -445,7 +445,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
 
         for (let i = 0; i < WARM_UP_QTY; i++) {
 
-            promises.push(breaker.call(() => NodeTimer.setTimeout(10)));
+            promises.push(breaker.call(() => sleep(10)));
         }
 
         NodeAssert.throws(() => { breaker.call(() => { }); }, E_BREAKER_OPENED);

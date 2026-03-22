@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DebounceController, IDebounceOptions } from './DebounceController';
+import { DebounceController, IDebounceOptions } from './DebounceController.js';
 
 /**
  * The options for the batch buffer.

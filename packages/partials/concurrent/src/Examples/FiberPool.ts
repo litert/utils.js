@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import NodeTimers from 'node:timers/promises';
 import { BackgroundRunner } from '@litert/utils-async';
-import * as NodeTimers from 'node:timers/promises';
-import { FiberPool } from '..';
+import { FiberPool } from '../index.js';
 
 const fp = new FiberPool({
     maxFibers: 5,

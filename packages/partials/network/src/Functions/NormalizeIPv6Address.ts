@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { parseIPv6Address } from './ParseIPv6Address';
+import { parseIPv6Address } from './ParseIPv6Address.js';
 
 /**
  * Transform an IPv6 address to a normalized format, with exact 8 segments.

@@ -1,7 +1,7 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { CountingRateLimiter } from './CountingRateLimiter';
-import { SlideWindowCounter } from './SlideWindowCounter';
+import { CountingRateLimiter } from './CountingRateLimiter.js';
+import { SlideWindowCounter } from './SlideWindowCounter.js';
 
 NodeTest.describe('Class CountingRateLimiter', () => {
 

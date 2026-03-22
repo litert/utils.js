@@ -15,7 +15,7 @@
  */
 
 import type { IConstructor, IDict, IFunction } from '@litert/utils-ts-types';
-import { E_RATE_LIMITED, ISyncRateLimiterManager } from '../Types';
+import { E_RATE_LIMITED, ISyncRateLimiterManager } from '../Types.js';
 
 /**
  * The options for `TokenBucketRateLimiter`.

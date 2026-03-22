@@ -1,7 +1,7 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimer from 'node:timers/promises';
-import { withAbortSignal } from './WithAbortSignal';
+import { withAbortSignal } from './WithAbortSignal.js';
+import { sleep } from './Sleep.js';
 
 NodeTest.describe('Function withAbortSignal', async () => {
 
@@ -29,7 +29,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
         try {
             await withAbortSignal(controller.signal, async () => {
                 // Simulate a long-running task
-                await NodeTimer.setTimeout(1000);
+                await sleep(1000);
             });
             NodeAssert.fail('Expected to throw AbortError');
         } catch (e) {
@@ -46,7 +46,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
 
         const result = await withAbortSignal(controller.signal, async () => {
             // Simulate a quick task
-            await NodeTimer.setTimeout(50);
+            await sleep(50);
             return 42;
         });
 
@@ -62,7 +62,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
         try {
             await withAbortSignal(controller.signal, async () => {
                 // Simulate a task that fails
-                await NodeTimer.setTimeout(50);
+                await sleep(50);
                 throw new Error('Task failed');
             });
             NodeAssert.fail('Expected to throw Task failed error');
@@ -82,7 +82,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
 
         await withAbortSignal(controller.signal, async () => {
             // Simulate a quick task
-            await NodeTimer.setTimeout(50);
+            await sleep(50);
         });
 
         controller.signal.removeEventListener('abort', onAbort);
@@ -105,7 +105,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
         try {
             await withAbortSignal(controller.signal, async () => {
                 // Simulate a task that fails
-                await NodeTimer.setTimeout(50);
+                await sleep(50);
                 throw new Error('Task failed');
             });
             NodeAssert.fail('Expected to throw Task failed error');
@@ -129,7 +129,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
 
         const promise = new Promise<number>(async (resolve) => {
             // Simulate a quick task
-            await NodeTimer.setTimeout(50);
+            await sleep(50);
             resolve(99);
         });
 
@@ -165,7 +165,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
 
         const promise = new Promise<number>(async (resolve) => {
             // Simulate a task that fails
-            await NodeTimer.setTimeout(200);
+            await sleep(200);
             resolve(123);
         });
 
@@ -191,7 +191,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
         }
 
         // Wait a bit to ensure the original promise settles
-        await NodeTimer.setTimeout(150);
+        await sleep(150);
 
         NodeAssert.strictEqual(collectedError, null);
         NodeAssert.strictEqual(collectedResult, 123);
@@ -206,7 +206,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
 
         const promise = new Promise<number>(async (_resolve, reject) => {
             // Simulate a task that fails
-            await NodeTimer.setTimeout(200);
+            await sleep(200);
             reject(new Error('Task failed'));
         });
 
@@ -232,7 +232,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
         }
 
         // Wait a bit to ensure the original promise settles
-        await NodeTimer.setTimeout(150);
+        await sleep(150);
 
         NodeAssert.ok(collectedError instanceof Error);
         NodeAssert.strictEqual(collectedError!.message, 'Task failed');
@@ -247,7 +247,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
 
         const promise = new Promise<number>(async (resolve) => {
             // Simulate a quick task
-            await NodeTimer.setTimeout(50);
+            await sleep(50);
             resolve(456);
         });
 
@@ -285,7 +285,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
             NodeAssert.strictEqual((e as DOMException).name, 'AbortError');
         }
 
-        await NodeTimer.setTimeout(100); // Wait to ensure function is not executed
+        await sleep(100); // Wait to ensure function is not executed
 
         NodeAssert.strictEqual(functionExecuted, false);
     });
@@ -300,7 +300,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
 
         const okPromise = new Promise<number>(async (resolve) => {
             // Simulate a quick task
-            await NodeTimer.setTimeout(50);
+            await sleep(50);
             resolve(789);
         });
 
@@ -322,14 +322,14 @@ NodeTest.describe('Function withAbortSignal', async () => {
         }
 
         // Wait a bit to ensure the original promise settles
-        await NodeTimer.setTimeout(100);
+        await sleep(100);
 
         NodeAssert.strictEqual(collectedError, null);
         NodeAssert.strictEqual(collectedResult, 789);
 
         const errPromise = new Promise<number>(async (_resolve, reject) => {
             // Simulate a task that fails
-            await NodeTimer.setTimeout(50);
+            await sleep(50);
             reject(new Error('Task failed'));
         });
 
@@ -354,7 +354,7 @@ NodeTest.describe('Function withAbortSignal', async () => {
         }
 
         // Wait a bit to ensure the original promise settles
-        await NodeTimer.setTimeout(100);
+        await sleep(100);
 
         NodeAssert.ok(collectedError instanceof Error);
         NodeAssert.strictEqual((collectedError as Error).message, 'Task failed');

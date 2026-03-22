@@ -15,7 +15,7 @@
  */
 
 import { EventEmitter } from 'node:events';
-import { sleep } from '../Functions/Sleep';
+import { sleep } from '../Functions/Sleep.js';
 
 export interface IBackgroundRunnerEvents {
 

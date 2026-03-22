@@ -16,8 +16,8 @@
 
 import type { IConstructor } from '@litert/utils-ts-types';
 import { EventEmitter } from 'node:events';
-import { SlideWindowCounter } from './SlideWindowCounter';
-import { E_BREAKER_OPENED, IBreaker, ICounter, ISimpleFn } from '../Types';
+import { SlideWindowCounter } from './SlideWindowCounter.js';
+import { E_BREAKER_OPENED, IBreaker, ICounter, ISimpleFn } from '../Types.js';
 
 /**
  * The events emitted by `CircuitBreaker`.

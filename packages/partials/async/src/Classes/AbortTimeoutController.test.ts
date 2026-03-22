@@ -1,56 +1,60 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimer from 'node:timers/promises';
-import { AbortTimeoutController } from './AbortTimeoutController';
+import { sleep } from '../Functions/Sleep.js';
+import { AbortTimeoutController } from './AbortTimeoutController.js';
+import { autoTickMs } from '@litert/utils-test';
 
 NodeTest.describe('Class AbortTimeoutController', async () => {
 
-    await NodeTest.it('The signal should be aborted after the timeout', async () => {
+    await NodeTest.it('The signal should be aborted after the timeout', async (ctx) => {
+
+        ctx.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
 
         const start = Date.now();
         const atc = new AbortTimeoutController(200);
 
         try {
 
-            await NodeTimer.setTimeout(500, null, { signal: atc.signal });
+            await autoTickMs(ctx, sleep(500, atc.signal));
         }
         catch {
 
             NodeAssert.strictEqual(atc.signal.aborted, true);
-            NodeAssert.ok(Date.now() - start >= 200, 'The timeout should be at least 200ms');
-            NodeAssert.ok(Date.now() - start < 300, 'The timeout should be about 200ms');
+            NodeAssert.strictEqual(Date.now() - start, 200, 'The timeout should be at least 200ms');
         }
 
         NodeAssert.strictEqual(atc.signal.reason, 'timeout', 'The reason should be "timeout"');
     });
 
-    await NodeTest.it('The signal should be aborted if abort is called before the timeout', async () => {
+    await NodeTest.it('The signal should be aborted if abort is called before the timeout', async (ctx) => {
+
+        ctx.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
+
         const start = Date.now();
         const atc = new AbortTimeoutController(200);
         setTimeout(() => { atc.abort('test'); }, 100);
 
         try {
 
-            await NodeTimer.setTimeout(500, null, { signal: atc.signal });
+            await autoTickMs(ctx, sleep(500, atc.signal));
         }
         catch {
 
             NodeAssert.strictEqual(atc.signal.aborted, true);
             NodeAssert.ok(atc.signal.reason === 'test', 'The reason should be "test"');
-            NodeAssert.ok(Date.now() - start >= 100, 'The timeout should be at least 100ms');
-            NodeAssert.ok(Date.now() - start < 200, 'The timeout should be about 100ms');
+            NodeAssert.strictEqual(Date.now() - start, 100, 'The timeout should be at least 100ms');
         }
     });
 
     await NodeTest.it('The destroy method should clear the timeout', async (ctx) => {
 
-        ctx.mock?.timers.enable({ apis: ['setTimeout', 'Date'] });
+        ctx.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
 
         const atc1 = new AbortTimeoutController(200);
 
         NodeAssert.strictEqual(atc1.signal.aborted, false, 'The signal should not be aborted');
 
-        ctx.mock?.timers.tick(500);
+        ctx.mock.timers.tick(500);
 
         NodeAssert.strictEqual(atc1.signal.aborted, true, 'The signal should be aborted after timeout');
 
@@ -60,7 +64,7 @@ NodeTest.describe('Class AbortTimeoutController', async () => {
 
         atc2.destroy();
 
-        ctx.mock?.timers.tick(500);
+        ctx.mock.timers.tick(500);
 
         NodeAssert.strictEqual(atc2.signal.aborted, false, 'The signal should not be aborted after destroy and timeout');
     });
@@ -80,11 +84,11 @@ NodeTest.describe('Class AbortTimeoutController', async () => {
 
     await NodeTest.it('Calling abort after timeout should have no effect', async (ctx) => {
 
-        ctx.mock?.timers.enable({ apis: ['setTimeout', 'Date'] });
+        ctx.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
 
         const atc = new AbortTimeoutController(200);
 
-        ctx.mock?.timers.tick(500);
+        ctx.mock.timers.tick(500);
 
         NodeAssert.strictEqual(atc.signal.aborted, true, 'The signal should be aborted after timeout');
 

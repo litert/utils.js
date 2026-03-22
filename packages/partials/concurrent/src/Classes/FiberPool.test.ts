@@ -1,9 +1,7 @@
 import * as NodeTest from 'node:test';
-// import * as UtilsTest from '@litert/utils-test';
-import * as NodeTimers from 'node:timers/promises';
 import * as NodeAssert from 'node:assert';
-import { FiberPool } from './FiberPool';
-import { TimeoutError } from '@litert/utils-async';
+import { sleep, TimeoutError } from '@litert/utils-async';
+import { FiberPool } from './FiberPool.js';
 
 NodeTest.describe('Class FiberPool', async () => {
 
@@ -14,7 +12,7 @@ NodeTest.describe('Class FiberPool', async () => {
         let v = 0;
         const fn = async (data: number): Promise<void> => {
 
-            await NodeTimers.setTimeout(10);
+            await sleep(10);
             v += data;
         };
 
@@ -39,7 +37,7 @@ NodeTest.describe('Class FiberPool', async () => {
         let v = 0;
         const fn = async (data: number): Promise<void> => {
 
-            await NodeTimers.setTimeout(10);
+            await sleep(10);
             v += data;
         };
 
@@ -48,7 +46,7 @@ NodeTest.describe('Class FiberPool', async () => {
             fp.run({ function: fn, data: 321 }),
         ]);
 
-        await NodeTimers.setImmediate(); // wait for the fibers to start running.
+        await sleep(0); // wait for the fibers to start running.
 
         NodeAssert.strictEqual(fp.idleFibers, 0, 'Idle fibers should be 0 when there are running fibers.');
         NodeAssert.strictEqual(fp.busyFibers, 2, 'Busy fibers should be 2 when there are running fibers.');
@@ -72,7 +70,7 @@ NodeTest.describe('Class FiberPool', async () => {
         let v = 0;
         const fn = async (data: number): Promise<void> => {
 
-            await NodeTimers.setTimeout(10);
+            await sleep(10);
             v += data;
         };
 
@@ -82,7 +80,7 @@ NodeTest.describe('Class FiberPool', async () => {
             fp.run({ function: fn, data: 444 }),
         ]);
 
-        await NodeTimers.setImmediate(); // wait for the fibers to start running.
+        await sleep(0); // wait for the fibers to start running.
         fp.close();
 
         NodeAssert.strictEqual(fp.idleFibers, 0, 'Idle fibers should be 0 when there are running fibers.');
@@ -111,7 +109,7 @@ NodeTest.describe('Class FiberPool', async () => {
         let v = 0;
         const fn = async (data: number): Promise<void> => {
 
-            await NodeTimers.setTimeout(10);
+            await sleep(10);
             v += data;
         };
 
@@ -134,7 +132,7 @@ NodeTest.describe('Class FiberPool', async () => {
 
         const fn = async (data: number): Promise<void> => {
 
-            await NodeTimers.setImmediate();
+            await sleep(0);
             throw new Error(`Test error: ${data}`);
         };
 
@@ -156,7 +154,7 @@ NodeTest.describe('Class FiberPool', async () => {
 
         const fn = async (data: number): Promise<void> => {
 
-            await NodeTimers.setTimeout(50);
+            await sleep(50);
             throw new Error(`Test error: ${data}`);
         };
 
@@ -196,7 +194,7 @@ NodeTest.describe('Class FiberPool', async () => {
 
         const fn = async (data: number): Promise<void> => {
 
-            await NodeTimers.setTimeout(10);
+            await sleep(10);
             throw new Error(`Test error: ${data}`);
         };
 

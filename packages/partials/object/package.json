@@ -34,7 +34,58 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "type": "module",
   "peerDependencies": {},
   "ottoia:alias": "partials.object",
-  "access": "public"
+  "access": "public",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./functions/CopyProperties": {
+      "default": {
+        "types": "./lib/Functions/CopyProperties.d.ts",
+        "default": "./lib/Functions/CopyProperties.js"
+      }
+    },
+    "./functions/DeepMerge": {
+      "default": {
+        "types": "./lib/Functions/DeepMerge.d.ts",
+        "default": "./lib/Functions/DeepMerge.js"
+      }
+    },
+    "./functions/GetConstructor": {
+      "default": {
+        "types": "./lib/Functions/GetConstructor.d.ts",
+        "default": "./lib/Functions/GetConstructor.js"
+      }
+    },
+    "./functions/GetPropertyNames": {
+      "default": {
+        "types": "./lib/Functions/GetPropertyNames.d.ts",
+        "default": "./lib/Functions/GetPropertyNames.js"
+      }
+    },
+    "./functions/HasProperties": {
+      "default": {
+        "types": "./lib/Functions/HasProperties.d.ts",
+        "default": "./lib/Functions/HasProperties.js"
+      }
+    },
+    "./functions/IsSubclassOf": {
+      "default": {
+        "types": "./lib/Functions/IsSubclassOf.d.ts",
+        "default": "./lib/Functions/IsSubclassOf.js"
+      }
+    },
+    "./functions/PickProperties": {
+      "default": {
+        "types": "./lib/Functions/PickProperties.d.ts",
+        "default": "./lib/Functions/PickProperties.js"
+      }
+    }
+  }
 }

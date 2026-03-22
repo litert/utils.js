@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-export * from './Classes/ThrottleController';
-export * from './Classes/BatchBuffer';
-export * from './Classes/DebounceController';
-export * from './Classes/SlideWindowCounter';
-export * from './Classes/CountingRateLimiter';
-export * from './Classes/TokenBucketRateLimiter';
-export * from './Classes/LeakyBucketRateLimiter';
-export * from './Classes/TokenBucketRateLimiterManager';
-export * from './Classes/LeakyBucketRateLimiterManager';
-export * from './Classes/MemoryMutex';
-export * from './Classes/FiberPool';
-export * from './Classes/ManualBreaker';
-export * from './Classes/CircuitBreaker';
-export * from './Types';
+export * from './Classes/ThrottleController.js';
+export * from './Classes/BatchBuffer.js';
+export * from './Classes/DebounceController.js';
+export * from './Classes/SlideWindowCounter.js';
+export * from './Classes/CountingRateLimiter.js';
+export * from './Classes/TokenBucketRateLimiter.js';
+export * from './Classes/LeakyBucketRateLimiter.js';
+export * from './Classes/TokenBucketRateLimiterManager.js';
+export * from './Classes/LeakyBucketRateLimiterManager.js';
+export * from './Classes/MemoryMutex.js';
+export * from './Classes/FiberPool.js';
+export * from './Classes/ManualBreaker.js';
+export * from './Classes/CircuitBreaker.js';
+export * from './Types.js';

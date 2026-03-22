@@ -1,5 +1,13 @@
 # CHANGES
 
+## v2.0.0
+
+- build(project): migrate the project to ESM module system
+- fix(pkg:async): `Async.sleep` should throw error immediately if an aborted signal is passed in.
+- fix(pkg:async): `Async.sleep` should sleep for 0ms if 0ms is passed in, instead of resolving immediately in the next tick.
+- feat(pkg:test): added new API `Test.autoTickMs` to tick timers by a specified ms interval instead of ticking all timers immediately.
+- deprecate(pkg:ts-types): removed type `IJsonSafeValue`.
+
 ## v1.7.0
 
 - fix(pkg:ts-types): corrected the helper type `IJsonSafeValue` to whitelist `undefined` as a valid JSON safe value

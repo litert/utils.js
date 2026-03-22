@@ -1,7 +1,7 @@
 import * as NodeTest from 'node:test';
-import * as NodeTimer from 'node:timers/promises';
+import NodeTimer from 'node:timers/promises';
 import * as NodeAssert from 'node:assert';
-import { tryCatch } from './TryCatch';
+import { tryCatch } from './TryCatch.js';
 
 NodeTest.describe('Function FlowControl.tryCatch', () => {
 

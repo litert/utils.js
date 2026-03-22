@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-export * as Units from './Classes/UnitConverter';
-export * from './Functions/RandomBetween';
+export * as Units from './Classes/UnitConverter.js';
+export * from './Functions/RandomBetween.js';

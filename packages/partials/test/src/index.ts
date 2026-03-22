@@ -14,4 +14,5 @@
  * limitations under the License.
  */
 
-export * from './Functions/AutoTick';
+export * from './Functions/AutoTick.js';
+export * from './Functions/AutoTickMs.js';

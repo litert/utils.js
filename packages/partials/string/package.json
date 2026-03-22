@@ -30,9 +30,72 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "type": "module",
   "dependencies": {},
   "devDependencies": {},
   "peerDependencies": {},
   "ottoia:alias": "partials.string",
-  "access": "public"
+  "access": "public",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./class/UnitParser": {
+      "default": {
+        "types": "./lib/Classes/UnitParser.d.ts",
+        "default": "./lib/Classes/UnitParser.js"
+      }
+    },
+    "./functions/EvilWhitespace": {
+      "default": {
+        "types": "./lib/Functions/EvilWhitespace.d.ts",
+        "default": "./lib/Functions/EvilWhitespace.js"
+      }
+    },
+    "./functions/Html": {
+      "default": {
+        "types": "./lib/Functions/Html.d.ts",
+        "default": "./lib/Functions/Html.js"
+      }
+    },
+    "./functions/IsEmailAddress": {
+      "default": {
+        "types": "./lib/Functions/IsEmailAddress.d.ts",
+        "default": "./lib/Functions/IsEmailAddress.js"
+      }
+    },
+    "./functions/Lines": {
+      "default": {
+        "types": "./lib/Functions/Lines.d.ts",
+        "default": "./lib/Functions/Lines.js"
+      }
+    },
+    "./functions/NameCase": {
+      "default": {
+        "types": "./lib/Functions/NameCase.d.ts",
+        "default": "./lib/Functions/NameCase.js"
+      }
+    },
+    "./functions/Random": {
+      "default": {
+        "types": "./lib/Functions/Random.d.ts",
+        "default": "./lib/Functions/Random.js"
+      }
+    },
+    "./functions/RegexpEscape": {
+      "default": {
+        "types": "./lib/Functions/RegexpEscape.d.ts",
+        "default": "./lib/Functions/RegexpEscape.js"
+      }
+    },
+    "./functions/ToChunks": {
+      "default": {
+        "types": "./lib/Functions/ToChunks.d.ts",
+        "default": "./lib/Functions/ToChunks.js"
+      }
+    }
+  }
 }

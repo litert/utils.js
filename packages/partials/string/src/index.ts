@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-export * from './Functions/Lines';
-export * from './Functions/EvilWhitespace';
-export * from './Functions/Random';
-export * from './Functions/RegexpEscape';
-export * from './Functions/Html';
-export * from './Functions/IsEmailAddress';
-export * from './Functions/ToChunks';
-export * from './Functions/NameCase';
-export * from './Classes/UnitParser';
+export * from './Functions/Lines.js';
+export * from './Functions/EvilWhitespace.js';
+export * from './Functions/Random.js';
+export * from './Functions/RegexpEscape.js';
+export * from './Functions/Html.js';
+export * from './Functions/IsEmailAddress.js';
+export * from './Functions/ToChunks.js';
+export * from './Functions/NameCase.js';
+export * from './Classes/UnitParser.js';

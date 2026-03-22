@@ -1,7 +1,7 @@
 import * as NodeTest from 'node:test';
-import * as NodeTimers from 'timers/promises';
 import * as NodeAssert from 'node:assert';
-import { DebounceController } from './DebounceController';
+import { sleep } from '@litert/utils-async';
+import { DebounceController } from './DebounceController.js';
 
 NodeTest.describe('Class DebounceController', async () => {
 
@@ -246,7 +246,7 @@ NodeTest.describe('Class DebounceController', async () => {
 
         NodeAssert.strictEqual(v, 1, 'The function should be called once');
 
-        await NodeTimers.setTimeout(10);
+        await sleep(10);
 
         NodeAssert.strictEqual(v, 1, 'The function should not be called again because the maxDelay triggered callNow and cancelled the scheduled call');
     });

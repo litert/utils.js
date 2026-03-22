@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { toChunks, toChunksBackward} from './ToChunks';
+import { toChunks, toChunksBackward} from './ToChunks.js';
 
 NodeTest.describe('Function String.toChunks', () => {
 

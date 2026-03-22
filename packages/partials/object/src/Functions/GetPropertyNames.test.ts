@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { getPropertyNames } from './GetPropertyNames';
+import { getPropertyNames } from './GetPropertyNames.js';
 
 NodeTest.describe('Function Object.getPropertyNames', () => {
 

@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { BatchBuffer } from './BatchBuffer';
+import { BatchBuffer } from './BatchBuffer.js';
 
 NodeTest.describe('Class BatchBuffer', async () => {
 

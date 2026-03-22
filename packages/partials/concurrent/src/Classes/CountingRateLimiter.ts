@@ -15,7 +15,7 @@
  */
 
 import type { IConstructor, IFunction } from '@litert/utils-ts-types';
-import { E_RATE_LIMITED, ICounter, ISyncRateLimiter } from '../Types';
+import { E_RATE_LIMITED, ICounter, ISyncRateLimiter } from '../Types.js';
 
 /**
  * The options for `CountingRateLimiter`.

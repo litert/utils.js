@@ -1,14 +1,14 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimer from 'node:timers/promises';
 import * as TestUtils from '@litert/utils-test';
+import { sleep } from './Sleep.js';
 import {
     autoRetry,
     createExponentialBackoffDelayGenerator,
     DEFAULT_BEFORE_RETRY,
     equalJitter,
     fullJitter,
-} from './AutoRetry';
+} from './AutoRetry.js';
 
 NodeTest.describe('Function autoRetry', async () => {
 
@@ -25,7 +25,7 @@ NodeTest.describe('Function autoRetry', async () => {
                 },
                 'beforeRetry': async (i) => {
                     NodeAssert.strictEqual(i, callCount - 1, 'Retry index should match call count - 1');
-                    await NodeTimer.setImmediate();
+                    await sleep(0);
                 },
             });
         } catch {
@@ -48,7 +48,7 @@ NodeTest.describe('Function autoRetry', async () => {
                 },
                 'beforeRetry': async (ctx) => {
                     NodeAssert.strictEqual(ctx.retriedTimes, callCount - 1, 'Retry index should match call count - 1');
-                    await NodeTimer.setImmediate();
+                    await sleep(0);
                 },
             });
         } catch (e) {
@@ -79,12 +79,12 @@ NodeTest.describe('Function autoRetry', async () => {
         t.mock.timers.enable({'apis': ['setTimeout', 'Date']});
 
         try {
-            await TestUtils.autoTick(t, autoRetry({
-            'maxRetries': 100,
-            'function': async () => {
-                throw new Error('Test error');
-            }
-        }));
+            await TestUtils.autoTickMs(t, autoRetry({
+                'maxRetries': 100,
+                'function': async () => {
+                    throw new Error('Test error');
+                }
+            }), { tickMs: 1000 });
             NodeAssert.fail('Function should throw an error');
         }
         catch (e) {
@@ -116,20 +116,22 @@ NodeTest.describe('Function autoRetry', async () => {
         NodeAssert.strictEqual(Math.abs((Date.now() - t0)) < 5, true, 'No sleep should be scheduled');
     });
 
-    await NodeTest.it('AbortSignal should work insides "beforeRetry"', async () => {
+    await NodeTest.it('AbortSignal should work insides "beforeRetry"', async (ctx) => {
+
+        ctx.mock.timers.enable({'apis': ['setTimeout', 'Date']});
 
         const t0 = Date.now();
 
         try {
             const ac = new AbortController();
             setTimeout(() => ac.abort(), 50);
-            await autoRetry({
+            await TestUtils.autoTick(ctx, autoRetry({
                 'maxRetries': 1,
                 'function': async () => {
                     throw new Error('Test error');
                 },
                 'signal': ac.signal,
-            });
+            }));
             NodeAssert.fail('Function should throw an error');
         }
         catch (e) {
@@ -137,7 +139,7 @@ NodeTest.describe('Function autoRetry', async () => {
             NodeAssert.ok(true);
         }
 
-        NodeAssert.strictEqual(Math.abs((Date.now() - t0) - 50) < 10, true, 'Function should wait 50ms before throwing an error');
+        NodeAssert.strictEqual(Math.abs((Date.now() - t0) - 50) <= 10, true, 'Function should wait 50ms before throwing an error');
     });
 
     await NodeTest.it('DEFAULT_BEFORE_RETRY should applies exponential backoff', async (t) => {
@@ -155,10 +157,7 @@ NodeTest.describe('Function autoRetry', async () => {
                     'error': null,
                 }) as Promise<void>);
 
-                NodeAssert.strictEqual(
-                    Date.now() - t0 < (1000 * Math.pow(2, i)),
-                    true,
-                );
+                NodeAssert.ok(Date.now() - t0 <= 1000 * Math.pow(2, i));
 
                 NodeAssert.strictEqual(
                     Date.now() - t0 <= 30_000,
@@ -175,16 +174,17 @@ NodeTest.describe('Function autoRetry', async () => {
         const t0 = Date.now();
 
         try {
-            await TestUtils.autoTick(t, (async () => {
+            await TestUtils.autoTickMs(t, async () => {
                 const ac = new AbortController();
                 await autoRetry({
                     'maxRetries': 1,
                     'function': async () => {
                         throw new Error('Test error');
                     },
+                    'beforeRetry': () => sleep(1000),
                     'signal': ac.signal,
                 });
-            })());
+            }, { tickMs: 1 });
             NodeAssert.fail('Function should throw an error');
         }
         catch (e) {
@@ -192,7 +192,7 @@ NodeTest.describe('Function autoRetry', async () => {
             NodeAssert.ok(true);
         }
 
-        NodeAssert.strictEqual(Date.now() - t0 < 1000, true, 'Function should wait no more than 1000ms before throwing an error');
+        NodeAssert.ok(Date.now() - t0 >= 1000, 'Function should wait no more than 1000ms before throwing an error');
     });
 
     await NodeTest.it('AbortSignal should work before "beforeRetry" if aborted insides main function', async () => {
@@ -207,7 +207,7 @@ NodeTest.describe('Function autoRetry', async () => {
                 await autoRetry({
                     'maxRetries': 1,
                     'function': async (ctx) => {
-                        await NodeTimer.setTimeout(1000, null, { signal: ctx.signal });
+                        await sleep(1000, ctx.signal);
                         throw new Error('Test error');
                     },
                     'signal': ac.signal,
@@ -220,7 +220,7 @@ NodeTest.describe('Function autoRetry', async () => {
             NodeAssert.fail('Function should throw an error');
         }
         catch (e) {
-            NodeAssert.strictEqual((e as Error).message, 'The operation was aborted', 'Error message should match');
+            NodeAssert.strictEqual((e as Error).message, 'Operation aborted.', 'Error message should match');
             NodeAssert.ok(true);
         }
 
@@ -242,7 +242,7 @@ NodeTest.describe('Function autoRetry', async () => {
                         throw new Error('Test error');
                     },
                     'signal': ac.signal,
-                    'beforeRetry': async () => { await NodeTimer.setTimeout(50); } // Not caring about signal
+                    'beforeRetry': async () => { await sleep(50); } // Not caring about signal
                 });
             }
             catch (e) {

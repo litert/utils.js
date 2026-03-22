@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { deduplicate } from './Deduplicate';
+import { deduplicate } from './Deduplicate.js';
 
 NodeTest.describe('Function Deduplicate', () => {
 

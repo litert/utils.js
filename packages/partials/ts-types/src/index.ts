@@ -126,23 +126,6 @@ export type IfIsAny<T, TYes, TNo> = 0 extends (1 & T) ? TYes : TNo;
 export type IfIsNever<T, TYes, TNo> = [T] extends [never] ? TYes : TNo;
 
 /**
- * The type to express a JSON safe value, which could be safely passed to
- * `JSON.stringify`, and may be returned by `JSON.parse`.
- *
- * Thus, only the following types are allowed:
- *
- * - Basic Types: `string`, `number`, `boolean`, `null`
- * - Array of JSON safe values
- * - Object with string keys and JSON safe values
- *
- * Note that `function`, `symbol`, `bigint` and other non-JSON safe types are
- * disallowed.
- */
-export type IJsonSafeValue = string | number | boolean | null | undefined | IJsonSafeValue[] | {
-    [key: string]: IJsonSafeValue;
-};
-
-/**
  * The utility type that extracts the instance type from a class constructor
  * type `T`, the opposite of `IConstructor`.
  *

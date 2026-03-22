@@ -1,4 +1,6 @@
-import type * as dTS from './index';
+import type * as dTS from './index.js';
+
+function refForTest(...args: unknown[]): unknown[] { return args; }
 
 // Type IFunction
 
@@ -41,7 +43,7 @@ export function fn2() {
     const e2: dTS.IElementOfArray<typeof arr2> = 'abc';
     const e3: dTS.IElementOfArray<typeof arr3> = { a: 123, b: 'abc' };
 
-    console.log(e1, e2, e3);
+    refForTest(e1, e2, e3);
 }
 
 // Type IMaybeArray
@@ -61,27 +63,7 @@ export function fn3() {
     ma3 = { a: 123, b: 'abc' };
     ma3 = [{ a: 123, b: 'abc' }, { a: 456, b: 'def' }];
 
-    console.log(ma1, ma2, ma3);
-}
-
-// Type IJsonSafeValue
-
-declare let jsv1: dTS.IJsonSafeValue;
-declare let jsv2: dTS.IJsonSafeValue;
-
-export function fn4() {
-
-    jsv1 = 'abc';
-    jsv1 = 123;
-    jsv1 = true;
-    jsv1 = null;
-    jsv1 = ['abc', 123, false, null];
-    jsv1 = { a: 'abc', b: 123, c: false, d: null, e: ['abc', 123, false, null], f: { a: 'abc' } };
-
-    jsv2 = ['abc', 123, true, null, ['abc', 123, false, null], { a: 'abc' }];
-    jsv2 = { a: 'abc', b: 123, c: true, d: null, e: ['abc', 123, false, null], f: { a: 'abc' } };
-
-    console.log(jsv1, jsv2);
+    refForTest(ma1, ma2, ma3);
 }
 
 // Type IConstructor
@@ -94,12 +76,12 @@ const c2: dTS.IConstructor<A> = A;
 const a1: unknown = new c1();
 const a2: A = new c2();
 
-console.log(a1, a2);
+refForTest(a1, a2);
 
-// Type IInstanceType
+// Type IInstanceOf
 
 type T1 = dTS.IInstanceOf<typeof A>;
 
 const a3: T1 = new A();
 
-console.log(a3);
+refForTest(a3);

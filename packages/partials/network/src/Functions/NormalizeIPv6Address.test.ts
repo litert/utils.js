@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { normalizeIPv6Address } from './NormalizeIPv6Address';
+import { normalizeIPv6Address } from './NormalizeIPv6Address.js';
 
 NodeTest.describe('Function Network.normalizeIPv6Address', () => {
 

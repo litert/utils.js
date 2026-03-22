@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TimeoutError } from '../Errors';
+import { TimeoutError } from '../Errors.js';
 
 /**
  * The extended options for `withTimeout` function.

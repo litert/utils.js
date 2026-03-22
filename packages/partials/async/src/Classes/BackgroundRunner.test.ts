@@ -1,7 +1,7 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimer from 'node:timers/promises';
-import { BackgroundRunner } from './BackgroundRunner';
+import { sleep } from '../Functions/Sleep.js';
+import { BackgroundRunner } from './BackgroundRunner.js';
 
 NodeTest.describe('Class BackgroundRunner', async () => {
 
@@ -12,7 +12,7 @@ NodeTest.describe('Class BackgroundRunner', async () => {
 
         runner.run(async () => {
             executed = true;
-            await NodeTimer.setTimeout(1);
+            await sleep(1);
         });
 
         NodeAssert.strictEqual(executed, true);
@@ -30,7 +30,7 @@ NodeTest.describe('Class BackgroundRunner', async () => {
             throw new Error('Test error');
         });
 
-        await NodeTimer.setImmediate();
+        await sleep(0);
 
         NodeAssert.strictEqual(lastError instanceof Error && lastError.message === 'Test error', true);
     });
@@ -57,11 +57,11 @@ NodeTest.describe('Class BackgroundRunner', async () => {
 
         runner.runLater(async () => {
             executed = true;
-            await NodeTimer.setTimeout(1);
+            await sleep(1);
         });
 
         NodeAssert.strictEqual(executed, false);
-        await NodeTimer.setTimeout(5);
+        await sleep(5);
 
         NodeAssert.strictEqual(executed, true);
     });
@@ -71,28 +71,28 @@ NodeTest.describe('Class BackgroundRunner', async () => {
         let flag = 0;
         const waitFn1 = async () => {
             flag = 1;
-            await NodeTimer.setTimeout(1);
+            await sleep(1);
         };
 
         const runner = new BackgroundRunner({ waitFn: waitFn1 });
 
         runner.runLater(async () => {
-            await NodeTimer.setTimeout(1);
+            await sleep(1);
         });
 
-        await NodeTimer.setTimeout(10);
+        await sleep(10);
         NodeAssert.strictEqual(flag, 1);
 
         const waitFn2 = async () => {
             flag = 2;
-            await NodeTimer.setTimeout(1);
+            await sleep(1);
         };
 
         runner.runLater(async () => {
-            await NodeTimer.setTimeout(1);
+            await sleep(1);
         }, waitFn2);
 
-        await NodeTimer.setTimeout(10);
+        await sleep(10);
         NodeAssert.strictEqual(flag, 2);
     });
 

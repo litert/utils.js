@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import type { IConstructor } from '@litert/utils-ts-types';
 import { EventEmitter } from 'node:events';
-import { E_BREAKER_OPENED, IBreaker, ISimpleFn } from '../Types';
+import type { IConstructor } from '@litert/utils-ts-types';
+import { E_BREAKER_OPENED, IBreaker, ISimpleFn } from '../Types.js';
 
 /**
  * A manual breaker implementation, which can be used to control the flow of

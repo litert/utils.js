@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { TokenBucketRateLimiter } from './TokenBucketRateLimiter';
+import { TokenBucketRateLimiter } from './TokenBucketRateLimiter.js';
 
 NodeTest.describe('Class TokenBucketRateLimiter', () => {
 

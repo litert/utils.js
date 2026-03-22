@@ -51,8 +51,8 @@ The `ThrottleController` class can be used to throttle an asynchronous function 
 that a function is called at most once in a specified period of time.
 
 ```ts
+import NodeTimers from 'node:timers/promises';
 import { ThrottleController } from '@litert/concurrent';
-import * as NodeTimers from 'node:timers/promises';
 
 const controller = new ThrottleController(
     async (ms: number, v: string): Promise<string> => {
@@ -103,8 +103,8 @@ The `CircuitBreaker` class can be used to control the flow of function calls,
 by automatically open or close the breaker based on the success or failure of the function calls.
 
 ```ts
+import NodeTimers from 'node:timers/promises';
 import { CircuitBreaker } from '@litert/concurrent';
-import * as NodeTimers from 'node:timers/promises';
 
 const breaker = new CircuitBreaker({
     'cooldownTimeMs': 30000, // Cooldown for 30 seconds when opened

@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { isValidMacAddress } from './IsValidMacAddress';
+import { isValidMacAddress } from './IsValidMacAddress.js';
 
 NodeTest.describe('Function Network.isValidMacAddress', () => {
 

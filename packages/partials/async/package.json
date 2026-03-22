@@ -34,10 +34,67 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "type": "module",
   "devDependencies": {
     "@litert/utils-test": "-"
   },
   "peerDependencies": {},
   "ottoia:alias": "partials.async",
-  "access": "public"
+  "access": "public",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./class/AbortTimeoutController": {
+      "default": {
+        "types": "./lib/Classes/AbortTimeoutController.d.ts",
+        "default": "./lib/Classes/AbortTimeoutController.js"
+      }
+    },
+    "./class/BackgroundRunner": {
+      "default": {
+        "types": "./lib/Classes/BackgroundRunner.d.ts",
+        "default": "./lib/Classes/BackgroundRunner.js"
+      }
+    },
+    "./class/FiberController": {
+      "default": {
+        "types": "./lib/Classes/FiberController.d.ts",
+        "default": "./lib/Classes/FiberController.js"
+      }
+    },
+    "./class/PromiseController": {
+      "default": {
+        "types": "./lib/Classes/PromiseController.d.ts",
+        "default": "./lib/Classes/PromiseController.js"
+      }
+    },
+    "./functions/AutoRetry": {
+      "default": {
+        "types": "./lib/Functions/AutoRetry.d.ts",
+        "default": "./lib/Functions/AutoRetry.js"
+      }
+    },
+    "./functions/Sleep": {
+      "default": {
+        "types": "./lib/Functions/Sleep.d.ts",
+        "default": "./lib/Functions/Sleep.js"
+      }
+    },
+    "./functions/WithAbortSignal": {
+      "default": {
+        "types": "./lib/Functions/WithAbortSignal.d.ts",
+        "default": "./lib/Functions/WithAbortSignal.js"
+      }
+    },
+    "./functions/WithTimeout": {
+      "default": {
+        "types": "./lib/Functions/WithTimeout.d.ts",
+        "default": "./lib/Functions/WithTimeout.js"
+      }
+    }
+  }
 }

@@ -24,6 +24,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "type": "module",
   "keywords": [
     "utility",
     "litert",
@@ -34,5 +35,43 @@
   "devDependencies": {},
   "peerDependencies": {},
   "ottoia:alias": "partials.network",
-  "access": "public"
+  "access": "public",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./functions/IsValidIPv4Address": {
+      "default": {
+        "types": "./lib/Functions/IsValidIPv4Address.d.ts",
+        "default": "./lib/Functions/IsValidIPv4Address.js"
+      }
+    },
+    "./functions/IsValidIPv6Address": {
+      "default": {
+        "types": "./lib/Functions/IsValidIPv6Address.d.ts",
+        "default": "./lib/Functions/IsValidIPv6Address.js"
+      }
+    },
+    "./functions/IsValidMacAddress": {
+      "default": {
+        "types": "./lib/Functions/IsValidMacAddress.d.ts",
+        "default": "./lib/Functions/IsValidMacAddress.js"
+      }
+    },
+    "./functions/NormalizeIPv6Address": {
+      "default": {
+        "types": "./lib/Functions/NormalizeIPv6Address.d.ts",
+        "default": "./lib/Functions/NormalizeIPv6Address.js"
+      }
+    },
+    "./functions/ParseIPv6Address": {
+      "default": {
+        "types": "./lib/Functions/ParseIPv6Address.d.ts",
+        "default": "./lib/Functions/ParseIPv6Address.js"
+      }
+    }
+  }
 }

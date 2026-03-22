@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-export * from './Functions/UseValueOr';
-export * from './Functions/TryCatch';
+export * from './Functions/UseValueOr.js';
+export * from './Functions/TryCatch.js';

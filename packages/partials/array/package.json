@@ -24,6 +24,7 @@
   "dependencies": {
     "@litert/utils-ts-types": "-"
   },
+  "type": "module",
   "keywords": [
     "utility",
     "litert",
@@ -36,5 +37,31 @@
   "devDependencies": {},
   "peerDependencies": {},
   "ottoia:alias": "partials.array",
-  "access": "public"
+  "access": "public",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./functions/Deduplicate": {
+      "default": {
+        "types": "./lib/Functions/Deduplicate.d.ts",
+        "default": "./lib/Functions/Deduplicate.js"
+      }
+    },
+    "./functions/ToChunks": {
+      "default": {
+        "types": "./lib/Functions/ToChunks.d.ts",
+        "default": "./lib/Functions/ToChunks.js"
+      }
+    },
+    "./functions/ToDict": {
+      "default": {
+        "types": "./lib/Functions/ToDict.d.ts",
+        "default": "./lib/Functions/ToDict.js"
+      }
+    }
+  }
 }

@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { parseIPv6Address, parseIPv6AddressToUInt16Array } from './ParseIPv6Address';
+import { parseIPv6Address, parseIPv6AddressToUInt16Array } from './ParseIPv6Address.js';
 
 NodeTest.describe('Function Network.parseIPv6Address', () => {
 

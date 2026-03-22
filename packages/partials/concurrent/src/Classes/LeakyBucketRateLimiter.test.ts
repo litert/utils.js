@@ -1,8 +1,8 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimers from 'node:timers/promises';
+import { sleep } from '@litert/utils-async';
 import { autoTick } from '@litert/utils-test';
-import { LeakyBucketRateLimiter } from './LeakyBucketRateLimiter';
+import { LeakyBucketRateLimiter } from './LeakyBucketRateLimiter.js';
 
 NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
 
@@ -63,13 +63,13 @@ NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
         ]));
 
         // wait for 100ms, so the bucket will become empty again.
-        await autoTick(ctx, NodeTimers.setTimeout(100));
+        await autoTick(ctx, sleep(100));
 
         await autoTick(ctx, Promise.all([
             limiter.challenge(),
             limiter.challenge(),
             (async () => {
-                await NodeTimers.setTimeout(100);
+                await sleep(100);
                 await limiter.challenge();
             })(),
         ]));

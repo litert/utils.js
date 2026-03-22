@@ -1,0 +1,31 @@
+{
+  "name": "@litert/utils-examples",
+  "version": "0.1.0",
+  "description": "Usage examples for @litert/utils-* packages (TypeScript)",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "scripts": {
+    "setup": "node setup.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "example:array": "node array/index.ts",
+    "example:async": "node async/index.ts",
+    "example:concurrent": "node concurrent/index.ts",
+    "example:flow-control": "node flow-control/index.ts",
+    "example:network": "node network/index.ts",
+    "example:number": "node number/index.ts",
+    "example:object": "node object/index.ts",
+    "example:string": "node string/index.ts",
+    "example:test": "node --test test/index.ts",
+    "example:ts-types": "node ts-types/index.ts",
+    "examples": "npm run example:array && npm run example:flow-control && npm run example:network && npm run example:number && npm run example:object && npm run example:string && npm run example:async && npm run example:concurrent && npm run example:test && npm run example:ts-types"
+  },
+  "dependencies": {
+    "@litert/utils": "-"
+  },
+  "ottoia:alias": "examples",
+  "devDependencies": {},
+  "peerDependencies": {}
+}

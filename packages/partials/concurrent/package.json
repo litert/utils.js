@@ -36,10 +36,97 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "type": "module",
   "devDependencies": {
     "@litert/utils-test": "-"
   },
   "peerDependencies": {},
   "ottoia:alias": "partials.concurrent",
-  "access": "public"
+  "access": "public",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./class/BatchBuffer": {
+      "default": {
+        "types": "./lib/Classes/BatchBuffer.d.ts",
+        "default": "./lib/Classes/BatchBuffer.js"
+      }
+    },
+    "./class/CircuitBreaker": {
+      "default": {
+        "types": "./lib/Classes/CircuitBreaker.d.ts",
+        "default": "./lib/Classes/CircuitBreaker.js"
+      }
+    },
+    "./class/CountingRateLimiter": {
+      "default": {
+        "types": "./lib/Classes/CountingRateLimiter.d.ts",
+        "default": "./lib/Classes/CountingRateLimiter.js"
+      }
+    },
+    "./class/DebounceController": {
+      "default": {
+        "types": "./lib/Classes/DebounceController.d.ts",
+        "default": "./lib/Classes/DebounceController.js"
+      }
+    },
+    "./class/FiberPool": {
+      "default": {
+        "types": "./lib/Classes/FiberPool.d.ts",
+        "default": "./lib/Classes/FiberPool.js"
+      }
+    },
+    "./class/LeakyBucketRateLimiter": {
+      "default": {
+        "types": "./lib/Classes/LeakyBucketRateLimiter.d.ts",
+        "default": "./lib/Classes/LeakyBucketRateLimiter.js"
+      }
+    },
+    "./class/LeakyBucketRateLimiterManager": {
+      "default": {
+        "types": "./lib/Classes/LeakyBucketRateLimiterManager.d.ts",
+        "default": "./lib/Classes/LeakyBucketRateLimiterManager.js"
+      }
+    },
+    "./class/ManualBreaker": {
+      "default": {
+        "types": "./lib/Classes/ManualBreaker.d.ts",
+        "default": "./lib/Classes/ManualBreaker.js"
+      }
+    },
+    "./class/MemoryMutex": {
+      "default": {
+        "types": "./lib/Classes/MemoryMutex.d.ts",
+        "default": "./lib/Classes/MemoryMutex.js"
+      }
+    },
+    "./class/SlideWindowCounter": {
+      "default": {
+        "types": "./lib/Classes/SlideWindowCounter.d.ts",
+        "default": "./lib/Classes/SlideWindowCounter.js"
+      }
+    },
+    "./class/ThrottleController": {
+      "default": {
+        "types": "./lib/Classes/ThrottleController.d.ts",
+        "default": "./lib/Classes/ThrottleController.js"
+      }
+    },
+    "./class/TokenBucketRateLimiter": {
+      "default": {
+        "types": "./lib/Classes/TokenBucketRateLimiter.d.ts",
+        "default": "./lib/Classes/TokenBucketRateLimiter.js"
+      }
+    },
+    "./class/TokenBucketRateLimiterManager": {
+      "default": {
+        "types": "./lib/Classes/TokenBucketRateLimiterManager.d.ts",
+        "default": "./lib/Classes/TokenBucketRateLimiterManager.js"
+      }
+    }
+  }
 }

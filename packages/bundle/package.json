@@ -38,11 +38,68 @@
     "litert",
     "helper"
   ],
+  "type": "module",
   "devDependencies": {},
   "peerDependencies": {},
   "ottoia:alias": "bundle",
   "engines": {
     "node": ">=18.0.0"
   },
-  "access": "public"
+  "access": "public",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./namespaces/Array": {
+      "default": {
+        "types": "./lib/Namespaces/Array.d.ts",
+        "default": "./lib/Namespaces/Array.js"
+      }
+    },
+    "./namespaces/Async": {
+      "default": {
+        "types": "./lib/Namespaces/Async.d.ts",
+        "default": "./lib/Namespaces/Async.js"
+      }
+    },
+    "./namespaces/Concurrent": {
+      "default": {
+        "types": "./lib/Namespaces/Concurrent.d.ts",
+        "default": "./lib/Namespaces/Concurrent.js"
+      }
+    },
+    "./namespaces/Network": {
+      "default": {
+        "types": "./lib/Namespaces/Network.d.ts",
+        "default": "./lib/Namespaces/Network.js"
+      }
+    },
+    "./namespaces/Number": {
+      "default": {
+        "types": "./lib/Namespaces/Number.d.ts",
+        "default": "./lib/Namespaces/Number.js"
+      }
+    },
+    "./namespaces/Object": {
+      "default": {
+        "types": "./lib/Namespaces/Object.d.ts",
+        "default": "./lib/Namespaces/Object.js"
+      }
+    },
+    "./namespaces/String": {
+      "default": {
+        "types": "./lib/Namespaces/String.d.ts",
+        "default": "./lib/Namespaces/String.js"
+      }
+    },
+    "./namespaces/Test": {
+      "default": {
+        "types": "./lib/Namespaces/Test.d.ts",
+        "default": "./lib/Namespaces/Test.js"
+      }
+    }
+  }
 }

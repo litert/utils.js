@@ -1,8 +1,8 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimer from 'node:timers/promises';
-import { withTimeout } from './WithTimeout';
-import { TimeoutError } from '../Errors';
+import { withTimeout } from './WithTimeout.js';
+import { TimeoutError } from '../Errors.js';
+import { sleep } from './Sleep.js';
 
 NodeTest.describe('Function withTimeout', async () => {
 
@@ -10,7 +10,7 @@ NodeTest.describe('Function withTimeout', async () => {
 
         async function slowTask(): Promise<number> {
 
-            await NodeTimer.setTimeout(100); // Simulate a slow task
+            await sleep(100); // Simulate a slow task
             return 123;
         }
 
@@ -51,7 +51,7 @@ NodeTest.describe('Function withTimeout', async () => {
 
         async function slowFailedTask(): Promise<number> {
 
-            await NodeTimer.setTimeout(100); // Simulate a slow task
+            await sleep(100); // Simulate a slow task
             throw new Error('Task failed');
         }
 
@@ -110,7 +110,7 @@ NodeTest.describe('Function withTimeout', async () => {
 
         async function theTask(): Promise<number> {
 
-            await NodeTimer.setTimeout(10); // Simulate a slow task
+            await sleep(10); // Simulate a slow task
 
             return 12345;
         }
@@ -123,7 +123,7 @@ NodeTest.describe('Function withTimeout', async () => {
 
         async function theTask(): Promise<number> {
 
-            await NodeTimer.setTimeout(10); // Simulate a slow task
+            await sleep(10); // Simulate a slow task
 
             throw new Error('Task failed');
         }
@@ -152,7 +152,7 @@ NodeTest.describe('Function withTimeout', async () => {
 
         async function slowTask(): Promise<number> {
 
-            await NodeTimer.setTimeout(50); // Simulate a slow task
+            await sleep(50); // Simulate a slow task
             return 6789;
         }
 
@@ -170,7 +170,7 @@ NodeTest.describe('Function withTimeout', async () => {
         }
 
         // Wait a bit to ensure the slowTask has completed
-        await NodeTimer.setTimeout(100);
+        await sleep(100);
 
         NodeAssert.strictEqual(collectedError, null);
         NodeAssert.strictEqual(collectedResult, 6789);
@@ -183,7 +183,7 @@ NodeTest.describe('Function withTimeout', async () => {
 
         async function slowFailedTask(): Promise<number> {
 
-            await NodeTimer.setTimeout(50); // Simulate a slow task
+            await sleep(50); // Simulate a slow task
             throw new Error('Slow task failed');
         }
 
@@ -201,7 +201,7 @@ NodeTest.describe('Function withTimeout', async () => {
         }
 
         // Wait a bit to ensure the slowFailedTask has completed
-        await NodeTimer.setTimeout(100);
+        await sleep(100);
 
         NodeAssert.strictEqual(collectedError instanceof Error && (collectedError as Error).message === 'Slow task failed', true);
         NodeAssert.strictEqual(collectedResult, undefined);

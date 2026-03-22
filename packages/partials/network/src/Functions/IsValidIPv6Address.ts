@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { quickParseIPv6Address } from './_internal/IPv6';
+import { quickParseIPv6Address } from './_internal/IPv6.js';
 
 /**
  * Check if a string is a valid IPv6 address.

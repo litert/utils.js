@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { isEmailAddress } from './IsEmailAddress';
+import { isEmailAddress } from './IsEmailAddress.js';
 
 NodeTest.describe('Function String.isEmailAddress', () => {
 

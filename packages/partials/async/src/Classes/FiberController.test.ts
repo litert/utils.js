@@ -1,8 +1,8 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimer from 'node:timers/promises';
-import { FiberController } from './FiberController';
 import { once } from 'node:events';
+import { sleep } from '../Functions/Sleep.js';
+import { FiberController } from './FiberController.js';
 
 NodeTest.describe('Class FiberController', async () => {
 
@@ -12,7 +12,7 @@ NodeTest.describe('Class FiberController', async () => {
         const fc = new FiberController({
             main: async () => {
                 test++;
-                await NodeTimer.setImmediate();
+                await sleep(0);
             }
         });
         NodeAssert.strictEqual(test, 1); // The execution should start immediately
@@ -30,7 +30,7 @@ NodeTest.describe('Class FiberController', async () => {
                 do {
                     ctx.data.count++;
                     await ctx.sleep();
-                    await NodeTimer.setImmediate();
+                    await sleep(0);
                 } while (!ctx.data.stop);
 
             },
@@ -40,7 +40,7 @@ NodeTest.describe('Class FiberController', async () => {
         for (let i = 0; i < 5; i++) {
 
             while (fc.isRunning()) {
-                await NodeTimer.setImmediate();
+                await sleep(0);
             }
             if (fc.isSleeping()) {
                 fc.resume();
@@ -135,7 +135,7 @@ NodeTest.describe('Class FiberController', async () => {
     await NodeTest.it('resume method should return false if the fiber is not sleeping', async () => {
 
         const fc = new FiberController({
-            main: async () => { await NodeTimer.setImmediate(); }
+            main: async () => { await sleep(0); }
         });
 
         NodeAssert.strictEqual(fc.isRunning(), true); // The fiber should be running
@@ -171,7 +171,7 @@ NodeTest.describe('Class FiberController', async () => {
         const fc = new FiberController({
             async main(ctx) {
 
-                await NodeTimer.setImmediate();
+                await sleep(0);
                 v++;
                 await ctx.sleep();
                 v++;
@@ -195,7 +195,7 @@ NodeTest.describe('Class FiberController', async () => {
 
         let v = 0;
         const fc = new FiberController({
-            async main() { await NodeTimer.setImmediate(); }
+            async main() { await sleep(0); }
         });
 
         try {
@@ -224,7 +224,7 @@ NodeTest.describe('Class FiberController', async () => {
         });
 
         NodeAssert.strictEqual(v, 1);
-        await NodeTimer.setImmediate();
+        await sleep(0);
         NodeAssert.strictEqual(v, 1);
 
         if (!fc.isSleeping()) {
@@ -256,7 +256,7 @@ NodeTest.describe('Class FiberController', async () => {
             }
         });
 
-        await NodeTimer.setImmediate();
+        await sleep(0);
 
         fc.abort();
 
@@ -272,7 +272,7 @@ NodeTest.describe('Class FiberController', async () => {
         const fc = new FiberController({
             async main(ctx) {
 
-                await NodeTimer.setImmediate();
+                await sleep(0);
 
                 try {
 

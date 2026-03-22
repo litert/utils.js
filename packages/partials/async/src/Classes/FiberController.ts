@@ -15,7 +15,7 @@
  */
 
 import type * as DTypes from '@litert/utils-ts-types';
-import { PromiseController } from './PromiseController';
+import { PromiseController } from './PromiseController.js';
 
 /**
  * The context of the fiber execution, used to exchanged data between the fiber and the controller.

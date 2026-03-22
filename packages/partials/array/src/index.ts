@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-export * from './Functions/Deduplicate';
-export * from './Functions/ToChunks';
-export * from './Functions/ToDict';
+export * from './Functions/Deduplicate.js';
+export * from './Functions/ToChunks.js';
+export * from './Functions/ToDict.js';

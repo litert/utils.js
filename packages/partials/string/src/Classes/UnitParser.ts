@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { regexpEscape } from '../Functions/RegexpEscape';
+import { regexpEscape } from '../Functions/RegexpEscape.js';
 
 /**
  * The options for the units used in the UnitParser.

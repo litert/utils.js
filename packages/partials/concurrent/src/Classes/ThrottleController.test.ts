@@ -1,7 +1,7 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimer from 'node:timers/promises';
-import { ThrottleController } from './ThrottleController';
+import { sleep } from '@litert/utils-async';
+import { ThrottleController } from './ThrottleController.js';
 
 NodeTest.describe('Class ThrottleController', async () => {
 
@@ -9,7 +9,7 @@ NodeTest.describe('Class ThrottleController', async () => {
 
         const throttler = new ThrottleController(
             async (input: number) => {
-                await NodeTimer.setTimeout(20);
+                await sleep(20);
                 return input * 2;
             },
             (input) => `${input}`,
@@ -30,7 +30,7 @@ NodeTest.describe('Class ThrottleController', async () => {
 
         const throttler = new ThrottleController(
             async (input: number) => {
-                await NodeTimer.setTimeout(20);
+                await sleep(20);
                 throw new Error(`Error in call with input: ${input}`);
             },
             (input) => `${input}`
@@ -54,7 +54,7 @@ NodeTest.describe('Class ThrottleController', async () => {
 
         const throttler = new ThrottleController(
             async (input: number) => {
-                await NodeTimer.setTimeout(20);
+                await sleep(20);
                 return input * 2;
             },
             (input) => `${input}`
@@ -82,7 +82,7 @@ NodeTest.describe('Class ThrottleController', async () => {
 
         const throttler = new ThrottleController(
             async (input: number) => {
-                await NodeTimer.setTimeout(20);
+                await sleep(20);
                 return input * 2;
             },
             null,
@@ -110,7 +110,7 @@ NodeTest.describe('Class ThrottleController', async () => {
 
         const throttler = new ThrottleController(
             async (input: number) => {
-                await NodeTimer.setTimeout(10);
+                await sleep(10);
                 if (input < 100) {
                     return Date.now();
                 }
@@ -157,7 +157,7 @@ NodeTest.describe('Class ThrottleController', async () => {
 
         const fn = ThrottleController.wrap(
             async (input: number) => {
-                await NodeTimer.setTimeout(20);
+                await sleep(20);
                 return input * 2;
             },
             (input) => `${input}`,
@@ -178,7 +178,7 @@ NodeTest.describe('Class ThrottleController', async () => {
 
         const fn = ThrottleController.wrap(
             async (input: number) => {
-                await NodeTimer.setTimeout(20);
+                await sleep(20);
                 throw new Error(`Error in call with input: ${input}`);
             },
             (input) => `${input}`,
@@ -202,7 +202,7 @@ NodeTest.describe('Class ThrottleController', async () => {
 
         const fn = ThrottleController.wrap(
             async (input: number) => {
-                await NodeTimer.setTimeout(10);
+                await sleep(10);
                 if (input < 100) {
                     return Date.now();
                 }

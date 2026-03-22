@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { isValidIPv6Address } from './IsValidIPv6Address';
+import { isValidIPv6Address } from './IsValidIPv6Address.js';
 
 NodeTest.describe('Function Network.isValidIPv6Address', () => {
 

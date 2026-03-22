@@ -1,8 +1,8 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimer from 'node:timers/promises';
-import { ManualBreaker } from './ManualBreaker';
-import { E_BREAKER_OPENED } from '../Types';
+import { sleep } from '@litert/utils-async';
+import { ManualBreaker } from './ManualBreaker.js';
+import { E_BREAKER_OPENED } from '../Types.js';
 
 NodeTest.describe('Class ManualBreaker', async () => {
 
@@ -23,7 +23,7 @@ NodeTest.describe('Class ManualBreaker', async () => {
         const breaker = new ManualBreaker();
 
         breaker.call(() => { return; });
-        await breaker.call(async () => { await NodeTimer.setTimeout(1); });
+        await breaker.call(async () => { await sleep(1); });
     });
 
     await NodeTest.it('should rethrow the same error thrown by calls', async () => {
@@ -68,7 +68,7 @@ NodeTest.describe('Class ManualBreaker', async () => {
 
         breaker.call(() => { return; });
 
-        await breaker.call(async () => { await NodeTimer.setTimeout(1); });
+        await breaker.call(async () => { await sleep(1); });
     });
 
     await NodeTest.it('wrap method should work as expected', async () => {
@@ -76,7 +76,7 @@ NodeTest.describe('Class ManualBreaker', async () => {
         const breaker = new ManualBreaker();
 
         const syncFn = breaker.wrap(() => { return 123; });
-        const asyncFn = breaker.wrap(async () => { await NodeTimer.setTimeout(1); return 456; });
+        const asyncFn = breaker.wrap(async () => { await sleep(1); return 456; });
 
         NodeAssert.strictEqual(syncFn(), 123);
         NodeAssert.strictEqual(await asyncFn(), 456);

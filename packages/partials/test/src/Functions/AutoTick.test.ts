@@ -1,7 +1,7 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimer from 'node:timers/promises';
-import { autoTick } from './AutoTick';
+import NodeTimer from 'node:timers/promises';
+import { autoTick } from './AutoTick.js';
 
 NodeTest.describe('Function autoTick', async () => {
 

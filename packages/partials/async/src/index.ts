@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-export * from './Classes/AbortTimeoutController';
-export * from './Classes/FiberController';
-export * from './Classes/PromiseController';
-export * from './Classes/BackgroundRunner';
-export * from './Functions/WithTimeout';
-export * from './Functions/WithAbortSignal';
-export * from './Functions/AutoRetry';
-export * from './Functions/Sleep';
-export * from './Errors';
-export type * from './Typings';
+export * from './Classes/AbortTimeoutController.js';
+export * from './Classes/FiberController.js';
+export * from './Classes/PromiseController.js';
+export * from './Classes/BackgroundRunner.js';
+export * from './Functions/WithTimeout.js';
+export * from './Functions/WithAbortSignal.js';
+export * from './Functions/AutoRetry.js';
+export * from './Functions/Sleep.js';
+export * from './Errors.js';
+export type * from './Typings.js';

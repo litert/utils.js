@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-export * from './Functions/CopyProperties';
-export * from './Functions/DeepMerge';
-export * from './Functions/GetConstructor';
-export * from './Functions/GetPropertyNames';
-export * from './Functions/HasProperties';
-export * from './Functions/IsSubclassOf';
+export * from './Functions/CopyProperties.js';
+export * from './Functions/DeepMerge.js';
+export * from './Functions/GetConstructor.js';
+export * from './Functions/GetPropertyNames.js';
+export * from './Functions/HasProperties.js';
+export * from './Functions/IsSubclassOf.js';

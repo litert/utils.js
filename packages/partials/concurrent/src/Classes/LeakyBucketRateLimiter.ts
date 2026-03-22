@@ -15,7 +15,7 @@
  */
 
 import type { IConstructor, IFunction, IToPromise } from '@litert/utils-ts-types';
-import { E_RATE_LIMITED, IAsyncRateLimiter } from '../Types';
+import { E_RATE_LIMITED, IAsyncRateLimiter } from '../Types.js';
 import { sleep } from '@litert/utils-async';
 
 /**

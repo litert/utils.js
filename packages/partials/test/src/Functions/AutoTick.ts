@@ -16,43 +16,73 @@
 
 import type { TestContext } from 'node:test';
 
-function immediate(): Promise<void> {
-
-    return new Promise<void>((resolve) => {
-
-        setImmediate(() => {
-
-            resolve();
-        });
-    });
-}
-
 /**
- * This function helps to automatically tick all the timers in a test mocking context while waiting for a promise to
- * settle.
+ * Automatically advances all mocked timers on every event loop tick until the given
+ * promise settles.
  *
- * > WARNING:
- * >
- * > These situations should be used with care:
- * >
- * > - `require('node:timers/promises').setTimeout` with `AbortSignal`, will still count the full timeout duration even
- * >    if the signal is aborted before the timeout. In fact, without this function, the timer will throw an AbortError
- * >    immediately after the signal is aborted.
+ * On each event loop tick, this function calls `ctx.mock.timers.runAll()`, which fires
+ * every currently pending timer at its full scheduled duration. The loop continues until
+ * `asyncTask` resolves or rejects.
  *
- * @param ctx   The test context to use for mocking timers.
- * @param pr    The promise to wait for.
- * @returns  A promise that resolves with the result of the input promise.
+ * @remarks
+ * **Timer mocking must be enabled** before calling this function:
+ * ```ts
+ * ctx.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
+ * ```
+ *
+ * **Abort-signal behavior:** because `runAll()` fires each timer at its full scheduled
+ * duration, the mock clock always counts the entire timer duration — even if the timer is
+ * cancelled early by an `AbortController` signal. Use {@link autoTickMs} instead if you
+ * need the elapsed mock time to reflect the actual abort point.
+ *
+ * @param ctx       The test context from `node:test`, used to drive the mocked timers.
+ * @param asyncTask The async task to run. Can be an already-created `Promise`, or a
+ *                  factory function that returns one. The factory is called immediately.
+ *
+ * @returns A promise that resolves or rejects with the same value as `asyncTask`.
+ *
+ * @example
+ * ```ts
+ * import * as NodeTest from 'node:test';
+ * import NodeTimer from 'node:timers/promises';
+ * import { autoTick } from '@litert/utils-test';
+ *
+ * NodeTest.it('resolves correctly with mocked timers', async (ctx) => {
+ *     ctx.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
+ *
+ *     const result = await autoTick(ctx, async () => {
+ *         await NodeTimer.setTimeout(1000);
+ *         await NodeTimer.setTimeout(2000);
+ *         return 'done';
+ *     });
+ *
+ *     console.log(result); // 'done'
+ *     // The test completes instantly — no real time elapsed
+ * });
+ * ```
  */
-export async function autoTick<T>(ctx: TestContext, pr: Promise<T>): Promise<T> {
+export async function autoTick<T>(
+    ctx: TestContext,
+    asyncTask: Promise<T> | (() => Promise<T>),
+): Promise<T> {
 
-    let done = false;
+    let taskFinished = false;
+
+    let pr = asyncTask instanceof Promise ? asyncTask : asyncTask();
 
     (async () => {
 
-        while (!done) {
+        while (!taskFinished) {
 
             ctx.mock.timers.runAll();
-            await immediate();
+
+            await new Promise<void>((resolve) => {
+
+                setImmediate(() => {
+
+                    resolve();
+                });
+            });
         }
 
     // eslint-disable-next-line no-console
@@ -64,6 +94,6 @@ export async function autoTick<T>(ctx: TestContext, pr: Promise<T>): Promise<T> 
     }
     finally {
 
-        done = true;
+        taskFinished = true;
     }
 }

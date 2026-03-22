@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { AbortedError } from '../Errors';
-import { sleep } from './Sleep';
+import { AbortedError } from '../Errors.js';
+import { sleep } from './Sleep.js';
 
 const DEFAULT_RETRY_DELAY_GENERATOR = compositeRetryDelayGenerator({
     'delayGenerator': createExponentialBackoffDelayGenerator(1000, 2),

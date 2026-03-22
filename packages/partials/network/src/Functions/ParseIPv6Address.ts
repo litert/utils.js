@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { quickParseIPv6Address } from './_internal/IPv6';
+import { quickParseIPv6Address } from './_internal/IPv6.js';
 
 /**
  * Parse an IPv6 address to an array of segments, in hexadecimal format.

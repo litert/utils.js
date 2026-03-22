@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { getConstructor } from './GetConstructor';
+import { getConstructor } from './GetConstructor.js';
 
 NodeTest.describe('Function Object.getConstructor', () => {
 

@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-import { AbortedError } from '../Errors';
+import { AbortedError } from '../Errors.js';
 
 function doSleep(delayMs: number, signal?: AbortSignal): Promise<void> {
+
+    if (signal?.aborted) {
+
+        return Promise.reject(new AbortedError(null));
+    }
 
     return new Promise<void>((resolve, reject) => {
 
@@ -50,6 +55,12 @@ export async function sleep(delayMs: number, signal?: AbortSignal): Promise<void
     if (!Number.isSafeInteger(delayMs) || delayMs < 0) {
 
         throw new TypeError('The delayMs must be a non-negative integer.');
+    }
+
+    if (delayMs === 0) {
+
+        await new Promise<void>((resolve) => setTimeout(resolve, 0));
+        return;
     }
 
     while (delayMs > MAX_SAFE_TIMEOUT) {

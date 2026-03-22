@@ -31,9 +31,18 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "type": "module",
   "dependencies": {},
   "devDependencies": {},
   "peerDependencies": {},
   "ottoia:alias": "partials.ts-types",
-  "access": "public"
+  "access": "public",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    }
+  }
 }

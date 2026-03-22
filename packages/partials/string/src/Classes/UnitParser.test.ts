@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { UnitParser } from './UnitParser';
+import { UnitParser } from './UnitParser.js';
 
 NodeTest.describe('Class UnitParser', () => {
 

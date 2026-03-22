@@ -1,7 +1,7 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { PromiseController } from './PromiseController';
-import { TimeoutError } from '../Errors';
+import { PromiseController } from './PromiseController.js';
+import { TimeoutError } from '../Errors.js';
 
 NodeTest.describe('Class PromiseController', async () => {
 

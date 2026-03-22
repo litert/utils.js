@@ -1,9 +1,9 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import * as NodeTimer from 'node:timers/promises';
+import NodeTimer from 'node:timers/promises';
 import * as TestUtils from '@litert/utils-test';
-import { sleep } from './Sleep';
-import { AbortedError } from '../Errors';
+import { sleep } from './Sleep.js';
+import { AbortedError } from '../Errors.js';
 
 NodeTest.describe('Function sleep', async () => {
 
@@ -100,5 +100,25 @@ NodeTest.describe('Function sleep', async () => {
             () => sleep(Infinity),
             { name: 'TypeError', message: 'The delayMs must be a non-negative integer.' }
         );
+    });
+
+    NodeTest.it('Should throw AbortedError immediately if signal is already aborted', async (ctx) => {
+
+        ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'] });
+
+        const ac = new AbortController();
+        ac.abort();
+
+        const t0 = Date.now();
+
+        try {
+
+            await TestUtils.autoTick(ctx, sleep(100, ac.signal));
+        }
+        catch (e) {
+            NodeAssert.ok(e instanceof AbortedError, 'Error should be an instance of AbortedError');
+        }
+
+        NodeAssert.strictEqual(Date.now() - t0, 0, 'Function should throw immediately');
     });
 });

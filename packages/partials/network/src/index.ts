@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-export * from './Functions/NormalizeIPv6Address';
-export * from './Functions/IsValidIPv6Address';
-export * from './Functions/IsValidIPv4Address';
-export * from './Functions/IsValidMacAddress';
-export * from './Functions/ParseIPv6Address';
+export * from './Functions/NormalizeIPv6Address.js';
+export * from './Functions/IsValidIPv6Address.js';
+export * from './Functions/IsValidIPv4Address.js';
+export * from './Functions/IsValidMacAddress.js';
+export * from './Functions/ParseIPv6Address.js';

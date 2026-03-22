@@ -1,6 +1,6 @@
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { isSubclassOf } from './IsSubclassOf';
+import { isSubclassOf } from './IsSubclassOf.js';
 
 NodeTest.describe('Function Object.isSubclassOf', () => {
 

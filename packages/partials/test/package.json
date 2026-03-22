@@ -35,7 +35,28 @@
   "devDependencies": {
     "@litert/utils-ts-types": "-"
   },
+  "type": "module",
   "peerDependencies": {},
   "ottoia:alias": "partials.utils",
-  "access": "public"
+  "access": "public",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./functions/AutoTick": {
+      "default": {
+        "types": "./lib/Functions/AutoTick.d.ts",
+        "default": "./lib/Functions/AutoTick.js"
+      }
+    },
+    "./functions/AutoTickMs": {
+      "default": {
+        "types": "./lib/Functions/AutoTickMs.d.ts",
+        "default": "./lib/Functions/AutoTickMs.js"
+      }
+    }
+  }
 }

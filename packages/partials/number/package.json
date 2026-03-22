@@ -28,7 +28,28 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "type": "module",
   "peerDependencies": {},
   "ottoia:alias": "partials.number",
-  "access": "public"
+  "access": "public",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./class/UnitConverter": {
+      "default": {
+        "types": "./lib/Classes/UnitConverter.d.ts",
+        "default": "./lib/Classes/UnitConverter.js"
+      }
+    },
+    "./functions/RandomBetween": {
+      "default": {
+        "types": "./lib/Functions/RandomBetween.d.ts",
+        "default": "./lib/Functions/RandomBetween.js"
+      }
+    }
+  }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AbortedError } from '../Errors';
+import { AbortedError } from '../Errors.js';
 
 /**
  * The extended options for `withAbortSignal` function.

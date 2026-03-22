@@ -22,19 +22,6 @@ npm i @litert/utils-ts-types --save
 
 ## Usage
 
-### Type `IJsonSafeValue`
-
-The `IJsonSafeValue` type is a TypeScript type that express a JSON safe value, which could be safely passed to
-`JSON.stringify`, and may be returned by `JSON.parse`.
-
-Thus, only the following types are allowed:
-
-- Basic Types: `string`, `number`, `boolean`, `null`
-- Array of JSON safe values
-- Object with string keys and JSON safe values
-
-Note that `undefined`, `function`, `symbol`, `bigint` and other non-JSON safe types are not allowed.
-
 ### Type `IObject`
 
 The `IObject` type is a type stands for any object values, usefully in generic constraints.

@@ -34,8 +34,29 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "type": "module",
   "devDependencies": {},
   "peerDependencies": {},
   "ottoia:alias": "partials.flow-control",
-  "access": "public"
+  "access": "public",
+  "exports": {
+    ".": {
+      "default": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    },
+    "./functions/TryCatch": {
+      "default": {
+        "types": "./lib/Functions/TryCatch.d.ts",
+        "default": "./lib/Functions/TryCatch.js"
+      }
+    },
+    "./functions/UseValueOr": {
+      "default": {
+        "types": "./lib/Functions/UseValueOr.d.ts",
+        "default": "./lib/Functions/UseValueOr.js"
+      }
+    }
+  }
 }

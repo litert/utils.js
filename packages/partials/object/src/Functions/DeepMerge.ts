@@ -17,7 +17,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { IDict, IObject } from '@litert/utils-ts-types';
-import { getPropertyNames } from './GetPropertyNames';
+import { getPropertyNames } from './GetPropertyNames.js';
 
 export type IMergeArray<T1 extends any[], T2 extends any[]> = T1[0] extends IObject ?
     T2[0] extends IObject ?
