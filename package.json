@@ -25,8 +25,8 @@
   "license": "Apache-2.0",
   "description": "",
   "devDependencies": {
-    "@commitlint/cli": "^19.6.1",
-    "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@litert/eslint-plugin-rules": "^0.3.1",
     "@litert/ottoia": "^0.4.5",
     "@types/node": "^22.10.2",

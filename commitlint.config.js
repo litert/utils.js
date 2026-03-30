@@ -7,7 +7,11 @@ module.exports = {
             'feat',
             'test',
             'deprecate',
-            'build'
+            'build',
+            'chore',
+            'doc',
+            'lint',
+            'refactor',
         ]],
         'scope-enum': [2, 'always', [
             'pkg:array',
@@ -20,12 +24,12 @@ module.exports = {
             'pkg:string',
             'pkg:test',
             'pkg:ts-types',
-            'deps',
-            'doc',
-            'lint',
-            'project'
         ]],
-        'scope-empty': [2, 'never'],
+        'scope-case': [2, 'always', {
+            'cases': ['lower-case'],
+            'delimiters': [':'],
+        }],
+        'scope-empty': [0, 'never'],
         'subject-min-length': [2, 'always', 5],
         'subject-max-length': [2, 'always', 50],
     }
