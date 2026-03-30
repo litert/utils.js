@@ -1,28 +1,15 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { sleep } from '@litert/utils-async';
 import { CircuitBreaker } from './CircuitBreaker.js';
-import { E_BREAKER_OPENED } from '../Types.js';
+import * as Errors from '../Errors.js';
 
-NodeTest.describe('Class CircuitBreaker', async () => {
+NodeTest.describe('Module Concurrent - Class CircuitBreaker', async () => {
 
-    NodeTest.it('should throw errors if option values are invalid', () => {
+    // ─── Black-Box: Main Flow ────────────────────────────
 
-        for (const invalidValue of [0, -1, 1.5, 'foo', {}, [], true, false]) {
-
-            NodeAssert.throws(() => { new CircuitBreaker({ cooldownTimeMs: invalidValue as number }); });
-            NodeAssert.throws(() => { new CircuitBreaker({ breakThreshold: invalidValue as number }); });
-            NodeAssert.throws(() => { new CircuitBreaker({ warmupThreshold: invalidValue as number }); });
-        }
-
-        for (const invalidValue of [0, -1, 1.5, 'foo', {}, [], true, false]) {
-
-            NodeAssert.throws(() => { new CircuitBreaker({ isFailure: invalidValue as any }); });
-            NodeAssert.throws(() => { new CircuitBreaker({ errorCtorOnOpen: invalidValue as any }); });
-        }
-    });
-
-    NodeTest.it('breaker should trigger event opened once opened', () => {
+    NodeTest.it('B-M-00001: Breaker should trigger event opened once opened', () => {
 
         const b = new CircuitBreaker({});
         let evOpened = 0;
@@ -35,7 +22,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(evOpened, 1);
     });
 
-    NodeTest.it('breaker should trigger event closed once closed', () => {
+    NodeTest.it('B-M-00002: Breaker should trigger event closed once closed', () => {
 
         const b = new CircuitBreaker({});
         let evClosed = 0;
@@ -53,7 +40,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(evClosed, 1);
     });
 
-    await NodeTest.it('breaker should keep closed if no error occurred', async () => {
+    await NodeTest.it('B-M-00003: Breaker should keep closed if no error occurred', async () => {
 
         const FAIL_THRESHOLD = 3;
 
@@ -94,7 +81,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(breaker.isClosed(), true);
     });
 
-    await NodeTest.it('breaker should ignore some errors by isFailure callback', async () => {
+    await NodeTest.it('B-M-00004: Breaker should ignore some errors by isFailure callback', async () => {
 
         class MyError extends Error { }
 
@@ -136,7 +123,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(breaker.isOpened(), true);
     });
 
-    await NodeTest.it('breaker should become opened after too many failures', async () => {
+    await NodeTest.it('B-M-00005: Breaker should become opened after too many failures', async () => {
 
         const FAIL_THRESHOLD = 3;
 
@@ -160,7 +147,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(breaker.isHalfOpened(), false);
         NodeAssert.strictEqual(breaker.isClosed(), false);
 
-        NodeAssert.throws(() => { breaker.call(syncFn); }, E_BREAKER_OPENED);
+        NodeAssert.throws(() => { breaker.call(syncFn); }, Errors.E_BREAKER_OPENED);
 
         const asyncFn = async (): Promise<string> => { throw new Error('Service failed'); };
         const asyncBreaker = new CircuitBreaker({
@@ -185,10 +172,10 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(asyncBreaker.isHalfOpened(), false);
         NodeAssert.strictEqual(asyncBreaker.isClosed(), false);
 
-        await NodeAssert.rejects(async () => { await asyncBreaker.call(asyncFn); }, E_BREAKER_OPENED);
+        await NodeAssert.rejects(async () => { await asyncBreaker.call(asyncFn); }, Errors.E_BREAKER_OPENED);
     });
 
-    await NodeTest.it('isOpen method should return false after cooldown', async (ctx) => {
+    await NodeTest.it('B-M-00006: IsOpen method should return false after cooldown', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date'] });
 
@@ -206,7 +193,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(breaker.isOpened(), false);
     });
 
-    await NodeTest.it('isHalfOpen method return true after cooldown', async (ctx) => {
+    await NodeTest.it('B-M-00007: IsHalfOpen method return true after cooldown', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date'] });
 
@@ -227,7 +214,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(breaker.isOpened(), false);
     });
 
-    await NodeTest.it('"until" parameter should control the cooldown time', async (ctx) => {
+    await NodeTest.it('B-M-00008: "Until" parameter should control the cooldown time', async (ctx) => {
         ctx.mock.timers.enable({ apis: ['Date'] });
 
         const breaker = new CircuitBreaker({
@@ -253,7 +240,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(breaker.isHalfOpened(), true);
     });
 
-    await NodeTest.it('breaker should become HALF_OPENED after a cooldown', async (ctx) => {
+    await NodeTest.it('B-M-00009: Breaker should become HALF_OPENED after a cooldown', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date'] });
 
@@ -273,7 +260,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(breaker.isHalfOpened(), true);
     });
 
-    await NodeTest.it('sufficient successful calls should close breaker under HALF_OPENED', async (ctx) => {
+    await NodeTest.it('B-M-00010: Sufficient successful calls should close breaker under HALF_OPENED', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'] });
 
@@ -315,7 +302,46 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(breaker.isHalfOpened(), false);
     });
 
-    await NodeTest.it('any failed call should open the breaker again under HALF_OPENED', async (ctx) => {
+    NodeTest.it('B-M-00011: Wrap method should use the same breaker', () => {
+
+        const fn = () => { return 'ok'; };
+
+        const breaker = new CircuitBreaker({
+            breakThreshold: 3,
+            cooldownTimeMs: 1000,
+            warmupThreshold: 2,
+        });
+
+        const wrappedFn = breaker.wrap(fn);
+
+        NodeAssert.strictEqual(breaker.call(fn), 'ok');
+        NodeAssert.strictEqual(wrappedFn(), 'ok');
+
+        breaker.open();
+
+        NodeAssert.throws(() => { breaker.call(fn); }, Errors.E_BREAKER_OPENED);
+        NodeAssert.throws(() => { wrappedFn(); }, Errors.E_BREAKER_OPENED);
+    });
+
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    NodeTest.it('B-F-00001: Should throw errors if option values are invalid', () => {
+
+        for (const invalidValue of [0, -1, 1.5, 'foo', {}, [], true, false]) {
+
+            NodeAssert.throws(() => { new CircuitBreaker({ cooldownTimeMs: invalidValue as number }); });
+            NodeAssert.throws(() => { new CircuitBreaker({ breakThreshold: invalidValue as number }); });
+            NodeAssert.throws(() => { new CircuitBreaker({ warmupThreshold: invalidValue as number }); });
+        }
+
+        for (const invalidValue of [0, -1, 1.5, 'foo', {}, [], true, false]) {
+
+            NodeAssert.throws(() => { new CircuitBreaker({ isFailure: invalidValue as any }); });
+            NodeAssert.throws(() => { new CircuitBreaker({ errorCtorOnOpen: invalidValue as any }); });
+        }
+    });
+
+    await NodeTest.it('B-F-00002: Any failed call should open the breaker again under HALF_OPENED', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'] });
 
@@ -340,7 +366,9 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(breaker.isOpened(), true);
     });
 
-    await NodeTest.it('only the same batch of warmup calls should make breaker closed', async (ctx) => {
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    await NodeTest.it('B-E-00001: Only the same batch of warmup calls should make breaker closed', async (ctx) => {
 
         // This is to ensure that if partial warmup calls failed and opened the breaker again,
         // but the other partial calls are still running until the next warmup batch starts,
@@ -403,28 +431,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
         NodeAssert.strictEqual(prevBatchCallDone, 2);
     });
 
-    NodeTest.it('wrap method should use the same breaker', () => {
-
-        const fn = () => { return 'ok'; };
-
-        const breaker = new CircuitBreaker({
-            breakThreshold: 3,
-            cooldownTimeMs: 1000,
-            warmupThreshold: 2,
-        });
-
-        const wrappedFn = breaker.wrap(fn);
-
-        NodeAssert.strictEqual(breaker.call(fn), 'ok');
-        NodeAssert.strictEqual(wrappedFn(), 'ok');
-
-        breaker.open();
-
-        NodeAssert.throws(() => { breaker.call(fn); }, E_BREAKER_OPENED);
-        NodeAssert.throws(() => { wrappedFn(); }, E_BREAKER_OPENED);
-    });
-
-    await NodeTest.it('only limited calls should be allowed under HALF_OPENED', async (ctx) => {
+    await NodeTest.it('B-E-00002: Only limited calls should be allowed under HALF_OPENED', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'] });
 
@@ -448,7 +455,7 @@ NodeTest.describe('Class CircuitBreaker', async () => {
             promises.push(breaker.call(() => sleep(10)));
         }
 
-        NodeAssert.throws(() => { breaker.call(() => { }); }, E_BREAKER_OPENED);
+        NodeAssert.throws(() => { breaker.call(() => { }); }, Errors.E_BREAKER_OPENED);
 
         ctx.mock.timers.tick(10);
         await Promise.all(promises);

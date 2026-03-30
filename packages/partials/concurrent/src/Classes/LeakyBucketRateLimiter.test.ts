@@ -1,12 +1,15 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { sleep } from '@litert/utils-async';
 import { autoTick } from '@litert/utils-test';
 import { LeakyBucketRateLimiter } from './LeakyBucketRateLimiter.js';
 
-NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
+NodeTest.describe('Module Concurrent - Class LeakyBucketRateLimiter', async () => {
 
-    await NodeTest.it('should not wait if the bucket is empty', async (ctx) => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    await NodeTest.it('B-M-00001: Should not wait if the bucket is empty', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 10000 });
 
@@ -22,7 +25,7 @@ NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
         NodeAssert.strictEqual(Date.now() - start, 0);
     });
 
-    await NodeTest.it('should wait enough time to process each task', async (ctx) => {
+    await NodeTest.it('B-M-00002: Should wait enough time to process each task', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 0 });
 
@@ -84,7 +87,7 @@ NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
         });
     });
 
-    await NodeTest.it('call method should work as same as challenge', async (ctx) => {
+    await NodeTest.it('B-M-00003: Call method should work as same as challenge', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 0 });
 
@@ -119,7 +122,7 @@ NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
         NodeAssert.strictEqual(Date.now() - start, 200);
     });
 
-    await NodeTest.it('wrap method should make wrapped function works like method call', async (ctx) => {
+    await NodeTest.it('B-M-00004: Wrap method should make wrapped function works like method call', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 0 });
 
@@ -156,7 +159,76 @@ NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
         NodeAssert.strictEqual(Date.now() - start, 200);
     });
 
-    await NodeTest.it('test for larger capacity', async (ctx) => {
+    await NodeTest.it('B-M-00005: Reset method should remove blocking', async (ctx) => {
+
+        ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 10000 });
+
+        const limiter = new LeakyBucketRateLimiter({
+            capacity: 2,
+            leakIntervalMs: 100,
+        });
+
+        const start = Date.now();
+
+        const prAllowed: Array<Promise<void>> = [];
+
+        prAllowed.push(limiter.challenge());
+        prAllowed.push(limiter.challenge());
+        NodeAssert.strictEqual(limiter.isBlocking(), true);
+        prAllowed.push(NodeAssert.rejects(limiter.challenge()));
+
+        limiter.reset();
+
+        prAllowed.push(limiter.challenge());
+        prAllowed.push(limiter.challenge());
+        prAllowed.push(NodeAssert.rejects(limiter.challenge()));
+
+        await autoTick(ctx, Promise.all(prAllowed));
+
+        NodeAssert.strictEqual(Date.now() - start, 100);
+    });
+
+    await NodeTest.it('B-M-00006: IsIdle should return true when bucket is idle and false when blocking', async (ctx) => {
+
+        ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 0 });
+
+        const limiter = new LeakyBucketRateLimiter({
+            capacity: 2,
+            leakIntervalMs: 100,
+        });
+
+        NodeAssert.strictEqual(limiter.isIdle(), true);
+
+        limiter.challenge(); // not awaited — bucket is now scheduled
+        NodeAssert.strictEqual(limiter.isIdle(), false);
+    });
+
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    NodeTest.it('B-F-00001: Should throw error if any option value is invalid', () => {
+
+        for (const v of [ -1, 0, 1.5, NaN, 1n, Symbol('sss'), Infinity, -Infinity, '1', {}, [], true, false ]) {
+
+            NodeAssert.throws(() => {
+
+                new LeakyBucketRateLimiter({
+                    capacity: v as unknown as number,
+                    leakIntervalMs: 1000,
+                });
+            });
+            NodeAssert.throws(() => {
+
+                new LeakyBucketRateLimiter({
+                    capacity: 123,
+                    leakIntervalMs: v as unknown as number,
+                });
+            });
+        }
+    });
+
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    await NodeTest.it('B-E-00001: Test for larger capacity', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 0 });
 
@@ -187,55 +259,5 @@ NodeTest.describe('Class LeakyBucketRateLimiter', async () => {
 
         NodeAssert.strictEqual(Date.now() - start, 800);
 
-    });
-
-    await NodeTest.it('reset method should remove blocking', async (ctx) => {
-
-        ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 10000 });
-
-        const limiter = new LeakyBucketRateLimiter({
-            capacity: 2,
-            leakIntervalMs: 100,
-        });
-
-        const start = Date.now();
-
-        const prAllowed: Array<Promise<void>> = [];
-
-        prAllowed.push(limiter.challenge());
-        prAllowed.push(limiter.challenge());
-        NodeAssert.strictEqual(limiter.isBlocking(), true);
-        prAllowed.push(NodeAssert.rejects(limiter.challenge()));
-
-        limiter.reset();
-
-        prAllowed.push(limiter.challenge());
-        prAllowed.push(limiter.challenge());
-        prAllowed.push(NodeAssert.rejects(limiter.challenge()));
-
-        await autoTick(ctx, Promise.all(prAllowed));
-
-        NodeAssert.strictEqual(Date.now() - start, 100);
-    });
-
-    NodeTest.it('should throw error if any option value is invalid', () => {
-
-        for (const v of [ -1, 0, 1.5, NaN, 1n, Symbol('sss'), Infinity, -Infinity, '1', {}, [], true, false ]) {
-
-            NodeAssert.throws(() => {
-
-                new LeakyBucketRateLimiter({
-                    capacity: v as unknown as number,
-                    leakIntervalMs: 1000,
-                });
-            });
-            NodeAssert.throws(() => {
-
-                new LeakyBucketRateLimiter({
-                    capacity: 123,
-                    leakIntervalMs: v as unknown as number,
-                });
-            });
-        }
     });
 });

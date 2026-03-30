@@ -1,10 +1,13 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { MemoryMutex, E_LOCK_FAILED } from './MemoryMutex.js';
 
-NodeTest.describe('Class MemoryMutex', async () => {
+NodeTest.describe('Module Concurrent - Class MemoryMutex', async () => {
 
-    NodeTest.it('Option "reentrant" should be set correctly', () => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    NodeTest.it('B-M-00001: Option "reentrant" should be set correctly', () => {
 
         NodeAssert.strictEqual(new MemoryMutex({ reentrant: true }).reentrant, true);
         NodeAssert.strictEqual(new MemoryMutex({ reentrant: false }).reentrant, false);
@@ -12,7 +15,7 @@ NodeTest.describe('Class MemoryMutex', async () => {
         NodeAssert.strictEqual(new MemoryMutex().reentrant, false);
     });
 
-    NodeTest.it('New shared mutex should use the same reentrant option', () => {
+    NodeTest.it('B-M-00002: New shared mutex should use the same reentrant option', () => {
 
         NodeAssert.strictEqual(new MemoryMutex({ reentrant: true }).share().reentrant, true);
         NodeAssert.strictEqual(new MemoryMutex({ reentrant: false }).share().reentrant, false);
@@ -20,7 +23,7 @@ NodeTest.describe('Class MemoryMutex', async () => {
         NodeAssert.strictEqual(new MemoryMutex().share().reentrant, false);
     });
 
-    NodeTest.it('A non-reentrant mutex should be able to lock and unlock', () => {
+    NodeTest.it('B-M-00003: A non-reentrant mutex should be able to lock and unlock', () => {
 
         const mutex = new MemoryMutex();
 
@@ -34,23 +37,7 @@ NodeTest.describe('Class MemoryMutex', async () => {
         NodeAssert.strictEqual(mutex.unlock(), false);
     });
 
-    NodeTest.it('A reentrant mutex should allow reacquiring the lock', () => {
-
-        const mutex = new MemoryMutex({ reentrant: true });
-
-        NodeAssert.strictEqual(mutex.lock(), true);
-        NodeAssert.strictEqual(mutex.isLocked(), true);
-        NodeAssert.strictEqual(mutex.lock(), true, 'Locking again should succeed');
-        NodeAssert.strictEqual(mutex.isLocked(), true);
-        NodeAssert.strictEqual(mutex.unlock(), true);
-        NodeAssert.strictEqual(mutex.unlock(), false);
-        NodeAssert.strictEqual(mutex.isLocked(), false);
-        NodeAssert.strictEqual(mutex.unlock(), false);
-        NodeAssert.strictEqual(mutex.isLocked(), false);
-        NodeAssert.strictEqual(mutex.unlock(), false);
-    });
-
-    NodeTest.it('Two non-shared mutex should be lockable independently', () => {
+    NodeTest.it('B-M-00004: Two non-shared mutex should be lockable independently', () => {
 
         const mutex1 = new MemoryMutex();
         const mutex2 = new MemoryMutex();
@@ -73,33 +60,7 @@ NodeTest.describe('Class MemoryMutex', async () => {
         NodeAssert.strictEqual(mutex2.unlock(), false);
     });
 
-    NodeTest.it('Two shared mutex should share the mutex state', () => {
-
-        const mutex1 = new MemoryMutex();
-        const mutex2 = mutex1.share();
-
-        NodeAssert.strictEqual(mutex1.lock(), true);
-        NodeAssert.strictEqual(mutex2.lock(), false);
-        NodeAssert.strictEqual(mutex1.isLocked(), true);
-        NodeAssert.strictEqual(mutex2.isLocked(), false);
-        NodeAssert.strictEqual(mutex1.lock(), false);
-        NodeAssert.strictEqual(mutex2.lock(), false);
-        NodeAssert.strictEqual(mutex1.isLocked(), true);
-        NodeAssert.strictEqual(mutex2.isLocked(), false);
-        NodeAssert.strictEqual(mutex2.unlock(), false);
-        NodeAssert.strictEqual(mutex1.unlock(), true);
-        NodeAssert.strictEqual(mutex1.isLocked(), false);
-        NodeAssert.strictEqual(mutex2.isLocked(), false);
-        NodeAssert.strictEqual(mutex2.unlock(), false);
-        NodeAssert.strictEqual(mutex1.unlock(), false);
-        NodeAssert.strictEqual(mutex2.unlock(), false);
-    });
-
-    NodeTest.it('Two shared reentrant mutex should share the mutex state', () => {
-
-    });
-
-    NodeTest.it('Method run should execute a synchronous function', () => {
+    NodeTest.it('B-M-00005: Method run should execute a synchronous function', () => {
 
         const mutex = new MemoryMutex();
         let executed = false;
@@ -114,7 +75,7 @@ NodeTest.describe('Class MemoryMutex', async () => {
         NodeAssert.strictEqual(mutex.isLocked(), false);
     });
 
-    NodeTest.it('Method run should execute an asynchronous function', async () => {
+    NodeTest.it('B-M-00006: Method run should execute an asynchronous function', async () => {
 
         const mutex = new MemoryMutex();
         let executed = false;
@@ -130,7 +91,105 @@ NodeTest.describe('Class MemoryMutex', async () => {
         NodeAssert.strictEqual(mutex.isLocked(), false);
     });
 
-    NodeTest.it('Method run should unlock the mutex if synchronous function throws', () => {
+    NodeTest.it('B-M-00007: Method run should return the result of the function', () => {
+
+        const mutex = new MemoryMutex();
+
+        const ret = mutex.run(() => 123);
+
+        NodeAssert.strictEqual(ret, 123);
+    });
+
+    NodeTest.it('B-M-00008: Method run should return the result of the async function', async () => {
+
+        const mutex = new MemoryMutex();
+
+        const ret = await mutex.run(async () => 123);
+
+        NodeAssert.strictEqual(ret, 123);
+    });
+
+    NodeTest.it('B-M-00009: Method wrap should return a function that executes with lock', () => {
+
+        const mutex = new MemoryMutex();
+        let executed = false;
+
+        const wrapped = mutex.wrap(() => {
+
+            NodeAssert.strictEqual(mutex.isLocked(), true);
+            executed = true;
+        });
+
+        wrapped();
+
+        NodeAssert.strictEqual(executed, true);
+        NodeAssert.strictEqual(mutex.isLocked(), false);
+    });
+
+    NodeTest.it('B-M-00010: Method wrap should pass arguments to the wrapped function', () => {
+
+        const mutex = new MemoryMutex();
+        let executed = false;
+
+        const wrapped = mutex.wrap((a: number, b: number) => {
+
+            NodeAssert.strictEqual(mutex.isLocked(), true);
+            executed = true;
+            return a + b;
+        });
+
+        const ret = wrapped(1, 2);
+
+        NodeAssert.strictEqual(executed, true);
+        NodeAssert.strictEqual(ret, 3);
+        NodeAssert.strictEqual(mutex.isLocked(), false);
+    });
+
+    NodeTest.it('B-M-00011: Method wrap should work with async functions', async () => {
+
+        const mutex = new MemoryMutex();
+        let executed = false;
+
+        const wrapped = mutex.wrap(async () => {
+
+            NodeAssert.strictEqual(mutex.isLocked(), true);
+            await new Promise((resolve) => setTimeout(resolve, 10));
+            executed = true;
+            return 123;
+        });
+
+        const ret = await wrapped();
+
+        NodeAssert.strictEqual(executed, true);
+        NodeAssert.strictEqual(ret, 123);
+        NodeAssert.strictEqual(mutex.isLocked(), false);
+    });
+
+    NodeTest.it('B-M-00012: Method wrap should preserve execution context', () => {
+
+        const mutex = new MemoryMutex();
+
+        class TestClass {
+
+            public value = 123;
+
+            public method() {
+                return this.value;
+            }
+        }
+
+        const obj = new TestClass();
+        obj.value = 456;
+
+        const wrapped = mutex.wrap(obj.method.bind(obj));
+
+        const ret = wrapped();
+        NodeAssert.strictEqual(ret, obj.value);
+    });
+
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    NodeTest.it('B-F-00001: Method run should unlock the mutex if synchronous function throws', () => {
 
         const mutex = new MemoryMutex();
 
@@ -147,7 +206,7 @@ NodeTest.describe('Class MemoryMutex', async () => {
         NodeAssert.strictEqual(mutex.isLocked(), false);
     });
 
-    NodeTest.it('Method run should unlock the mutex if asynchronous function throws', async () => {
+    NodeTest.it('B-F-00002: Method run should unlock the mutex if asynchronous function throws', async () => {
 
         const mutex = new MemoryMutex();
 
@@ -164,7 +223,7 @@ NodeTest.describe('Class MemoryMutex', async () => {
         NodeAssert.strictEqual(mutex.isLocked(), false);
     });
 
-    NodeTest.it('Method run should throw E_LOCK_FAILED if lock is already held', () => {
+    NodeTest.it('B-F-00003: Method run should throw E_LOCK_FAILED if lock is already held', () => {
 
         const mutex1 = new MemoryMutex();
         const mutex2 = mutex1.share();
@@ -203,107 +262,11 @@ NodeTest.describe('Class MemoryMutex', async () => {
         });
     });
 
-    NodeTest.it('Method run should return the result of the function', () => {
-
-        const mutex = new MemoryMutex();
-
-        const ret = mutex.run(() => 123);
-
-        NodeAssert.strictEqual(ret, 123);
-    });
-
-    NodeTest.it('Method run should return the result of the async function', async () => {
-
-        const mutex = new MemoryMutex();
-
-        const ret = await mutex.run(async () => 123);
-
-        NodeAssert.strictEqual(ret, 123);
-    });
-
-    NodeTest.it('Method wrap should return a function that executes with lock', () => {
-
-        const mutex = new MemoryMutex();
-        let executed = false;
-
-        const wrapped = mutex.wrap(() => {
-
-            NodeAssert.strictEqual(mutex.isLocked(), true);
-            executed = true;
-        });
-
-        wrapped();
-
-        NodeAssert.strictEqual(executed, true);
-        NodeAssert.strictEqual(mutex.isLocked(), false);
-    });
-
-    NodeTest.it('Method wrap should pass arguments to the wrapped function', () => {
-
-        const mutex = new MemoryMutex();
-        let executed = false;
-
-        const wrapped = mutex.wrap((a: number, b: number) => {
-
-            NodeAssert.strictEqual(mutex.isLocked(), true);
-            executed = true;
-            return a + b;
-        });
-
-        const ret = wrapped(1, 2);
-
-        NodeAssert.strictEqual(executed, true);
-        NodeAssert.strictEqual(ret, 3);
-        NodeAssert.strictEqual(mutex.isLocked(), false);
-    });
-
-    NodeTest.it('Method wrap should work with async functions', async () => {
-
-        const mutex = new MemoryMutex();
-        let executed = false;
-
-        const wrapped = mutex.wrap(async () => {
-
-            NodeAssert.strictEqual(mutex.isLocked(), true);
-            await new Promise((resolve) => setTimeout(resolve, 10));
-            executed = true;
-            return 123;
-        });
-
-        const ret = await wrapped();
-
-        NodeAssert.strictEqual(executed, true);
-        NodeAssert.strictEqual(ret, 123);
-        NodeAssert.strictEqual(mutex.isLocked(), false);
-    });
-
-    NodeTest.it('Method wrap should preserve execution context', () => {
-
-        const mutex = new MemoryMutex();
-
-        class TestClass {
-
-            public value = 123;
-
-            public method() {
-                return this.value;
-            }
-        }
-
-        const obj = new TestClass();
-        obj.value = 456;
-
-        const wrapped = mutex.wrap(obj.method.bind(obj));
-        
-        const ret = wrapped();
-        NodeAssert.strictEqual(ret, obj.value);
-    });
-
-    NodeTest.it('Method wrap should throw E_LOCK_FAILED if lock is already held', () => {
+    NodeTest.it('B-F-00004: Method wrap should throw E_LOCK_FAILED if lock is already held', () => {
 
         const mutex1 = new MemoryMutex();
         const mutex2 = mutex1.share();
-        
+
         mutex1.lock();
 
         const wrapped = mutex2.wrap(() => {
@@ -313,5 +276,49 @@ NodeTest.describe('Class MemoryMutex', async () => {
         NodeAssert.throws(() => {
             wrapped();
         }, E_LOCK_FAILED);
+    });
+
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    NodeTest.it('B-E-00001: A reentrant mutex should allow reacquiring the lock', () => {
+
+        const mutex = new MemoryMutex({ reentrant: true });
+
+        NodeAssert.strictEqual(mutex.lock(), true);
+        NodeAssert.strictEqual(mutex.isLocked(), true);
+        NodeAssert.strictEqual(mutex.lock(), true, 'Locking again should succeed');
+        NodeAssert.strictEqual(mutex.isLocked(), true);
+        NodeAssert.strictEqual(mutex.unlock(), true);
+        NodeAssert.strictEqual(mutex.unlock(), false);
+        NodeAssert.strictEqual(mutex.isLocked(), false);
+        NodeAssert.strictEqual(mutex.unlock(), false);
+        NodeAssert.strictEqual(mutex.isLocked(), false);
+        NodeAssert.strictEqual(mutex.unlock(), false);
+    });
+
+    NodeTest.it('B-E-00002: Two shared mutex should share the mutex state', () => {
+
+        const mutex1 = new MemoryMutex();
+        const mutex2 = mutex1.share();
+
+        NodeAssert.strictEqual(mutex1.lock(), true);
+        NodeAssert.strictEqual(mutex2.lock(), false);
+        NodeAssert.strictEqual(mutex1.isLocked(), true);
+        NodeAssert.strictEqual(mutex2.isLocked(), false);
+        NodeAssert.strictEqual(mutex1.lock(), false);
+        NodeAssert.strictEqual(mutex2.lock(), false);
+        NodeAssert.strictEqual(mutex1.isLocked(), true);
+        NodeAssert.strictEqual(mutex2.isLocked(), false);
+        NodeAssert.strictEqual(mutex2.unlock(), false);
+        NodeAssert.strictEqual(mutex1.unlock(), true);
+        NodeAssert.strictEqual(mutex1.isLocked(), false);
+        NodeAssert.strictEqual(mutex2.isLocked(), false);
+        NodeAssert.strictEqual(mutex2.unlock(), false);
+        NodeAssert.strictEqual(mutex1.unlock(), false);
+        NodeAssert.strictEqual(mutex2.unlock(), false);
+    });
+
+    NodeTest.it('B-E-00003: Two shared reentrant mutex should share the mutex state', () => {
+
     });
 });

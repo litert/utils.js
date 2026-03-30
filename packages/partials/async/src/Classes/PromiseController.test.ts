@@ -1,11 +1,15 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
+import * as TestUtils from '@litert/utils-test';
 import { PromiseController } from './PromiseController.js';
-import { TimeoutError } from '../Errors.js';
+import { E_TIMEOUT } from '../Errors.js';
 
-NodeTest.describe('Class PromiseController', async () => {
+NodeTest.describe('Module Async - Class PromiseController', async () => {
 
-    await NodeTest.it('Create a promise controller without timeout by default', async () => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    await NodeTest.it('B-M-00001: Create a promise controller without timeout by default', async () => {
 
         const pc = new PromiseController<string>();
 
@@ -19,7 +23,7 @@ NodeTest.describe('Class PromiseController', async () => {
         NodeAssert.strictEqual(await pc.promise, '123');
     });
 
-    await NodeTest.it('Create a promise controller with timeout', async () => {
+    await NodeTest.it('B-M-00002: Create a promise controller with timeout', async () => {
 
         const pc1 = new PromiseController<string>(100);
 
@@ -43,13 +47,11 @@ NodeTest.describe('Class PromiseController', async () => {
         }
         catch (e) {
 
-            NodeAssert.strictEqual(e instanceof TimeoutError, true);
-            NodeAssert.strictEqual((e as TimeoutError).message, 'Operation timed out');
-            NodeAssert.strictEqual((e as TimeoutError).unresolvedPromise, pc2.promise);
+            NodeAssert.ok(e instanceof E_TIMEOUT, 'Should reject with E_TIMEOUT');
         }
     });
 
-    await NodeTest.it('Both resolve and reject could clear the timeout', async () => {
+    await NodeTest.it('B-M-00003: Both resolve and reject could clear the timeout', async () => {
 
         const pc1 = new PromiseController<string>(100);
 
@@ -72,7 +74,9 @@ NodeTest.describe('Class PromiseController', async () => {
         }
     });
 
-    await NodeTest.it('Should throw error with an invalid timeout', async () => {
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    await NodeTest.it('B-F-00001: Should throw error with an invalid timeout', async () => {
 
         for (const invalidTimeout of [
             null, BigInt(1234), 'string', 1.5,
@@ -85,5 +89,55 @@ NodeTest.describe('Class PromiseController', async () => {
                 message: 'The "timeoutMs" must be an integer.'
             });
         }
+    });
+
+    await NodeTest.it('B-F-00002: After timeout fires, resolve() should be a no-op', async (ctx) => {
+
+        ctx.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
+
+        const TIMEOUT_MS = 50;
+        const pc = new PromiseController<string>(TIMEOUT_MS);
+
+        await NodeAssert.rejects(
+            TestUtils.autoTick(ctx, pc.promise),
+            (e) => {
+                NodeAssert.ok(e instanceof E_TIMEOUT, 'Should reject with E_TIMEOUT');
+                return true;
+            }
+        );
+
+        // After timeout fired, resolve() must be a no-op — no unhandled rejection
+        pc.resolve('late-value');
+    });
+
+    await NodeTest.it('B-F-00003: After timeout fires, reject() should be a no-op', async (ctx) => {
+
+        ctx.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
+
+        const TIMEOUT_MS = 50;
+        const pc = new PromiseController<string>(TIMEOUT_MS);
+
+        await NodeAssert.rejects(
+            TestUtils.autoTick(ctx, pc.promise),
+            (e) => {
+                NodeAssert.ok(e instanceof E_TIMEOUT, 'Should reject with E_TIMEOUT');
+                return true;
+            }
+        );
+
+        // After timeout fired, reject() must be a no-op — no double rejection
+        pc.reject(new Error('late-error'));
+    });
+
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    await NodeTest.it('B-E-00001: Zero timeout should not start a timer and should allow manual resolve', async () => {
+
+        const pc = new PromiseController<number>(0);
+
+        NodeAssert.strictEqual((pc as any)._timer, null, 'Zero timeout should not create an internal timer');
+
+        pc.resolve(99);
+        NodeAssert.strictEqual(await pc.promise, 99);
     });
 });

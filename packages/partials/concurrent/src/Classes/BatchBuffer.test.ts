@@ -1,10 +1,13 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { BatchBuffer } from './BatchBuffer.js';
 
-NodeTest.describe('Class BatchBuffer', async () => {
+NodeTest.describe('Module Concurrent - Class BatchBuffer', async () => {
 
-    NodeTest.it('should call callback when the buffer is full', () => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    NodeTest.it('B-M-00001: Should call callback when the buffer is full', () => {
 
         const recv: any[] = [];
 
@@ -26,7 +29,7 @@ NodeTest.describe('Class BatchBuffer', async () => {
         NodeAssert.strictEqual(recv.length, 2);
     });
 
-    NodeTest.it('should call callback when the timeout is reached', (ctx) => {
+    NodeTest.it('B-M-00002: Should call callback when the timeout is reached', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'] });
 
@@ -54,7 +57,9 @@ NodeTest.describe('Class BatchBuffer', async () => {
         NodeAssert.deepStrictEqual(recv, [1, 2, 3]);
     });
 
-    NodeTest.it('should process arrays as well', (ctx) => {
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    NodeTest.it('B-E-00001: Should process arrays as well', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'] });
 

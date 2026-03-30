@@ -1,10 +1,13 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { SlideWindowCounter } from './SlideWindowCounter.js';
 
-NodeTest.describe('Class SlideWindowCounter', () => {
+NodeTest.describe('Module Concurrent - Class SlideWindowCounter', () => {
 
-    NodeTest.it('should use the corrected default option values', () => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    NodeTest.it('B-M-00001: Should use the corrected default option values', () => {
 
         NodeAssert.strictEqual(new SlideWindowCounter().windowQty, 3);
         NodeAssert.strictEqual(new SlideWindowCounter().windowSize, 10000);
@@ -14,7 +17,7 @@ NodeTest.describe('Class SlideWindowCounter', () => {
         NodeAssert.strictEqual(new SlideWindowCounter({ windowSizeMs: 5000 }).windowSize, 5000);
     });
 
-    NodeTest.it('should count correctly before window rotated', (ctx) => {
+    NodeTest.it('B-M-00002: Should count correctly before window rotated', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date'], now: 1000000 });
 
@@ -56,28 +59,7 @@ NodeTest.describe('Class SlideWindowCounter', () => {
         NodeAssert.strictEqual(rwc.getWindows(), 3);
     });
 
-    NodeTest.it('should start from first window if all windows are expired', (ctx) => {
-
-        ctx.mock.timers.enable({ apis: ['Date'], now: 1000000 });
-
-        const rwc = new SlideWindowCounter({
-            windowSizeMs: 1000,
-            windowQty: 3,
-        });
-
-        NodeAssert.strictEqual(rwc.increase(), 1); // [1]
-        ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.increase(), 2); // [1, 1]
-        ctx.mock.timers.tick(1000);
-        NodeAssert.strictEqual(rwc.increase(), 3); // [1, 1, 1]
-
-        ctx.mock.timers.tick(3000);
-
-        NodeAssert.strictEqual(rwc.increase(), 1); // [1]
-
-    });
-
-    NodeTest.it('should rotate oldest window if new window is needed', (ctx) => {
+    NodeTest.it('B-M-00003: Should rotate oldest window if new window is needed', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date'], now: 1000000 });
 
@@ -120,7 +102,7 @@ NodeTest.describe('Class SlideWindowCounter', () => {
         NodeAssert.strictEqual(rwc.getWindows(), 3);
     });
 
-    NodeTest.it('should restart all by reset method', (ctx) => {
+    NodeTest.it('B-M-00004: Should restart all by reset method', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date'], now: 1000000 });
 
@@ -141,13 +123,48 @@ NodeTest.describe('Class SlideWindowCounter', () => {
         NodeAssert.strictEqual(rwc.getWindows(), 0);
 
         NodeAssert.strictEqual(rwc.increase(), 1); // [1]
-        
+
         ctx.mock.timers.tick(3000);
 
         NodeAssert.strictEqual(rwc.increase(), 1); // [1]
     });
 
-    NodeTest.it('should drop the oldest window once a new boundary was reached', (ctx) => {
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    NodeTest.it('B-F-00001: Should throw error if incorrect settings were used', () => {
+
+        for (const invalidValue of [
+            0, -1, 1.1, NaN, Infinity, -Infinity, '1', {}, [1], 1n, true, false
+        ] as any) {
+            NodeAssert.throws(() => new SlideWindowCounter({ windowQty: invalidValue }));
+            NodeAssert.throws(() => new SlideWindowCounter({ windowSizeMs: invalidValue }));
+        }
+    });
+
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    NodeTest.it('B-E-00001: Should start from first window if all windows are expired', (ctx) => {
+
+        ctx.mock.timers.enable({ apis: ['Date'], now: 1000000 });
+
+        const rwc = new SlideWindowCounter({
+            windowSizeMs: 1000,
+            windowQty: 3,
+        });
+
+        NodeAssert.strictEqual(rwc.increase(), 1); // [1]
+        ctx.mock.timers.tick(1000);
+        NodeAssert.strictEqual(rwc.increase(), 2); // [1, 1]
+        ctx.mock.timers.tick(1000);
+        NodeAssert.strictEqual(rwc.increase(), 3); // [1, 1, 1]
+
+        ctx.mock.timers.tick(3000);
+
+        NodeAssert.strictEqual(rwc.increase(), 1); // [1]
+
+    });
+
+    NodeTest.it('B-E-00002: Should drop the oldest window once a new boundary was reached', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date'], now: 1000000 });
 
@@ -168,15 +185,5 @@ NodeTest.describe('Class SlideWindowCounter', () => {
         NodeAssert.strictEqual(rwc.increase(), 4); // [2, 1, 1]
         ctx.mock.timers.tick(1);
         NodeAssert.strictEqual(rwc.increase(), 3); // [1, 1, 1]
-    });
-
-    NodeTest.it('should throw error if incorrect settings were used', () => {
-
-        for (const invalidValue of [
-            0, -1, 1.1, NaN, Infinity, -Infinity, '1', {}, [1], 1n, true, false
-        ] as any) {
-            NodeAssert.throws(() => new SlideWindowCounter({ windowQty: invalidValue }));
-            NodeAssert.throws(() => new SlideWindowCounter({ windowSizeMs: invalidValue }));
-        }
     });
 });

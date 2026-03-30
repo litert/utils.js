@@ -1,10 +1,13 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { getPropertyNames } from './GetPropertyNames.js';
 
-NodeTest.describe('Function Object.getPropertyNames', () => {
+NodeTest.describe('Module Object - Function GetPropertyNames', () => {
 
-    NodeTest.it('Should get all string-named properties', () => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    NodeTest.it('B-M-00001: Should get all string-named properties', () => {
 
         const obj = {
             a: 1,
@@ -18,7 +21,30 @@ NodeTest.describe('Function Object.getPropertyNames', () => {
         );
     });
 
-    NodeTest.it('Should get all symbol-named properties', () => {
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    NodeTest.it('B-F-00001: Should throw exception if not a valid object', () => {
+
+        NodeAssert.throws(
+            () => getPropertyNames(null as any),
+            (e: unknown) => {
+                NodeAssert.ok(e instanceof TypeError);
+                NodeAssert.strictEqual((e as TypeError).message, 'An object is expected by "getPropertyNames" function.');
+                return true;
+            }
+        );
+    });
+
+    NodeTest.it('B-F-00002: Should throw TypeError for non-null non-object primitives', () => {
+
+        for (const v of [1, 'str', true, undefined, Symbol('s'), BigInt(1)]) {
+            NodeAssert.throws(() => getPropertyNames(v as any), TypeError);
+        }
+    });
+
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    NodeTest.it('B-E-00001: Should get all symbol-named properties', () => {
 
         const s1 = Symbol('a');
         const s2 = Symbol('b');
@@ -35,7 +61,7 @@ NodeTest.describe('Function Object.getPropertyNames', () => {
         );
     });
 
-    NodeTest.it('Should get all string-named and symbol-named properties', () => {
+    NodeTest.it('B-E-00002: Should get all string-named and symbol-named properties', () => {
 
         const s1 = Symbol('a');
         const s2 = Symbol('b');
@@ -55,17 +81,18 @@ NodeTest.describe('Function Object.getPropertyNames', () => {
         );
     });
 
-    NodeTest.it('Should throw exception if not a valid object', () => {
+    NodeTest.it('B-E-00003: Should return an empty array for an empty object', () => {
 
-        try {
+        NodeAssert.deepStrictEqual(getPropertyNames({}), []);
+    });
 
-            getPropertyNames(null as any);
-            NodeAssert.fail('Expected TypeError to be thrown');
-        }
-        catch (e) {
+    NodeTest.it('B-E-00004: Should not include inherited properties — only own properties', () => {
 
-            NodeAssert.ok(e instanceof TypeError);
-            NodeAssert.strictEqual(e.message, 'An object is expected by "getPropertyNames" function.');
-        }
+        const proto = { inherited: 42 };
+        const obj = Object.assign(Object.create(proto), { own: 1 }) as { own: number };
+        const names = getPropertyNames(obj);
+
+        NodeAssert.ok((names as string[]).includes('own'), '"own" must be present');
+        NodeAssert.ok(!(names as string[]).includes('inherited'), '"inherited" must not be present');
     });
 });

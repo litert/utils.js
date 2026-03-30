@@ -1,12 +1,15 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { sleep } from '@litert/utils-async';
 import { autoTick } from '@litert/utils-test';
 import { LeakyBucketRateLimiterManager } from './LeakyBucketRateLimiterManager.js';
 
-NodeTest.describe('Class LeakyBucketRateLimiterManager', async () => {
+NodeTest.describe('Module Concurrent - Class LeakyBucketRateLimiterManager', async () => {
 
-    await NodeTest.it('should not wait if the bucket is empty', async (ctx) => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    await NodeTest.it('B-M-00001: Should not wait if the bucket is empty', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 10000 });
 
@@ -29,7 +32,7 @@ NodeTest.describe('Class LeakyBucketRateLimiterManager', async () => {
         NodeAssert.strictEqual(Date.now() - start, 0);
     });
 
-    await NodeTest.it('should wait enough time to process each task', async (ctx) => {
+    await NodeTest.it('B-M-00002: Should wait enough time to process each task', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 0 });
 
@@ -114,7 +117,7 @@ NodeTest.describe('Class LeakyBucketRateLimiterManager', async () => {
         });
     });
 
-    await NodeTest.it('call method should work as same as challenge', async (ctx) => {
+    await NodeTest.it('B-M-00003: Call method should work as same as challenge', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 0 });
 
@@ -159,40 +162,7 @@ NodeTest.describe('Class LeakyBucketRateLimiterManager', async () => {
         NodeAssert.strictEqual(Date.now() - start, 200);
     });
 
-    await NodeTest.it('test for larger capacity', async (ctx) => {
-
-        ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 0 });
-
-        const limiter = new LeakyBucketRateLimiterManager({
-            capacity: 5,
-            leakIntervalMs: 100,
-        });
-
-        const start = Date.now();
-
-        await autoTick(ctx, Promise.all([
-            limiter.challenge('a'),
-            limiter.challenge('a'),
-            limiter.challenge('a'),
-            limiter.challenge('a'),
-            limiter.challenge('a'),
-        ]));
-
-        NodeAssert.strictEqual(Date.now() - start, 400);
-
-        await autoTick(ctx, Promise.all([
-            limiter.challenge('a'),
-            limiter.challenge('a'),
-            limiter.challenge('a'),
-            limiter.challenge('a'),
-            NodeAssert.rejects(limiter.challenge('a'))
-        ]));
-
-        NodeAssert.strictEqual(Date.now() - start, 800);
-
-    });
-
-    await NodeTest.it('reset method should remove blocking', async (ctx) => {
+    await NodeTest.it('B-M-00004: Reset method should remove blocking', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 10000 });
 
@@ -221,7 +191,7 @@ NodeTest.describe('Class LeakyBucketRateLimiterManager', async () => {
         NodeAssert.strictEqual(Date.now() - start, 100);
     });
 
-    await NodeTest.it('method clean should recycle unused buckets', async (ctx) => {
+    await NodeTest.it('B-M-00005: Method clean should recycle unused buckets', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 10000 });
 
@@ -270,7 +240,7 @@ NodeTest.describe('Class LeakyBucketRateLimiterManager', async () => {
         NodeAssert.strictEqual(limiter.size(), 0);
     });
 
-    await NodeTest.it('method clean should recycle unused buckets but delay by cleanDelayMs', async (ctx) => {
+    await NodeTest.it('B-M-00006: Method clean should recycle unused buckets but delay by cleanDelayMs', async (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 10000 });
 
@@ -312,7 +282,9 @@ NodeTest.describe('Class LeakyBucketRateLimiterManager', async () => {
         NodeAssert.strictEqual(limiter.size(), 0);
     });
 
-    NodeTest.it('should throw error if any option value is invalid', () => {
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    NodeTest.it('B-F-00001: Should throw error if any option value is invalid', () => {
 
         for (const v of [ -1, 1.5, NaN, 1n, Symbol('sss'), Infinity, -Infinity, '1', {}, [], true, false ]) {
 
@@ -353,5 +325,40 @@ NodeTest.describe('Class LeakyBucketRateLimiterManager', async () => {
                 leakIntervalMs: 0,
             });
         });
+    });
+
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    await NodeTest.it('B-E-00001: Test for larger capacity', async (ctx) => {
+
+        ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'], now: 0 });
+
+        const limiter = new LeakyBucketRateLimiterManager({
+            capacity: 5,
+            leakIntervalMs: 100,
+        });
+
+        const start = Date.now();
+
+        await autoTick(ctx, Promise.all([
+            limiter.challenge('a'),
+            limiter.challenge('a'),
+            limiter.challenge('a'),
+            limiter.challenge('a'),
+            limiter.challenge('a'),
+        ]));
+
+        NodeAssert.strictEqual(Date.now() - start, 400);
+
+        await autoTick(ctx, Promise.all([
+            limiter.challenge('a'),
+            limiter.challenge('a'),
+            limiter.challenge('a'),
+            limiter.challenge('a'),
+            NodeAssert.rejects(limiter.challenge('a'))
+        ]));
+
+        NodeAssert.strictEqual(Date.now() - start, 800);
+
     });
 });

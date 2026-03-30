@@ -1,11 +1,14 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { CountingRateLimiter } from './CountingRateLimiter.js';
 import { SlideWindowCounter } from './SlideWindowCounter.js';
 
-NodeTest.describe('Class CountingRateLimiter', () => {
+NodeTest.describe('Module Concurrent - Class CountingRateLimiter', () => {
 
-    NodeTest.it('should not limit until reach the threshold', (ctx) => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    NodeTest.it('B-M-00001: Should not limit until reach the threshold', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'] });
 
@@ -33,7 +36,7 @@ NodeTest.describe('Class CountingRateLimiter', () => {
         NodeAssert.doesNotThrow(() => { limiter.challenge(); });
     });
 
-    NodeTest.it('should unlimit by reset method', () => {
+    NodeTest.it('B-M-00002: Should unlimit by reset method', () => {
 
         const limiter = new CountingRateLimiter({
             counter: new SlideWindowCounter({
@@ -55,7 +58,7 @@ NodeTest.describe('Class CountingRateLimiter', () => {
         NodeAssert.doesNotThrow(() => { limiter.challenge(); });
     });
 
-    NodeTest.it('wrapped function should work as expected', (ctx) => {
+    NodeTest.it('B-M-00003: Wrapped function should work as expected', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setTimeout'] });
 

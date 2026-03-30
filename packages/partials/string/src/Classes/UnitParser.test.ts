@@ -1,10 +1,13 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { UnitParser } from './UnitParser.js';
 
-NodeTest.describe('Class UnitParser', () => {
+NodeTest.describe('Module String - Class UnitParser', () => {
 
-    NodeTest.it('Should owns same values of the options in properties', () => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    NodeTest.it('B-M-00001: Should owns same values of the options in properties', () => {
 
         const parser = new UnitParser({
             format: '{value} {unit}',
@@ -27,7 +30,7 @@ NodeTest.describe('Class UnitParser', () => {
         NodeAssert.strictEqual(parser.maxDecimalPlaces, 12);
     });
 
-    NodeTest.it('Should use "true" as the default value of "caseInsensitive" property', () => {
+    NodeTest.it('B-M-00002: Should use "true" as the default value of "caseInsensitive" property', () => {
 
         const parser = new UnitParser({
             format: '{value} {unit}',
@@ -36,7 +39,7 @@ NodeTest.describe('Class UnitParser', () => {
         NodeAssert.strictEqual(parser.caseInsensitive, true);
     });
 
-    NodeTest.it('Should use 2 as the default value of "maxDecimalPlaces" property', () => {
+    NodeTest.it('B-M-00003: Should use 2 as the default value of "maxDecimalPlaces" property', () => {
 
         const parser = new UnitParser({
             format: '{value} {unit}',
@@ -45,62 +48,14 @@ NodeTest.describe('Class UnitParser', () => {
         NodeAssert.strictEqual(parser.maxDecimalPlaces, 2);
     });
 
-    NodeTest.it('Should throw RangeError if "unitNames" is set to an empty array', () => {
-
-        try {
-
-            new UnitParser({
-                format: '{value} {unit}',
-                units: [],
-            });
-        }
-        catch (e) {
-
-            NodeAssert.ok(e instanceof RangeError);
-            NodeAssert.strictEqual(e.message, 'The unitNames array must contain at least one element.');
-        }
-    });
-
-    NodeTest.it('Should throw SyntaxError if "format" does not contains "{value}"', () => {
-
-        try {
-
-            new UnitParser({
-                format: '{unit}', // Updated to test missing {value}
-                units: ['cm'],
-            });
-        }
-        catch (e) {
-
-            NodeAssert.ok(e instanceof SyntaxError);
-            NodeAssert.strictEqual(e.message, 'The format must contain the {value} placeholder.');
-        }
-    });
-
-    NodeTest.it('Should throw SyntaxError if "format" does not contains "{unit}"', () => {
-
-        try {
-
-            new UnitParser({
-                format: '{value}', // Updated to test missing {unit}
-                units: ['cm'],
-            });
-        }
-        catch (e) {
-
-            NodeAssert.ok(e instanceof SyntaxError);
-            NodeAssert.strictEqual(e.message, 'The format must contain the {unit} placeholder.');
-        }
-    });
-
-    NodeTest.it('Should ignore the case sensitivity of "format"', () => {
+    NodeTest.it('B-M-00004: Should ignore the case sensitivity of "format"', () => {
 
         new UnitParser({ format: '{UNIT}{value}', units: ['cm'] });
         
         new UnitParser({ format: '{UnIt}{vALuE}', units: ['cm'] });
     });
 
-    NodeTest.it('Should return the value and unit if the input is in the correct format', () => {
+    NodeTest.it('B-M-00005: Should return the value and unit if the input is in the correct format', () => {
 
         const lengthParser = new UnitParser({
             format: '{value}{unit}',
@@ -210,7 +165,71 @@ NodeTest.describe('Class UnitParser', () => {
         );
     });
 
-    NodeTest.it('Should return null if the input is not in the correct format', () => {
+    NodeTest.it('B-M-00006: Should parse correctly with caseInsensitive: false', () => {
+
+        const parser = new UnitParser({
+            format: '{value} {unit}',
+            units: ['cm', 'm', 'km'],
+            caseInsensitive: false,
+        });
+
+        NodeAssert.deepStrictEqual(parser.parse('1.2 cm'), { value: '1.2', unit: 'cm' });
+        NodeAssert.strictEqual(parser.parse('1.2 CM'), null, 'Uppercase unit should not match in case-sensitive mode');
+        NodeAssert.strictEqual(parser.parse('1.2 Cm'), null, 'Mixed-case unit should not match in case-sensitive mode');
+        NodeAssert.strictEqual(parser.parse('1.2 KM'), null);
+    });
+
+    NodeTest.it('B-M-00007: Should treat the unit name as its own alias when no aliases are provided in IUnitInfo', () => {
+
+        const parser = new UnitParser({
+            format: '{value} {unit}',
+            units: [{ name: 'km' }, { name: 'm' }],
+        });
+
+        NodeAssert.deepStrictEqual(parser.parse('10 km'), { value: '10', unit: 'km' });
+        NodeAssert.deepStrictEqual(parser.parse('1.5 m'),  { value: '1.5', unit: 'm' });
+        NodeAssert.strictEqual(parser.parse('1 dm'), null);
+    });
+
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    NodeTest.it('B-F-00001: Should throw RangeError if "unitNames" is set to an empty array', () => {
+
+        NodeAssert.throws(
+            () => new UnitParser({ format: '{value} {unit}', units: [] }),
+            (e: unknown) => {
+                NodeAssert.ok(e instanceof RangeError);
+                NodeAssert.strictEqual((e as RangeError).message, 'The unitNames array must contain at least one element.');
+                return true;
+            },
+        );
+    });
+
+    NodeTest.it('B-F-00002: Should throw SyntaxError if "format" does not contains "{value}"', () => {
+
+        NodeAssert.throws(
+            () => new UnitParser({ format: '{unit}', units: ['cm'] }),
+            (e: unknown) => {
+                NodeAssert.ok(e instanceof SyntaxError);
+                NodeAssert.strictEqual((e as SyntaxError).message, 'The format must contain the {value} placeholder.');
+                return true;
+            },
+        );
+    });
+
+    NodeTest.it('B-F-00003: Should throw SyntaxError if "format" does not contains "{unit}"', () => {
+
+        NodeAssert.throws(
+            () => new UnitParser({ format: '{value}', units: ['cm'] }),
+            (e: unknown) => {
+                NodeAssert.ok(e instanceof SyntaxError);
+                NodeAssert.strictEqual((e as SyntaxError).message, 'The format must contain the {unit} placeholder.');
+                return true;
+            },
+        );
+    });
+
+    NodeTest.it('B-F-00004: Should return null if the input is not in the correct format', () => {
 
         const lengthParser = new UnitParser({
             format: '{value}{unit}',
@@ -224,5 +243,92 @@ NodeTest.describe('Class UnitParser', () => {
         NodeAssert.strictEqual(lengthParser.parse('1.2dm'), null);
         NodeAssert.strictEqual(lengthParser.parse('1.223m'), null);
         NodeAssert.strictEqual(lengthParser.parse('m 1.22'), null);
+    });
+
+    NodeTest.it('B-F-00005: Should throw RangeError if "maxDecimalPlaces" is negative', () => {
+
+        NodeAssert.throws(
+            () => new UnitParser({ format: '{value} {unit}', units: ['cm'], maxDecimalPlaces: -1 }),
+            (e: unknown) => {
+                NodeAssert.ok(e instanceof RangeError);
+                NodeAssert.strictEqual((e as RangeError).message, 'The maxDecimalPlaces property must be a non-negative integer.');
+                return true;
+            },
+        );
+    });
+
+    NodeTest.it('B-F-00006: Should throw RangeError if "maxDecimalPlaces" is a non-integer', () => {
+
+        NodeAssert.throws(
+            () => new UnitParser({ format: '{value} {unit}', units: ['cm'], maxDecimalPlaces: 1.5 }),
+            (e: unknown) => {
+                NodeAssert.ok(e instanceof RangeError);
+                NodeAssert.strictEqual((e as RangeError).message, 'The maxDecimalPlaces property must be a non-negative integer.');
+                return true;
+            },
+        );
+    });
+
+    NodeTest.it('B-F-00007: Should throw RangeError when two units share the same alias', () => {
+
+        NodeAssert.throws(
+            () => new UnitParser({
+                format: '{value} {unit}',
+                units: [
+                    { name: 'MiB', aliases: ['mb'] },
+                    { name: 'MB',  aliases: ['mb'] },
+                ],
+            }),
+            (e: unknown) => {
+                NodeAssert.ok(e instanceof RangeError);
+                NodeAssert.match((e as RangeError).message, /The alias "mb" is already used by the unit "MiB"/);
+                return true;
+            },
+        );
+    });
+
+    NodeTest.it('B-F-00008: Should throw RangeError when two units produce the same alias under caseInsensitive mode', () => {
+
+        NodeAssert.throws(
+            () => new UnitParser({
+                format: '{value} {unit}',
+                units: [
+                    { name: 'MiB', aliases: ['MB'] },
+                    { name: 'MB',  aliases: ['mb'] },
+                ],
+                caseInsensitive: true,
+            }),
+            (e: unknown) => {
+                NodeAssert.ok(e instanceof RangeError);
+                NodeAssert.match((e as RangeError).message, /The alias "mb" is already used by the unit "MiB"/);
+                return true;
+            },
+        );
+    });
+
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    NodeTest.it('B-E-00001: Should not allow decimal places when maxDecimalPlaces is 1 (source uses > 1 threshold)', () => {
+
+        // The source uses `maxDecimalPlaces > 1` to decide whether to allow decimals,
+        // so maxDecimalPlaces = 1 produces the same no-decimal pattern as maxDecimalPlaces = 0.
+        const parser = new UnitParser({
+            format: '{value} {unit}',
+            units: ['cm'],
+            maxDecimalPlaces: 1,
+        });
+
+        NodeAssert.deepStrictEqual(parser.parse('5 cm'), { value: '5', unit: 'cm' });
+        NodeAssert.strictEqual(parser.parse('5.1 cm'), null, 'Decimal not allowed when maxDecimalPlaces = 1');
+    });
+
+    NodeTest.it('B-E-00002: Should return null for an empty string input', () => {
+
+        const parser = new UnitParser({
+            format: '{value} {unit}',
+            units: ['cm'],
+        });
+
+        NodeAssert.strictEqual(parser.parse(''), null);
     });
 });

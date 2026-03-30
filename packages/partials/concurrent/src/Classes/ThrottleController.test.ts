@@ -1,11 +1,14 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { sleep } from '@litert/utils-async';
 import { ThrottleController } from './ThrottleController.js';
 
-NodeTest.describe('Class ThrottleController', async () => {
+NodeTest.describe('Module Concurrent - Class ThrottleController', async () => {
 
-    await NodeTest.it('Wrapper Class: All calls during the current call done should get the same result', async () => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    await NodeTest.it('B-M-00001: Wrapper Class: All calls during the current call done should get the same result', async () => {
 
         const throttler = new ThrottleController(
             async (input: number) => {
@@ -26,31 +29,7 @@ NodeTest.describe('Class ThrottleController', async () => {
         NodeAssert.deepStrictEqual(results, [2, 2, 2, 2]);
     });
 
-    await NodeTest.it('Wrapper Class: All calls during the current call done should get the same error result', async () => {
-
-        const throttler = new ThrottleController(
-            async (input: number) => {
-                await sleep(20);
-                throw new Error(`Error in call with input: ${input}`);
-            },
-            (input) => `${input}`
-        );
-
-        const pr = throttler.call(1);
-        const results = await Promise.allSettled([
-            pr,
-            throttler.call(1),
-            throttler.call(1),
-            throttler.call(1),
-        ]);
-
-        NodeAssert.deepStrictEqual(results[0].status, 'rejected');
-        NodeAssert.deepStrictEqual(results[1].status, 'rejected');
-        NodeAssert.deepStrictEqual(results[2].status, 'rejected');
-        NodeAssert.deepStrictEqual(results[3].status, 'rejected');
-    });
-
-    await NodeTest.it('Wrapper Class: calls with different args should not bother each other', async () => {
+    await NodeTest.it('B-M-00002: Wrapper Class: Calls with different args should not bother each other', async () => {
 
         const throttler = new ThrottleController(
             async (input: number) => {
@@ -78,35 +57,7 @@ NodeTest.describe('Class ThrottleController', async () => {
         NodeAssert.strictEqual(results[3].value, 4);
     });
 
-    await NodeTest.it('Wrapper Class: null call ID maker ignores args affection', async () => {
-
-        const throttler = new ThrottleController(
-            async (input: number) => {
-                await sleep(20);
-                return input * 2;
-            },
-            null,
-        );
-
-        const pr = throttler.call(1);
-        const results = await Promise.allSettled([
-            pr,
-            throttler.call(1),
-            throttler.call(2),
-            throttler.call(2),
-        ]);
-
-        NodeAssert.strictEqual(results[0].status, 'fulfilled');
-        NodeAssert.strictEqual(results[1].status, 'fulfilled');
-        NodeAssert.strictEqual(results[2].status, 'fulfilled');
-        NodeAssert.strictEqual(results[3].status, 'fulfilled');
-        NodeAssert.strictEqual(results[0].value, 2);
-        NodeAssert.strictEqual(results[1].value, 2);
-        NodeAssert.strictEqual(results[2].value, 2);
-        NodeAssert.strictEqual(results[3].value, 2);
-    });
-
-    await NodeTest.it('Wrapper Class: A call after one call done should starts a new call', async () => {
+    await NodeTest.it('B-M-00003: Wrapper Class: A call after one call done should starts a new call', async () => {
 
         const throttler = new ThrottleController(
             async (input: number) => {
@@ -153,7 +104,7 @@ NodeTest.describe('Class ThrottleController', async () => {
         NodeAssert.deepStrictEqual(await throttler.call(1) > r2, true);
     });
 
-    await NodeTest.it('Wrapped Function: All calls during the current call done should get the same result', async () => {
+    await NodeTest.it('B-M-00004: Wrapped Function: All calls during the current call done should get the same result', async () => {
 
         const fn = ThrottleController.wrap(
             async (input: number) => {
@@ -174,31 +125,7 @@ NodeTest.describe('Class ThrottleController', async () => {
         NodeAssert.deepStrictEqual(results, [2, 2, 2, 2]);
     });
 
-    await NodeTest.it('Wrapped Function: All calls during the current call done should get the same error result', async () => {
-
-        const fn = ThrottleController.wrap(
-            async (input: number) => {
-                await sleep(20);
-                throw new Error(`Error in call with input: ${input}`);
-            },
-            (input) => `${input}`,
-        );
-
-        const pr = fn(1);
-        const results = await Promise.allSettled([
-            pr,
-            fn(1),
-            fn(1),
-            fn(1),
-        ]);
-
-        NodeAssert.deepStrictEqual(results[0].status, 'rejected');
-        NodeAssert.deepStrictEqual(results[1].status, 'rejected');
-        NodeAssert.deepStrictEqual(results[2].status, 'rejected');
-        NodeAssert.deepStrictEqual(results[3].status, 'rejected');
-    });
-
-    await NodeTest.it('Wrapped Function: A call after one call done should starts a new call', async () => {
+    await NodeTest.it('B-M-00005: Wrapped Function: A call after one call done should starts a new call', async () => {
 
         const fn = ThrottleController.wrap(
             async (input: number) => {
@@ -243,6 +170,86 @@ NodeTest.describe('Class ThrottleController', async () => {
         NodeAssert.notStrictEqual(errMsg1, errMsg2, 'The error messages should be different for the two calls');
 
         NodeAssert.strictEqual(await fn(1) > r2, true);
+    });
+
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    await NodeTest.it('B-F-00001: Wrapper Class: All calls during the current call done should get the same error result', async () => {
+
+        const throttler = new ThrottleController(
+            async (input: number) => {
+                await sleep(20);
+                throw new Error(`Error in call with input: ${input}`);
+            },
+            (input) => `${input}`
+        );
+
+        const pr = throttler.call(1);
+        const results = await Promise.allSettled([
+            pr,
+            throttler.call(1),
+            throttler.call(1),
+            throttler.call(1),
+        ]);
+
+        NodeAssert.deepStrictEqual(results[0].status, 'rejected');
+        NodeAssert.deepStrictEqual(results[1].status, 'rejected');
+        NodeAssert.deepStrictEqual(results[2].status, 'rejected');
+        NodeAssert.deepStrictEqual(results[3].status, 'rejected');
+    });
+
+    await NodeTest.it('B-F-00002: Wrapped Function: All calls during the current call done should get the same error result', async () => {
+
+        const fn = ThrottleController.wrap(
+            async (input: number) => {
+                await sleep(20);
+                throw new Error(`Error in call with input: ${input}`);
+            },
+            (input) => `${input}`,
+        );
+
+        const pr = fn(1);
+        const results = await Promise.allSettled([
+            pr,
+            fn(1),
+            fn(1),
+            fn(1),
+        ]);
+
+        NodeAssert.deepStrictEqual(results[0].status, 'rejected');
+        NodeAssert.deepStrictEqual(results[1].status, 'rejected');
+        NodeAssert.deepStrictEqual(results[2].status, 'rejected');
+        NodeAssert.deepStrictEqual(results[3].status, 'rejected');
+    });
+
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    await NodeTest.it('B-E-00001: Wrapper Class: Null call ID maker ignores args affection', async () => {
+
+        const throttler = new ThrottleController(
+            async (input: number) => {
+                await sleep(20);
+                return input * 2;
+            },
+            null,
+        );
+
+        const pr = throttler.call(1);
+        const results = await Promise.allSettled([
+            pr,
+            throttler.call(1),
+            throttler.call(2),
+            throttler.call(2),
+        ]);
+
+        NodeAssert.strictEqual(results[0].status, 'fulfilled');
+        NodeAssert.strictEqual(results[1].status, 'fulfilled');
+        NodeAssert.strictEqual(results[2].status, 'fulfilled');
+        NodeAssert.strictEqual(results[3].status, 'fulfilled');
+        NodeAssert.strictEqual(results[0].value, 2);
+        NodeAssert.strictEqual(results[1].value, 2);
+        NodeAssert.strictEqual(results[2].value, 2);
+        NodeAssert.strictEqual(results[3].value, 2);
     });
 
 });

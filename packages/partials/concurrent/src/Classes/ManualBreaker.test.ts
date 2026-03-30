@@ -1,12 +1,15 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { sleep } from '@litert/utils-async';
 import { ManualBreaker } from './ManualBreaker.js';
-import { E_BREAKER_OPENED } from '../Types.js';
+import * as Errors from '../Errors.js';
 
-NodeTest.describe('Class ManualBreaker', async () => {
+NodeTest.describe('Module Concurrent - Class ManualBreaker', async () => {
 
-    NodeTest.it('breaker should be closed by default', () => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    NodeTest.it('B-M-00001: Breaker should be closed by default', () => {
 
         NodeAssert.strictEqual(new ManualBreaker().isClosed(), true);
         NodeAssert.strictEqual(new ManualBreaker().isOpened(), false);
@@ -18,7 +21,7 @@ NodeTest.describe('Class ManualBreaker', async () => {
         NodeAssert.strictEqual(new ManualBreaker(false).isOpened(), true);
     });
 
-    await NodeTest.it('should allow calls if breaker is closed', async () => {
+    await NodeTest.it('B-M-00002: Should allow calls if breaker is closed', async () => {
 
         const breaker = new ManualBreaker();
 
@@ -26,7 +29,45 @@ NodeTest.describe('Class ManualBreaker', async () => {
         await breaker.call(async () => { await sleep(1); });
     });
 
-    await NodeTest.it('should rethrow the same error thrown by calls', async () => {
+    await NodeTest.it('B-M-00003: Should be allowed if breaker become closed from opened', async () => {
+
+        const breaker = new ManualBreaker();
+
+        breaker.open();
+
+        breaker.close();
+
+        breaker.call(() => { return; });
+
+        await breaker.call(async () => { await sleep(1); });
+    });
+
+    await NodeTest.it('B-M-00004: Wrap method should work as expected', async () => {
+
+        const breaker = new ManualBreaker();
+
+        const syncFn = breaker.wrap(() => { return 123; });
+        const asyncFn = breaker.wrap(async () => { await sleep(1); return 456; });
+
+        NodeAssert.strictEqual(syncFn(), 123);
+        NodeAssert.strictEqual(await asyncFn(), 456);
+
+        breaker.open();
+
+        await NodeAssert.rejects(
+            async () => { await asyncFn(); },
+            Errors.E_BREAKER_OPENED,
+        );
+
+        NodeAssert.throws(
+            () => { syncFn(); },
+            Errors.E_BREAKER_OPENED,
+        );
+    });
+
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    await NodeTest.it('B-F-00001: Should rethrow the same error thrown by calls', async () => {
 
         const breaker = new ManualBreaker();
 
@@ -41,7 +82,7 @@ NodeTest.describe('Class ManualBreaker', async () => {
         );
     });
 
-    await NodeTest.it('should be blocked if breaker is opened', async () => {
+    await NodeTest.it('B-F-00002: Should be blocked if breaker is opened', async () => {
 
         const breaker = new ManualBreaker();
 
@@ -49,52 +90,18 @@ NodeTest.describe('Class ManualBreaker', async () => {
 
         await NodeAssert.rejects(
             async () => { await breaker.call(async () => { return; }); },
-            E_BREAKER_OPENED
+            Errors.E_BREAKER_OPENED,
         );
 
         NodeAssert.throws(
             () => { breaker.call(() => { return; }); },
-            E_BREAKER_OPENED
+            Errors.E_BREAKER_OPENED,
         );
     });
 
-    await NodeTest.it('should be allowed if breaker become closed from opened', async () => {
+    // ─── Black-Box: Edge Cases ───────────────────────────
 
-        const breaker = new ManualBreaker();
-
-        breaker.open();
-
-        breaker.close();
-
-        breaker.call(() => { return; });
-
-        await breaker.call(async () => { await sleep(1); });
-    });
-
-    await NodeTest.it('wrap method should work as expected', async () => {
-
-        const breaker = new ManualBreaker();
-
-        const syncFn = breaker.wrap(() => { return 123; });
-        const asyncFn = breaker.wrap(async () => { await sleep(1); return 456; });
-
-        NodeAssert.strictEqual(syncFn(), 123);
-        NodeAssert.strictEqual(await asyncFn(), 456);
-
-        breaker.open();
-
-        await NodeAssert.rejects(
-            async () => { await asyncFn(); },
-            E_BREAKER_OPENED
-        );
-
-        NodeAssert.throws(
-            () => { syncFn(); },
-            E_BREAKER_OPENED
-        );
-    });
-
-    await NodeTest.it('custom error constructor should work as expected', async () => {
+    await NodeTest.it('B-E-00001: Custom error constructor should work as expected', async () => {
 
         class CustomError extends Error { }
 

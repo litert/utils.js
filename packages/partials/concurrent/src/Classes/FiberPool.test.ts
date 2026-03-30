@@ -1,11 +1,14 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
-import { sleep, TimeoutError } from '@litert/utils-async';
+import { sleep, E_TIMEOUT } from '@litert/utils-async';
 import { FiberPool } from './FiberPool.js';
 
-NodeTest.describe('Class FiberPool', async () => {
+NodeTest.describe('Module Concurrent - Class FiberPool', async () => {
 
-    await NodeTest.it('maxFibers should control the maximum running fibers', async () => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    await NodeTest.it('B-M-00001: MaxFibers should control the maximum running fibers', async () => {
 
         const fp = new FiberPool({ maxFibers: 2, });
 
@@ -30,7 +33,7 @@ NodeTest.describe('Class FiberPool', async () => {
         NodeAssert.strictEqual(fp.isClosed(), true, 'Fiber pool should be closed after calling close().');
     });
 
-    await NodeTest.it('maxFibers should control the maximum running fibers', async () => {
+    await NodeTest.it('B-M-00002: MaxFibers should control the maximum running fibers with idle/busy tracking', async () => {
 
         const fp = new FiberPool({ maxFibers: 2, });
 
@@ -63,7 +66,7 @@ NodeTest.describe('Class FiberPool', async () => {
         NodeAssert.strictEqual(fp.idleFibers, 0, 'Idle fibers should be 0 after the fiber pool is closed.');
     });
 
-    await NodeTest.it('close should rejects all pending executions of function', async () => {
+    await NodeTest.it('B-M-00003: Close should rejects all pending executions of function', async () => {
 
         const fp = new FiberPool({ maxFibers: 2, });
 
@@ -102,7 +105,7 @@ NodeTest.describe('Class FiberPool', async () => {
         }
     });
 
-    await NodeTest.it('idle fibers should be reuse prior to creating new fibers', async () => {
+    await NodeTest.it('B-M-00004: Idle fibers should be reuse prior to creating new fibers', async () => {
 
         const fp = new FiberPool({ maxFibers: 2, });
 
@@ -116,7 +119,7 @@ NodeTest.describe('Class FiberPool', async () => {
         await fp.run({ function: fn, data: 123 });
         NodeAssert.strictEqual(fp.idleFibers, 1, 'Idle fibers should be 1 immediately after the first run.');
         NodeAssert.strictEqual(fp.busyFibers, 0, 'Busy fibers should be 0 after the fibers finished running.');
-        
+
         await fp.run({ function: fn, data: 123 });
 
         // no more fibers should be created, since there is an idle fiber available.
@@ -126,7 +129,9 @@ NodeTest.describe('Class FiberPool', async () => {
         fp.close();
     });
 
-    await NodeTest.it('run() should throw the error thrown by the execution function', async () => {
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    await NodeTest.it('B-F-00001: Run() should throw the error thrown by the execution function', async () => {
 
         const fp = new FiberPool({ maxFibers: 2, });
 
@@ -148,7 +153,7 @@ NodeTest.describe('Class FiberPool', async () => {
         fp.close();
     });
 
-    await NodeTest.it('run() should throw TimeoutError if timeout during waiting for fiber', async () => {
+    await NodeTest.it('B-F-00002: Run() should throw E_TIMEOUT if timeout during waiting for fiber', async () => {
 
         const fp = new FiberPool({ maxFibers: 2, });
 
@@ -179,7 +184,7 @@ NodeTest.describe('Class FiberPool', async () => {
         NodeAssert.strictEqual(r5.reason.message, 'Test error: 999', 'The error message should be "Test error: 999".');
 
         NodeAssert.ok(r3.status === 'rejected');
-        NodeAssert.ok(r3.reason instanceof TimeoutError, 'The error should be an instance of TimeoutError.');
+        NodeAssert.ok(r3.reason instanceof E_TIMEOUT, 'The error should be an instance of E_TIMEOUT.');
 
         NodeAssert.ok(r4.status === 'rejected');
         NodeAssert.ok(r4.reason instanceof Error, 'The error should be an instance of Error.');
@@ -188,7 +193,9 @@ NodeTest.describe('Class FiberPool', async () => {
         fp.close();
     });
 
-    await NodeTest.it('run() should throw Error if there are too many waits', async () => {
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    await NodeTest.it('B-E-00001: Run() should throw Error if there are too many waits', async () => {
 
         const fp = new FiberPool({ maxFibers: 2, maxWaits: 1, });
 

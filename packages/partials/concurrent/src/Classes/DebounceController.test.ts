@@ -1,11 +1,14 @@
+/* eslint-disable */
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
 import { sleep } from '@litert/utils-async';
 import { DebounceController } from './DebounceController.js';
 
-NodeTest.describe('Class DebounceController', async () => {
+NodeTest.describe('Module Concurrent - Class DebounceController', async () => {
 
-    NodeTest.it('Method "schedule" should (re)schedule the function call', (ctx) => {
+    // ─── Black-Box: Main Flow ────────────────────────────
+
+    NodeTest.it('B-M-00001: Method "schedule" should (re)schedule the function call', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setImmediate', 'setTimeout'] });
 
@@ -45,7 +48,7 @@ NodeTest.describe('Class DebounceController', async () => {
         NodeAssert.strictEqual(Date.now() - startedAt, 1200, 'The function should have been called again after the delay.');
     });
 
-    NodeTest.it('Method "schedule" should watch on the maxDelay', (ctx) => {
+    NodeTest.it('B-M-00002: Method "schedule" should watch on the maxDelay', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setImmediate', 'setTimeout'], 'now': 10000000 });
 
@@ -75,7 +78,7 @@ NodeTest.describe('Class DebounceController', async () => {
         NodeAssert.strictEqual(Date.now() - startedAt, 2000, 'The function should have been called after the delay.');
     });
 
-    NodeTest.it('Method "cancel" should cancel the scheduled function call', () => {
+    NodeTest.it('B-M-00003: Method "cancel" should cancel the scheduled function call', () => {
 
         const controller = new DebounceController({
             function: () => {},
@@ -88,7 +91,7 @@ NodeTest.describe('Class DebounceController', async () => {
         NodeAssert.strictEqual(controller.isScheduled(), false, 'The function should not be scheduled after cancel.');
     });
 
-    NodeTest.it('Method "callNow" should cancel the scheduled calls', (ctx) => {
+    NodeTest.it('B-M-00004: Method "callNow" should cancel the scheduled calls', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setImmediate', 'setTimeout'] });
 
@@ -130,7 +133,27 @@ NodeTest.describe('Class DebounceController', async () => {
 
     });
 
-    NodeTest.it('Invalid delay should make error occur', () => {
+    NodeTest.it('B-M-00005: Functions wrapped by static method wrap should work as method schedule does', (ctx) => {
+
+        ctx.mock.timers.enable({ apis: ['Date', 'setImmediate', 'setTimeout'] });
+        let v = 0;
+        const fn= DebounceController.wrap({
+            function: () => { v++; },
+            delayMs: 100,
+        });
+
+        fn();
+
+        NodeAssert.strictEqual(v, 0, 'The function should not be called immediately');
+
+        ctx.mock.timers.runAll();
+
+        NodeAssert.strictEqual(v, 1, 'The function should be called after the delay');
+    });
+
+    // ─── Black-Box: Failure Flow ─────────────────────────
+
+    NodeTest.it('B-F-00001: Invalid delay should make error occur', () => {
 
         for (let i of [-1000, 0, 1.5, NaN, Infinity]) {
             NodeAssert.throws(() => {
@@ -152,7 +175,7 @@ NodeTest.describe('Class DebounceController', async () => {
         }
     });
 
-    NodeTest.it('Error handles', (ctx) => {
+    NodeTest.it('B-F-00002: Error handles', (ctx) => {
 
         ctx.mock.timers.enable({ apis: ['Date', 'setImmediate', 'setTimeout'] });
 
@@ -179,7 +202,9 @@ NodeTest.describe('Class DebounceController', async () => {
         }
     });
 
-    NodeTest.it('Method schedule should run immediately if the elapsed time reach maxDelay', () => {
+    // ─── Black-Box: Edge Cases ───────────────────────────
+
+    NodeTest.it('B-E-00001: Method schedule should run immediately if the elapsed time reach maxDelay', () => {
 
         let v = 0;
         const controller = new DebounceController({
@@ -204,25 +229,7 @@ NodeTest.describe('Class DebounceController', async () => {
         NodeAssert.strictEqual(v, 1, 'The function should be called only once');
     });
 
-    NodeTest.it('Functions wrapped by static method wrap should work as method schedule does', (ctx) => {
-
-        ctx.mock.timers.enable({ apis: ['Date', 'setImmediate', 'setTimeout'] });
-        let v = 0;
-        const fn= DebounceController.wrap({
-            function: () => { v++; },
-            delayMs: 100,
-        });
-
-        fn();
-
-        NodeAssert.strictEqual(v, 0, 'The function should not be called immediately');
-
-        ctx.mock.timers.runAll();
-
-        NodeAssert.strictEqual(v, 1, 'The function should be called after the delay');
-    });
-
-    await NodeTest.it('[BUG] Method "schedule" should clean existing timeout maxDelay', async () => {
+    await NodeTest.it('B-E-00002: Method "schedule" should clean existing timeout maxDelay', async () => {
 
         let v = 0;
 
