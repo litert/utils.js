@@ -20,25 +20,35 @@ import {
     getPropertyNames,
     hasProperties,
     isSubclassOf,
+    isClassConstructor,
+    PropertyPathParser,
 } from '@litert/utils-object';
 
 // pickProperties is only available via sub-path
 import { pickProperties } from '@litert/utils-object/functions/PickProperties';
 
 // ── 2. Individual sub-path exports ────────────────────────────────────────────
-import { copyProperties    as cp2   } from '@litert/utils-object/functions/CopyProperties';
-import { deepMerge         as dm2   } from '@litert/utils-object/functions/DeepMerge';
-import { getConstructor    as gc2   } from '@litert/utils-object/functions/GetConstructor';
-import { getPropertyNames  as gpn2  } from '@litert/utils-object/functions/GetPropertyNames';
-import { hasProperties     as hp2   } from '@litert/utils-object/functions/HasProperties';
-import { isSubclassOf      as isco2 } from '@litert/utils-object/functions/IsSubclassOf';
-import { pickProperties    as pp2   } from '@litert/utils-object/functions/PickProperties';
+import { copyProperties     as cp2   } from '@litert/utils-object/functions/CopyProperties';
+import { deepMerge          as dm2   } from '@litert/utils-object/functions/DeepMerge';
+import { getConstructor     as gc2   } from '@litert/utils-object/functions/GetConstructor';
+import { getPropertyNames   as gpn2  } from '@litert/utils-object/functions/GetPropertyNames';
+import { hasProperties      as hp2   } from '@litert/utils-object/functions/HasProperties';
+import { isSubclassOf       as isco2 } from '@litert/utils-object/functions/IsSubclassOf';
+import { pickProperties     as pp2   } from '@litert/utils-object/functions/PickProperties';
+import { isClassConstructor as icc2  } from '@litert/utils-object/functions/IsClassConstructor';
+import { PropertyPathParser as PPP2  } from '@litert/utils-object/class/PropertyPathParser';
+import { extractPropertyByPath as epbp2 } from '@litert/utils-object/functions/ExtractPropertyByPath';
 
 // ── 3. Bundle namespace ───────────────────────────────────────────────────────
 import * as ObjectNS from '@litert/utils/namespaces/Object';
 
 // ── Type-only imports ─────────────────────────────────────────────────────────
-import type { IDeepMergeOptions } from '@litert/utils-object';
+import type {
+    IDeepMergeOptions,
+    IMergeObject,
+    IMergeArray,
+    IExtractPropertyByPathOptions,
+} from '@litert/utils-object';
 
 (async (): Promise<void> => {
 
@@ -131,5 +141,62 @@ import type { IDeepMergeOptions } from '@litert/utils-object';
     console.log(partial); // { id: 1, name: 'Alice' }
 
     console.log(pp2(user, ['email', 'role'] as const)); // { email: '...', role: 'admin' }
+
+    // ── isClassConstructor ─────────────────────────────────────────────────────────
+    console.log('\n=== isClassConstructor ===');
+
+    console.log(isClassConstructor(Dog));           // true
+    console.log(isClassConstructor(function() {})); // false
+    console.log(icc2(class {}));                   // true
+    console.log(ObjectNS.isClassConstructor(() => {})); // false
+
+    // ── deepMerge types (IMergeObject / IMergeArray) ──────────────────────────────
+    console.log('\n=== IMergeObject / IMergeArray types ===');
+
+    // IMergeObject<T1, T2> is the inferred return type of deepMerge
+    const baseObj  = { a: 1, b: { c: 2 } };
+    const overObj  = { b: { d: 3 }, e: 'x' };
+    const merged: IMergeObject<typeof baseObj, typeof overObj> = deepMerge(baseObj, overObj);
+    console.log('merged.a:', merged.a);           // 1
+    console.log('merged.b.d:', merged.b.d);       // 3
+    console.log('merged.e:', merged.e);            // 'x'
+
+    // IMergeArray<T1, T2> is the inferred element type for merged arrays
+    type TMergedArr = IMergeArray<{ x: number }[], { y: string }[]>;
+    const arrEl: TMergedArr[number] = { x: 1, y: 'hi' };
+    console.log('IMergeArray element:', arrEl);
+
+    // ── PropertyPathParser ────────────────────────────────────────────────────────
+    console.log('\n=== PropertyPathParser ===');
+
+    const parser = new PropertyPathParser();
+    console.log(parser.parse('$'));              // []
+    console.log(parser.parse('$.a.b.c'));        // ['a', 'b', 'c']
+    console.log(parser.parse('$.a[0].b'));       // ['a', 0, 'b']
+    console.log(parser.parse('$.a["x.y"]'));     // ['a', 'x.y']
+
+    const parser2 = new PPP2();
+    console.log(parser2.parse('$.items[1]'));    // ['items', 1]
+
+    console.log(new ObjectNS.PropertyPathParser().parse('$.foo')); // ['foo']
+
+    // ── extractPropertyByPath ─────────────────────────────────────────────────────
+    // extractPropertyByPath is sub-path only — NOT in the main entry or bundle namespace
+    console.log('\n=== extractPropertyByPath ===');
+
+    const deep = { a: { b: [{ c: 42 }, { c: 99 }] } };
+
+    // IExtractPropertyByPathOptions exercises the exported options type
+    const epOpts: IExtractPropertyByPathOptions = { defaultValue: 'missing' };
+
+    console.log(epbp2(deep, '$'));               // the deep object itself
+    console.log(epbp2(deep, '$.a.b[0].c'));     // 42
+    console.log(epbp2(deep, '$.a.b[1].c'));     // 99
+    console.log(epbp2(deep, '$.a.b[2].c', epOpts));    // 'missing'
+    console.log(epbp2(deep, '$.a.b[0].z', epOpts));    // 'missing'
+
+    // Also accepts a pre-parsed path array (result of PropertyPathParser.parse)
+    const parsed = parser.parse('$.a.b[0].c');
+    console.log(epbp2(deep, parsed));           // 42
 
 })().catch(console.error);

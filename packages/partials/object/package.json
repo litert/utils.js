@@ -32,7 +32,7 @@
     "@litert/utils-ts-types": "-"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "type": "module",
   "peerDependencies": {},
@@ -45,6 +45,12 @@
         "default": "./lib/index.js"
       }
     },
+    "./class/PropertyPathParser": {
+      "default": {
+        "types": "./lib/Classes/PropertyPathParser.d.ts",
+        "default": "./lib/Classes/PropertyPathParser.js"
+      }
+    },
     "./functions/CopyProperties": {
       "default": {
         "types": "./lib/Functions/CopyProperties.d.ts",
@@ -55,6 +61,12 @@
       "default": {
         "types": "./lib/Functions/DeepMerge.d.ts",
         "default": "./lib/Functions/DeepMerge.js"
+      }
+    },
+    "./functions/ExtractPropertyByPath": {
+      "default": {
+        "types": "./lib/Functions/ExtractPropertyByPath.d.ts",
+        "default": "./lib/Functions/ExtractPropertyByPath.js"
       }
     },
     "./functions/GetConstructor": {
@@ -73,6 +85,12 @@
       "default": {
         "types": "./lib/Functions/HasProperties.d.ts",
         "default": "./lib/Functions/HasProperties.js"
+      }
+    },
+    "./functions/IsClassConstructor": {
+      "default": {
+        "types": "./lib/Functions/IsClassConstructor.d.ts",
+        "default": "./lib/Functions/IsClassConstructor.js"
       }
     },
     "./functions/IsSubclassOf": {

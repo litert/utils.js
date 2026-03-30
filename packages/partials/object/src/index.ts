@@ -19,4 +19,8 @@ export * from './Functions/DeepMerge.js';
 export * from './Functions/GetConstructor.js';
 export * from './Functions/GetPropertyNames.js';
 export * from './Functions/HasProperties.js';
+export * from './Functions/PickProperties.js';
 export * from './Functions/IsSubclassOf.js';
+export * from './Functions/IsClassConstructor.js';
+export * from './Functions/ExtractPropertyByPath.js';
+export * from './Classes/PropertyPathParser.js';
