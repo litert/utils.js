@@ -12,25 +12,25 @@ The utility functions/classes/constants for JavaScript/TypeScript.
 ## Requirement
 
 - TypeScript v5.0.0 (or newer)
-- Node.js v18.0.0 (or newer)
+- Node.js v22.0.0 (or newer)
 
 ## Namespaces
 
 The [bundle package `@litert/utils`](https://www.npmjs.com/package/@litert/utils) includes all utility functions/classes/constants, exported each sub-package as a namespace.
 
-- `Root Namespace`
-
-    These sub-packages are exported at the root namespace of the bundle package:
-    - [@litert/utils-flow-control](https://www.npmjs.com/package/@litert/utils-flow-control)
-    - [@litert/utils-ts-types](https://www.npmjs.com/package/@litert/utils-ts-types)
-
-- `Namespace Array` (Sub-package: [@litert/utils-array](https://www.npmjs.com/package/@litert/utils-array))
-- `Namespace Async` (Sub-package: [@litert/utils-async](https://www.npmjs.com/package/@litert/utils-async))
-- `Namespace Concurrent` (Sub-package: [@litert/concurrent](https://www.npmjs.com/package/@litert/concurrent))
-- `Namespace Network` (Sub-package: [@litert/utils-network](https://www.npmjs.com/package/@litert/utils-network))
-- `Namespace Number` (Sub-package: [@litert/utils-number](https://www.npmjs.com/package/@litert/utils-number))
-- `Namespace Object` (Sub-package: [@litert/utils-object](https://www.npmjs.com/package/@litert/utils-object))
-- `Namespace String` (Sub-package: [@litert/utils-string](https://www.npmjs.com/package/@litert/utils-string))
+| Namespace | Sub-package | Documentation |
+| --- | --- | --- |
+| `Root` | `@litert/utils` | [Read](https://litert.org/projects/utils.js/) |
+| `Array` | `@litert/utils-array` | [Read](https://litert.org/projects/utils.js/en/api/namespaces/array/) |
+| `Async` | `@litert/utils-async` | [Read](https://litert.org/projects/utils.js/en/api/namespaces/async/) |
+| `Concurrent` | `@litert/concurrent` | [Read](https://litert.org/projects/utils.js/en/api/namespaces/concurrent/) |
+| (Exported in Root)  | `@litert/utils-flow-control` | [Read](https://litert.org/projects/utils.js/en/api/namespaces/flow-control/) |
+| `Network` | `@litert/utils-network` | [Read](https://litert.org/projects/utils.js/en/api/namespaces/network/) | |
+| `Number` | `@litert/utils-number` | [Read](https://litert.org/projects/utils.js/en/api/namespaces/number/) |
+| `Object` | `@litert/utils-object` | [Read](https://litert.org/projects/utils.js/en/api/namespaces/object/) |
+| `String` | `@litert/utils-string` | [Read](https://litert.org/projects/utils.js/en/api/namespaces/string/) |
+| `Test` | `@litert/utils-test` | [Read](https://litert.org/projects/utils.js/en/api/namespaces/test/) |
+| (Exported in Root)  | `@litert/utils-ts-types` | [Read](https://litert.org/projects/utils.js/en/api/namespaces/ts-types/) |
 
 ## Installation
 
@@ -38,18 +38,10 @@ The [bundle package `@litert/utils`](https://www.npmjs.com/package/@litert/utils
 npm i @litert/utils --save
 ```
 
-## Documentation
-
-- [Array](https://litert.org/projects/utils-array.js/)
-- [Async](https://litert.org/projects/utils-async.js/)
-- [Concurrent](https://litert.org/projects/concurrent.js/)
-- [Flow Control](https://litert.org/projects/utils-flow-control.js/)
-- [Network](https://litert.org/projects/utils-network.js/)
-- [Number](https://litert.org/projects/utils-number.js/)
-- [Object](https://litert.org/projects/utils-object.js/)
-- [String](https://litert.org/projects/utils-string.js/)
-- [TypeScript Utility Types](https://litert.org/projects/utils-ts-types.js/)
-
 ## License
 
 This library is published under [Apache-2.0](https://github.com/litert/utils.js/blob/master/LICENSE) license.
+
+## AI Disclaimer
+
+This project may use AI tools to assist in documentation writing and inspiration for unit test cases, but all code is written and reviewed by human developers.

@@ -80,7 +80,7 @@ function updatePackageJson(pkgDir, exportsMap) {
 
     pkg.exports = exportsMap;
 
-    fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf8');
+    fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
     console.log(`  Updated  ${path.relative(ROOT, pkgPath)}`);
 }
 

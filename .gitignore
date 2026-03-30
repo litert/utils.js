@@ -11,3 +11,12 @@ tsconfig.tsbuildinfo
 /tmp/
 /.ottoia/
 !/utils/*.js
+/.github/copilot-instructions.md
+/.github/instructions/*.md
+/.github/agents/*.md
+/.github/skills/*.md
+/.cursor/
+/.ai/
+/.agents/
+/.agent/
+/AGENTS.md

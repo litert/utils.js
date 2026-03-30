@@ -2,11 +2,28 @@
 
 ## v2.0.0
 
+### New Features
+
 - build(project): migrate the project to ESM module system
+- feat(pkg:object): added API `Object.isClassConstructor` to check if a value is a native ES2015 class constructor
+- feat(pkg:string): added API `String.parseKeyValue`
+- feat(pkg:string): added API `String.parseBooleanValue`
+- feat(pkg:object): added class `Object.PropertyPathParser`
+- feat(pkg:object): added API `Object.extractPropertyByPath`
+- feat(pkg:test): added new API `Test.autoTickMs` to tick timers by a specified ms interval instead of ticking all timers immediately.
+- feat(pkg:test): added new API `Test.withEnv` to run tests with temporary environment variables.
+
+### Bug Fixes
+
 - fix(pkg:async): `Async.sleep` should throw error immediately if an aborted signal is passed in.
 - fix(pkg:async): `Async.sleep` should sleep for 0ms if 0ms is passed in, instead of resolving immediately in the next tick.
-- feat(pkg:test): added new API `Test.autoTickMs` to tick timers by a specified ms interval instead of ticking all timers immediately.
+
+### Breaking Changes
+
+- build(project): increased the minimum required Node.js version to v20.0.0, to support ESM modules
+- fix(pkg:object): API `Object.deepMerge` should not mutate the both input objects
 - deprecate(pkg:ts-types): removed type `IJsonSafeValue`.
+- deprecate(pkg:string): mark API `String.regexpEscape` as deprecated since `RegExp.escape` is now widely supported in modern environments.
 
 ## v1.7.0
 

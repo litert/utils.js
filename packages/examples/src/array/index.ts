@@ -23,6 +23,7 @@ import * as ArrayNS from '@litert/utils/namespaces/Array';
 
 // ── Type-only imports (verifies type exports are resolvable) ──────────────────
 import type { IDict } from '@litert/utils-ts-types';
+import type { IDeduplicateFn } from '@litert/utils-array';
 
 (async (): Promise<void> => {
 
@@ -46,6 +47,10 @@ import type { IDict } from '@litert/utils-ts-types';
 
     console.log(dedup2(['a', 'b', 'a', 'c']));        // ['a', 'b', 'c']
     console.log(ArrayNS.deduplicate([true, false, true])); // [true, false]
+
+    // IDeduplicateFn is the type of the deduplicate overloaded function
+    const dedupFn: IDeduplicateFn = deduplicate;
+    console.log(dedupFn([4, 5, 4, 6, 5])); // [4, 5, 6]
 
     // ── toChunks ──────────────────────────────────────────────────────────────────
     console.log('\n=== toChunks ===');

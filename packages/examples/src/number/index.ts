@@ -8,6 +8,7 @@
  *
  * TypeScript-specific: uses explicit return-type annotations to verify
  * `randomBetween` returns `number` and `UnitConverter.convert` returns `number`.
+ * Also imports `IUnit` and `IUnitConverterOptions` to verify type exports.
  */
 
 // ── 1. Main entry ─────────────────────────────────────────────────────────────
@@ -20,6 +21,9 @@ import { randomBetween as rb2 } from '@litert/utils-number/functions/RandomBetwe
 
 // ── 3. Bundle namespace ───────────────────────────────────────────────────────
 import * as NumberNS from '@litert/utils/namespaces/Number';
+
+// ── Type-only imports (verifies type exports from UnitConverter are resolvable)
+import type { IUnit, IUnitConverterOptions } from '@litert/utils-number/class/UnitConverter';
 
 (async (): Promise<void> => {
 
@@ -80,5 +84,30 @@ import * as NumberNS from '@litert/utils/namespaces/Number';
         ],
     });
     console.log('1 km in mm (namespace):', dist.convert(1, 'km', 'mm')); // 1000000
+
+    // ── IUnit / IUnitConverterOptions type verification ───────────────────────────
+    console.log('\n=== IUnit / IUnitConverterOptions ===');
+
+    // IUnit<T> describes a unit with name and factor
+    const weightUnits: IUnit<string>[] = [
+        { name: 'g',  factor: 1      },
+        { name: 'kg', factor: 1_000  },
+        { name: 't',  factor: 1_000_000 },
+    ];
+    console.log('IUnit array length:', weightUnits.length); // 3
+
+    // IUnitConverterOptions<T> is the full constructor options type
+    const opts: IUnitConverterOptions<string> = {
+        baseUnit: 'mg',
+        units: weightUnits,
+    };
+    const weight = new UnitConverter(opts);
+    console.log('1 kg in mg:', weight.convert(1, 'kg', 'mg')); // 1000000
+
+    // makeUnitsByFactor returns IUnit<T>[] — verify return type
+    const autoUnits: IUnit<string>[] = UnitConverter.makeUnitsByFactor(['kb', 'mb', 'gb'], 1024);
+    console.log('makeUnitsByFactor length:', autoUnits.length);    // 3
+    console.log('kb factor:', autoUnits[0].factor);               // 1024
+    console.log('mb factor:', autoUnits[1].factor);               // 1048576
 
 })().catch(console.error);

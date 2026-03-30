@@ -21,10 +21,12 @@ import type { IDict, IObject } from '@litert/utils-ts-types';
 /**
  * Transform an object array to a map/dictionary.
  *
+ * When the key conflicts, the last item will overwrite the previous one.
+ *
  * @param input     The array to be transformed
  * @param key       The key maker function or the property name of the object.
  *
- * @returns        A dictionary where each key is generated from the input array items.
+ * @returns A dictionary where each key is generated from the input array items.
  */
 export function toDict<T extends IObject>(
     input: readonly T[],

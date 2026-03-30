@@ -20,6 +20,9 @@ import { useValueOr as useValueOr2 } from '@litert/utils-flow-control/functions/
 // ── 3. Bundle flat re-export (no namespace — flow-control is flat in the bundle)
 import { tryCatch as tryCatch3, useValueOr as useValueOr3 } from '@litert/utils';
 
+// ── Type-only imports ─────────────────────────────────────────────────────────
+import type { ITryCatchOptions, ITryCatchResult } from '@litert/utils-flow-control';
+
 (async (): Promise<void> => {
 
     // ── tryCatch ──────────────────────────────────────────────────────────────────
@@ -60,6 +63,17 @@ import { tryCatch as tryCatch3, useValueOr as useValueOr3 } from '@litert/utils'
         catch: (e: unknown): string => `caught: ${(e as Error).message}`,
     });
     console.log('async catch:', r5); // 'caught: boom'
+
+    // ITryCatchOptions / ITryCatchResult — verify structural types are usable
+    console.log('\n=== ITryCatchOptions / ITryCatchResult ===');
+    {
+        const opts: ITryCatchOptions<number, number, void> = {
+            try:   (): number => 7,
+            catch: (): number => -1,
+        };
+        const result: ITryCatchResult<number, number, void> = tryCatch(opts);
+        console.log('typed result:', result); // 7
+    }
 
     // ── useValueOr ────────────────────────────────────────────────────────────────
     console.log('\n=== useValueOr ===');
