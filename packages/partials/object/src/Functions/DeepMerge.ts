@@ -19,6 +19,9 @@
 import type { IDict, IObject } from '@litert/utils-ts-types';
 import { getPropertyNames } from './GetPropertyNames.js';
 
+/**
+ * @no_doc
+ */
 export type IMergeArray<T1 extends any[], T2 extends any[]> = T1[0] extends IObject ?
     T2[0] extends IObject ?
         Array<IMergeObject<T1[0], T2[0]>> :
@@ -108,6 +111,9 @@ export function deepMerge<T1 extends IObject, T2 extends IObject>(
 
     const ret = {} as IDict;
 
+    obj1 = Array.isArray(obj1) ? [...obj1] as any : { ...obj1 };
+    obj2 = Array.isArray(obj2) ? [...obj2] as any : { ...obj2 };
+
     for (const k of getPropertyNames(obj1)) {
 
         ret[k] = (obj1 as any)[k];
@@ -115,10 +121,9 @@ export function deepMerge<T1 extends IObject, T2 extends IObject>(
 
     for (const k of getPropertyNames(obj2)) {
 
-        if ((ret[k] === null || obj2[k] === null) && opts.nullAsEmptyObject) {
+        if (opts.nullAsEmptyObject && isObject(ret[k])) {
 
-            ret[k] = {};
-            obj2[k] = {} as any;
+            obj2[k] ??= {} as any;
         }
 
         if (isObject(ret[k]) && isObject(obj2[k])) {
