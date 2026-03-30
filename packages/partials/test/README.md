@@ -14,7 +14,7 @@ The utility functions/classes/constants about test (using `node:test`) for NodeJ
 ## Requirement
 
 - TypeScript v5.0.0 (or newer)
-- Node.js v18.0.0 (or newer)
+- Node.js v22.0.0 (or newer)
 
 ## Installation
 
@@ -231,6 +231,54 @@ NodeTest.it('handles a 24-hour timer without performance issues', async (ctx) =>
 
 ---
 
+### Function `withEnv`
+
+Temporarily sets environment variables for the duration of a callback and restores them afterward.
+
+Works with both synchronous and asynchronous callbacks. If the callback returns a `Promise`, the environment variables are restored once the promise settles (resolves or rejects). Any error thrown by the callback is re-thrown after the environment variables are restored.
+
+**Signature:**
+
+```ts
+function withEnv<T extends () => any>(env: IDict, cb: T): ReturnType<T>
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `env` | `IDict` | An object of environment variable key-value pairs to set for the duration of the callback. |
+| `cb` | `T` | The callback function to execute with the temporary environment variables. |
+
+**Returns:** The return value of the callback (including `Promise` if the callback is async).
+
+**Example — synchronous callback:**
+
+```ts
+import { withEnv } from '@litert/utils-test';
+
+withEnv({ MY_VAR: 'hello' }, () => {
+    console.log(process.env.MY_VAR); // 'hello'
+});
+
+console.log(process.env.MY_VAR); // undefined (restored)
+```
+
+**Example — asynchronous callback:**
+
+```ts
+import { withEnv } from '@litert/utils-test';
+
+await withEnv({ NODE_ENV: 'test' }, async () => {
+    await someAsyncOperation();
+    console.log(process.env.NODE_ENV); // 'test'
+});
+
+console.log(process.env.NODE_ENV); // restored to original
+```
+
+---
+
 ## Choosing Between `autoTick` and `autoTickMs`
 
 | | `autoTick` | `autoTickMs` |
@@ -250,8 +298,12 @@ NodeTest.it('handles a 24-hour timer without performance issues', async (ctx) =>
 
 ## Documentation
 
-- [en-US](https://litert.org/projects/utils.js/api-docs/test/)
+- [en-US](https://litert.org/projects/utils.js/en/api/namespaces/test/)
 
 ## License
 
 This library is published under [Apache-2.0](https://github.com/litert/utils.js/blob/master/LICENSE) license.
+
+## AI Disclaimer
+
+This project may use AI tools to assist in documentation writing and inspiration for unit test cases, but all code is written and reviewed by human developers.

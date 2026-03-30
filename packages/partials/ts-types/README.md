@@ -12,7 +12,7 @@ The utility functions/classes/constants about helper types for TypeScript.
 ## Requirement
 
 - TypeScript v5.0.0 (or newer)
-- Node.js v18.0.0 (or newer)
+- Node.js v22.0.0 (or newer)
 
 ## Installation
 
@@ -129,10 +129,36 @@ If `T` is `any`, it resolves to `TYes`; otherwise, it resolves to `TNo`.
 The `IfIsNever<T, TYes, TNo>` type is a conditional type that checks if the type `T` is `never`.
 If `T` is `never`, it resolves to `TYes`; otherwise, it resolves to `TNo`.
 
+### Class `UtilityError`
+
+The base error class for all errors thrown by the LiteRT utilities. It extends the built-in `Error` class and adds a typed `context` property for structured error information, and an `origin` property for the underlying cause.
+
+```ts
+import { UtilityError } from '@litert/utils-ts-types';
+
+class MyError extends UtilityError<{ input: string }> {
+    public constructor(input: string, message: string) {
+        super('MyError', message, { input });
+    }
+}
+
+try {
+    throw new MyError('bad-value', 'Input is invalid');
+} catch (e) {
+    if (e instanceof MyError) {
+        console.error(`[${e.name}] ${e.message}`, e.context);
+    }
+}
+```
+
 ## Documentation
 
-- [en-US](https://litert.org/projects/utils.js/api-docs/ts-types/)
+- [en-US](https://litert.org/projects/utils.js/en/api/namespaces/ts-types/)
 
 ## License
 
 This library is published under [Apache-2.0](https://github.com/litert/utils.js/blob/master/LICENSE) license.
+
+## AI Disclaimer
+
+This project may use AI tools to assist in documentation writing and inspiration for unit test cases, but all code is written and reviewed by human developers.

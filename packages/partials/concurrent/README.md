@@ -12,7 +12,7 @@ The utility functions/classes/constants about asynchronous operations for JavaSc
 ## Requirement
 
 - TypeScript v5.0.0 (or newer)
-- Node.js v18.0.0 (or newer)
+- Node.js v22.0.0 (or newer)
 
 ## Installation
 
@@ -253,8 +253,12 @@ await sleep(1000); // Wait for 1 second.
 
 ## Documentation
 
-- [en-US](https://litert.org/projects/utils.js/api-docs/concurrent/)
+- [en-US](https://litert.org/projects/utils.js/en/api/namespaces/concurrent/)
 
 ## License
 
 This library is published under [Apache-2.0](https://github.com/litert/utils.js/blob/master/LICENSE) license.
+
+## AI Disclaimer
+
+This project may use AI tools to assist in documentation writing and inspiration for unit test cases, but all code is written and reviewed by human developers.
