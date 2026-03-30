@@ -18,6 +18,10 @@
  * Escape a string for use in a regular expression, all below characters will be escaped.
  *
  * > `[.*+?^${}()|[\]/\\]`
+ *
+ * @deprecated since 2025, the `RegExp.escape` method has been widely supported in modern environments.
+ * @param text The string to escape.
+ * @returns The escaped string.
  */
 export function regexpEscape(text: string): string {
 
