@@ -16,6 +16,8 @@ import {
     htmlEscape,
     includeEvilWhitespaceChars,
     replaceEvilWhitespaceChars,
+    includeEvilSpaceChars,
+    replaceEvilSpaceChars,
     isEmailAddress,
     splitIntoLines,
     toUnixString,
@@ -32,6 +34,7 @@ import {
     regexpEscape,
     toChunks,
     toChunksBackward,
+    parseKeyValue,
 } from '@litert/utils-string';
 
 // ── 2. Individual sub-path exports ────────────────────────────────────────────
@@ -49,12 +52,24 @@ import { random              as random2,
 import { regexpEscape        as re2         } from '@litert/utils-string/functions/RegexpEscape';
 import { toChunks            as tc2,
          toChunksBackward    as tcb2        } from '@litert/utils-string/functions/ToChunks';
+import { parseKeyValue       as pkv2        } from '@litert/utils-string/functions/ParseKeyValue';
+import {
+    parseBooleanValue                 as pbv2,
+    DEFAULT_BOOLEAN_VALUE_MAPPINGS    as DBVM2,
+} from '@litert/utils-string/functions/ParseBooleanValue';
 
 // ── 3. Bundle namespace ───────────────────────────────────────────────────────
 import * as StringNS from '@litert/utils/namespaces/String';
 
 // ── Type-only imports (verifies interface exports are resolvable) ──────────────
-import type { IUnitParserOptions, IUnitInfo } from '@litert/utils-string';
+import type {
+    IUnitParserOptions,
+    IUnitInfo,
+    IUnitParserResult,
+    IEmailValidationOptions,
+    IParseKeyValueOptions,
+    IParseBooleanValueOptions,
+} from '@litert/utils-string';
 
 (async (): Promise<void> => {
 
@@ -101,6 +116,10 @@ import type { IUnitParserOptions, IUnitInfo } from '@litert/utils-string';
     console.log('sub-path check:', iew2(evilStr));   // true
     console.log('sub-path replace:', rew2(evilStr)); // 'HelloWorld'
     console.log('namespace check:', StringNS.includeEvilWhitespaceChars(evilStr));
+
+    // includeEvilSpaceChars / replaceEvilSpaceChars are aliases for the above
+    console.log('alias check:', includeEvilSpaceChars(evilStr));          // true
+    console.log('alias replace:', replaceEvilSpaceChars(evilStr, '...')); // 'Hello...World'
 
     // ── isEmailAddress ────────────────────────────────────────────────────────────
     console.log('\n=== isEmailAddress ===');
@@ -179,5 +198,55 @@ import type { IUnitParserOptions, IUnitInfo } from '@litert/utils-string';
     console.log(tc2('abcdef', 2));  // ['ab', 'cd', 'ef']
     console.log(tcb2('abcde', 2));  // ['a', 'bc', 'de']
     console.log(StringNS.toChunks('abc', 2)); // ['ab', 'c']
+
+    // ── parseKeyValue ─────────────────────────────────────────────────────────────
+    console.log('\n=== parseKeyValue ===');
+
+    // IParseKeyValueOptions exercises the exported options type
+    const kv1: [string, string] | null = parseKeyValue('host=localhost');
+    console.log('host=localhost:', kv1);                      // ['host', 'localhost']
+
+    const kv2: [string, string] | null = parseKeyValue('a=b=c');
+    console.log('a=b=c:', kv2);                               // ['a', 'b=c']
+
+    const kv3: [string, string] | null = parseKeyValue('no-assign');
+    console.log('no-assign → null:', kv3);                    // null
+
+    const kvopts: IParseKeyValueOptions = { assignSign: '=>', trimKey: true, trimValue: false };
+    console.log('custom sign:', parseKeyValue('key => value', kvopts)); // ['key', ' value']
+
+    console.log('sub-path pkv2:', pkv2('x:y', { assignSign: ':' })); // ['x', 'y']
+    console.log('namespace:', StringNS.parseKeyValue('a=b'));           // ['a', 'b']
+
+    // ── parseBooleanValue ─────────────────────────────────────────────────────────
+    // parseBooleanValue is sub-path only — not in the main entry or bundle namespace
+    console.log('\n=== parseBooleanValue ===');
+
+    // IParseBooleanValueOptions exercises the exported options type
+    const bvOpts: IParseBooleanValueOptions = { caseSensitive: true, defaultValue: undefined };
+    console.log('true → true:', pbv2('true', bvOpts));              // true
+    console.log('false → false:', pbv2('false', bvOpts));           // false
+    console.log('yes → true:', pbv2('yes', bvOpts));                // true
+    console.log('no → false:', pbv2('no', bvOpts));                 // false
+    console.log('NO (case-sens) → undefined:', pbv2('NO', bvOpts)); // undefined
+    console.log('NO (case-insens) → false:', pbv2('NO'));            // false (default caseSensitive=false)
+
+    // DEFAULT_BOOLEAN_VALUE_MAPPINGS is the runtime constant
+    console.log('DEFAULT_BOOLEAN_VALUE_MAPPINGS.true:', DBVM2['true']);   // true
+    console.log('DEFAULT_BOOLEAN_VALUE_MAPPINGS.false:', DBVM2['false']); // false
+    console.log('DEFAULT_BOOLEAN_VALUE_MAPPINGS.allow:', DBVM2['allow']); // true
+
+    // ── IUnitParserResult / IEmailValidationOptions type verification ─────────────
+    console.log('\n=== IUnitParserResult / IEmailValidationOptions ===');
+
+    // IUnitParserResult shapes the return value of UnitParser.parse()
+    const rp = new UnitParser({ format: '{value}{unit}', units: ['px', 'em'] });
+    const pr: IUnitParserResult | null = rp.parse('16px');
+    console.log('IUnitParserResult:', pr); // { value: '16', unit: 'px' }
+
+    // IEmailValidationOptions — domain allow-list
+    const emailOpts: IEmailValidationOptions = { domains: ['example.com'] };
+    console.log('example.com allowed:', isEmailAddress('user@example.com', emailOpts)); // true
+    console.log('other.com blocked:',   isEmailAddress('user@other.com', emailOpts));   // false
 
 })().catch(console.error);

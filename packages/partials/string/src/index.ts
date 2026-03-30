@@ -16,6 +16,8 @@
 
 export * from './Functions/Lines.js';
 export * from './Functions/EvilWhitespace.js';
+export * from './Functions/ParseKeyValue.js';
+export * from './Functions/ParseBooleanValue.js';
 export * from './Functions/Random.js';
 export * from './Functions/RegexpEscape.js';
 export * from './Functions/Html.js';

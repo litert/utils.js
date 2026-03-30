@@ -28,10 +28,12 @@
   "license": "Apache-2.0",
   "private": false,
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "type": "module",
-  "dependencies": {},
+  "dependencies": {
+    "@litert/utils-ts-types": "-"
+  },
   "devDependencies": {},
   "peerDependencies": {},
   "ottoia:alias": "partials.string",
@@ -77,6 +79,18 @@
       "default": {
         "types": "./lib/Functions/NameCase.d.ts",
         "default": "./lib/Functions/NameCase.js"
+      }
+    },
+    "./functions/ParseBooleanValue": {
+      "default": {
+        "types": "./lib/Functions/ParseBooleanValue.d.ts",
+        "default": "./lib/Functions/ParseBooleanValue.js"
+      }
+    },
+    "./functions/ParseKeyValue": {
+      "default": {
+        "types": "./lib/Functions/ParseKeyValue.d.ts",
+        "default": "./lib/Functions/ParseKeyValue.js"
       }
     },
     "./functions/Random": {
