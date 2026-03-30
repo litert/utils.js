@@ -37,6 +37,7 @@ const EVIL_WHITESPACE_REGEXP = new RegExp(`[${[
  */
 export function includeEvilWhitespaceChars(str: string): boolean {
 
+    EVIL_WHITESPACE_REGEXP.lastIndex = 0;
     return EVIL_WHITESPACE_REGEXP.test(str);
 }
 
