@@ -16,6 +16,7 @@
 
 import type * as DTypes from '@litert/utils-ts-types';
 import { PromiseController } from './PromiseController.js';
+import * as Errors from '../Errors.js';
 
 /**
  * The context of the fiber execution, used to exchanged data between the fiber and the controller.
@@ -87,17 +88,6 @@ export type IFiberOptions<T> = T extends null ? {
 };
 
 /**
- * The error thrown by the `FiberController`.
- */
-export class FiberError extends Error {
-
-    public constructor(message: string) {
-        super(message);
-        this.name = FiberError.name;
-    }
-}
-
-/**
  * A controller class for asynchronous fiber execution.
  *
  * User can control the fiber execution by aborting it, hibernating it, or resuming it, and
@@ -145,7 +135,7 @@ export class FiberController<T = null> {
                         switch (this._state) {
                             case EState.RUNNING:
                                 if (this._ac.signal.aborted) {
-                                    throw new FiberError('The fiber execution has been aborted.');
+                                    throw new Errors.E_ABORTED();
                                 }
                                 this._state = EState.SLEEPING;
                                 this._pcResume = new PromiseController<void>();
@@ -157,7 +147,7 @@ export class FiberController<T = null> {
                             case EState.SLEEPING: // Do nothing if it is already sleeping.
                                 return;
                             case EState.EXITED:
-                                throw new FiberError('The fiber is not running, can not goto sleep.');
+                                throw new Errors.E_FIBER_EXITED();
                         }
                     }
                 });
@@ -174,13 +164,13 @@ export class FiberController<T = null> {
 
                 if (this._pcResume !== null) {
 
-                    this._pcResume.reject(new FiberError('The fiber has exited.'));
+                    this._pcResume.reject(new Errors.E_FIBER_EXITED());
                     this._pcResume = null;
                 }
 
                 if (this._pcSleepWait !== null) {
 
-                    this._pcSleepWait.reject(new FiberError('The fiber has exited.'));
+                    this._pcSleepWait.reject(new Errors.E_FIBER_EXITED());
                     this._pcSleepWait = null;
                 }
             }
@@ -245,7 +235,7 @@ export class FiberController<T = null> {
 
         if (this._pcResume !== null) {
 
-            this._pcResume.reject(new FiberError('The fiber has been aborted.'));
+            this._pcResume.reject(new Errors.E_ABORTED());
             this._pcResume = null;
         }
     }
@@ -272,7 +262,7 @@ export class FiberController<T = null> {
             case EState.SLEEPING:
                 return Promise.resolve();
             case EState.EXITED:
-                return Promise.reject(new FiberError('The fiber is exited, cannot wait for hibernation.'));
+                return Promise.reject(new Errors.E_FIBER_EXITED());
         }
     }
 }

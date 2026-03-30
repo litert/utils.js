@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TimeoutError } from '../Errors.js';
+import { E_TIMEOUT } from '../Errors.js';
 
 /**
  * The extended options for `withTimeout` function.
@@ -43,7 +43,7 @@ export interface IWithTimeoutOptions<T> {
  * @param asyncTask     The asynchronous task to execute, which can be a Promise or a function that returns a Promise.
  * @param opts          Additional options for handling the task result.
  *
- * @throws {TimeoutError} If the asynchronous task does not complete within the specified timeout.
+ * @throws {E_TIMEOUT} If the asynchronous task does not complete within the specified timeout.
  * @returns A Promise with the result of the asynchronous task or a timeout error.
  */
 export async function withTimeout<T>(
@@ -58,7 +58,7 @@ export async function withTimeout<T>(
 
         let timer: NodeJS.Timeout | null = setTimeout(() => {
             timer = null; // Clear the timer reference
-            reject(new TimeoutError(pr));
+            reject(new E_TIMEOUT({ unresolvedPromise: pr }));
         }, timeoutMs);
 
         pr.then(

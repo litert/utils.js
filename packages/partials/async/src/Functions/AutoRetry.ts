@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { AbortedError } from '../Errors.js';
+import { IMaybeAsync } from '@litert/utils-ts-types';
+import { E_ABORTED } from '../Errors.js';
 import { sleep } from './Sleep.js';
 
 const DEFAULT_RETRY_DELAY_GENERATOR = compositeRetryDelayGenerator({
@@ -37,7 +38,7 @@ export const DEFAULT_BEFORE_RETRY: IBeforeRetryCallback = async (ctx): Promise<v
  * The type of the callback functions that can be used to perform actions
  * before each retry attempt (e.g. waiting for a delay, logging, etc.).
  */
-export type IBeforeRetryCallback = (context: IRetryContext) => void | Promise<void>;
+export type IBeforeRetryCallback = (context: IRetryContext) => IMaybeAsync<void>;
 
 /**
  * The options for the `autoRetry` function.
@@ -56,7 +57,7 @@ export interface IRetryOptions<TResult> {
      *
      * @param context       The retry context, which contains: retriedTimes, error, signal.
      */
-    'function': (context: IRetryContext) => Promise<TResult>;
+    'function': (context: IRetryContext) => IMaybeAsync<TResult>;
 
     /**
      * A callback function to be called before each retry (except the first call, before the first
@@ -121,11 +122,9 @@ export interface IRetryContext {
  * @return A `Promise` that resolves to the result of the given function.
  *
  * @throws {TypeError} If the `maxRetries` option is not a positive integer.
- * @throws If the `beforeRetry` function throws an `AbortError`, the error thrown by the main function by be rethrown,
- *         and the retry will be stopped.
  * @throws If the `beforeRetry` function throws a new error, it will be thrown out and the retry will be stopped.
  * @throws If all retries are exhausted, the last error thrown by the main function will be rethrown.
- * @throws If aborted during calling the main function, the last error thrown by the main function will be rethrown.
+ * @throws {E_ABORTED} If signal aborted during the execution, the `E_ABORTED` will be thrown with an optional original error.
  *
  * @example
  *
@@ -154,54 +153,54 @@ export async function autoRetry<TResult>(opts: IRetryOptions<TResult>): Promise<
 
     opts.beforeRetry ??= DEFAULT_BEFORE_RETRY;
 
-    let retriedTimes = 0;
     let lastError: unknown = null;
 
-    while (true) {
+    // Total attempts = maxRetries + 1 (including the first call), so the loop should run `maxRetries + 1` times.
+    for (let i = 0; i <= opts.maxRetries; i++) {
 
         try {
 
-            return await opts.function({ retriedTimes, error: lastError, signal: opts.signal, });
+            const ret = opts.function({
+                'retriedTimes': i,
+                'error': lastError,
+                'signal': opts.signal,
+            });
+
+            if (ret instanceof Promise) {
+
+                return await ret;
+            }
+
+            return ret;
         }
         catch (e) {
 
-            if (retriedTimes >= opts.maxRetries || opts.signal?.aborted) {
+            if (i === opts.maxRetries || E_ABORTED.isAbortedError(e)) {
 
                 throw e;
             }
 
             lastError = e;
 
-            try {
-
-                const prBR =  opts.beforeRetry({ retriedTimes, error: e, signal: opts.signal, });
-
-                if (prBR instanceof Promise) {
-
-                    await prBR;
-                }
-            }
-            catch (e) {
-
-                if (opts.signal?.aborted && (
-                    (e instanceof Error && e.name === 'AbortError') ||
-                    e instanceof AbortedError
-                )) {
-
-                    throw lastError;
-                }
-
-                throw e;
-            }
-
             if (opts.signal?.aborted) {
 
-                throw e;
+                throw new E_ABORTED({}, e);
             }
 
-            retriedTimes++;
+            const prBR =  opts.beforeRetry({
+                'retriedTimes': i,
+                'error': e,
+                'signal': opts.signal,
+            });
+
+            if (prBR instanceof Promise) {
+
+                await prBR;
+            }
         }
     }
+
+    throw lastError;
 }
 
 /**

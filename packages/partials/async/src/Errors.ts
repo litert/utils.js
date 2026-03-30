@@ -14,30 +14,73 @@
  * limitations under the License.
  */
 
+import { type IDict, UtilityError } from '@litert/utils-ts-types';
+
+export interface IAsyncErrorContext extends IDict {
+
+    /**
+     * The promise that is still unresolved when the error is thrown,
+     * which can be used to track the original asynchronous task.
+     *
+     * @optional
+     */
+    unresolvedPromise?: Promise<unknown>;
+}
+
 /**
  * The error thrown when an operation exceeds the specified timeout.
  */
-export class TimeoutError extends Error {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export class E_TIMEOUT extends UtilityError<IAsyncErrorContext> {
 
-    public readonly unresolvedPromise: Promise<unknown>;
+    public readonly unresolvedPromise?: Promise<unknown>;
 
-    public constructor(unresolvedPromise: Promise<unknown>) {
-        super('Operation timed out');
-        this.name = TimeoutError.name;
-        this.unresolvedPromise = unresolvedPromise;
+    public constructor(ctx: IAsyncErrorContext = {}, origin: unknown = null) {
+        super('timeout', 'Operation timed out.', ctx, origin);
+        this.unresolvedPromise = ctx.unresolvedPromise;
     }
 }
 
 /**
  * The error thrown when an operation is aborted.
+ *
+ * You can use the `E_ABORTED.isAbortedError` static method to check if a given
+ * error is an instance of `E_ABORTED` or a standard `AbortError`
+ * (with name 'AbortError').
+ *
+ * In the new ECMAScript runtime, the `v instanceof E_ABORTED` operator may also
+ * work as `E_ABORTED.isAbortedError(v)`.
  */
-export class AbortedError extends DOMException {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export class E_ABORTED extends UtilityError<IAsyncErrorContext> {
 
-    public readonly unresolvedPromise: Promise<unknown> | null;
+    public constructor(context: IAsyncErrorContext = {}, origin: unknown = null) {
+        super('aborted', 'Operation aborted.', context, origin);
+    }
 
-    public constructor(unresolvedPromise: Promise<unknown> | null) {
+    public static override [Symbol.hasInstance](v: unknown): boolean {
 
-        super('Operation aborted.', 'AbortError');
-        this.unresolvedPromise = unresolvedPromise;
+        return this.isAbortedError(v);
+    }
+
+    /**
+     * Check if the given value is an instance of E_ABORTED or a standard AbortError (with name 'AbortError').
+     * @param v The error to check.
+     * @returns True if the error is an E_ABORTED instance or a standard AbortError, false otherwise.
+     */
+    public static isAbortedError(v: unknown): boolean {
+
+        return v?.constructor === E_ABORTED || (v instanceof Error && v.name === 'AbortError');
+    }
+}
+
+/**
+ * The error thrown when trying to resume a fiber that has already exited.
+ */
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export class E_FIBER_EXITED extends UtilityError<IAsyncErrorContext> {
+
+    public constructor(context: IAsyncErrorContext = {}, origin: unknown = null) {
+        super('fiber_exited', 'Fiber has already exited.', context, origin);
     }
 }

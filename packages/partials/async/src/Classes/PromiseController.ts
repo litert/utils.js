@@ -16,7 +16,7 @@
 
 import type { IDict } from '@litert/utils-ts-types';
 import type { IPromiseRejecter, IPromiseResolver } from '../Typings.js';
-import { TimeoutError } from '../Errors.js';
+import { E_TIMEOUT } from '../Errors.js';
 
 /**
  * The controller for promises, which allows you to decouple the resolver/rejecter with the
@@ -59,7 +59,7 @@ export class PromiseController<T = unknown, TError = unknown> {
      *                  have a timeout.
      *
      * @throws {TypeError} If the `timeoutMs` is not a safe integer.
-     * @throws {TimeoutError} If the promise is not resolved or rejected within the timeout.
+     * @throws {E_TIMEOUT} If the promise is not resolved or rejected within the timeout.
      */
     public constructor(timeoutMs: number = 0) {
 
@@ -91,7 +91,7 @@ export class PromiseController<T = unknown, TError = unknown> {
                 this._timer = setTimeout(() => {
 
                     this._timer = null;
-                    reject(new TimeoutError(this.promise));
+                    reject(new E_TIMEOUT({ unresolvedPromise: this.promise }));
 
                 }, timeoutMs);
             }

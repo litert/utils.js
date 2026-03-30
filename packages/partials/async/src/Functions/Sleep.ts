@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { AbortedError } from '../Errors.js';
+import { E_ABORTED } from '../Errors.js';
 
 function doSleep(delayMs: number, signal?: AbortSignal): Promise<void> {
 
     if (signal?.aborted) {
 
-        return Promise.reject(new AbortedError(null));
+        return Promise.reject(new E_ABORTED());
     }
 
     return new Promise<void>((resolve, reject) => {
@@ -31,7 +31,7 @@ function doSleep(delayMs: number, signal?: AbortSignal): Promise<void> {
 
             signal.addEventListener('abort', () => {
                 clearTimeout(timer);
-                reject(new AbortedError(null));
+                reject(new E_ABORTED());
             }, { once: true, });
         }
     });

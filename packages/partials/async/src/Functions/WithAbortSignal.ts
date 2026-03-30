@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AbortedError } from '../Errors.js';
+import { E_ABORTED } from '../Errors.js';
 
 /**
  * The extended options for `withAbortSignal` function.
@@ -79,10 +79,10 @@ export function withAbortSignal<T>(
                 );
             }
 
-            return Promise.reject(new AbortedError(asyncTask));
+            return Promise.reject(new E_ABORTED({ unresolvedPromise: asyncTask }));
         }
 
-        return Promise.reject(new AbortedError(null));
+        return Promise.reject(new E_ABORTED());
     }
 
     let pr: Promise<T>;
@@ -99,7 +99,7 @@ export function withAbortSignal<T>(
     return new Promise<T>((resolve, reject) => {
 
         const onAbort = (): void => {
-            reject(new AbortedError(pr));
+            reject(new E_ABORTED({ unresolvedPromise: pr }));
         };
 
         signal.addEventListener('abort', onAbort);
