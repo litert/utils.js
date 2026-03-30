@@ -1,0 +1,5 @@
+/.vitepress/.cache
+/.vitepress/dist/
+*.tgz
+/en/
+/typedoc-sidebar.json
