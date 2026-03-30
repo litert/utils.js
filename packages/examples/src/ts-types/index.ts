@@ -28,8 +28,12 @@ import type {
     IInstanceOf,
 } from '@litert/utils-ts-types';
 
+// ── Runtime imports (UtilityError is a real class, not type-only) ─────────────
+import { UtilityError } from '@litert/utils-ts-types';
+
 // ── 2. Bundle flat re-export (ts-types is flat in @litert/utils, no namespace)
 import type { IObject as IBundleObject, IDict as IBundleDict } from '@litert/utils';
+import { UtilityError as BundleUtilityError } from '@litert/utils';
 
 // ── Runtime presence check (side-effect imports) ──────────────────────────────
 import '@litert/utils-ts-types';
@@ -121,6 +125,34 @@ import '@litert/utils';
     const notNev: TNotNever = 'no';
     console.log('IfIsAny / IfIsNever types compile correctly:', isAny, notAny, isNev, notNev);
 
-    console.log('\n@litert/utils-ts-types: all 15 type exports verified');
+    // ── UtilityError ──────────────────────────────────────────────────────────────
+    // UtilityError is a real class (runtime value), not type-only
+    console.log('\n=== UtilityError ===');
+
+    // Subclass UtilityError to create a typed application error
+    class E_NOT_FOUND extends UtilityError<{ id: number }> {
+        public constructor(id: number, origin: unknown = null) {
+            super('not_found', `Resource ${id} was not found.`, { id }, origin);
+        }
+    }
+
+    const err = new E_NOT_FOUND(42);
+    console.log('name:',    err.name);               // 'not_found'
+    console.log('message:', err.message);             // 'Resource 42 was not found.'
+    console.log('context:', err.context);             // { id: 42 }
+    console.log('origin:',  err.origin);              // null
+    console.log('instanceof Error:', err instanceof Error);                  // true
+    console.log('instanceof UtilityError:', err instanceof UtilityError);    // true
+    console.log('instanceof E_NOT_FOUND:', err instanceof E_NOT_FOUND);      // true
+
+    // Verify BundleUtilityError is the same class (flat re-export from @litert/utils)
+    console.log('BundleUtilityError === UtilityError:', BundleUtilityError === UtilityError); // true
+
+    // With wrapped origin error
+    const cause = new Error('upstream failure');
+    const wrapped = new E_NOT_FOUND(7, cause);
+    console.log('origin is cause:', wrapped.origin === cause); // true
+
+    console.log('\n@litert/utils-ts-types: all 15 type exports + UtilityError class verified');
 
 })().catch(console.error);
