@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { EventEmitter } from 'node:events';
-import { FiberController, IFiberContext, PromiseController, TimeoutError } from '@litert/utils-async';
+import { FiberController, IFiberContext, PromiseController, E_TIMEOUT } from '@litert/utils-async';
 
 /**
  * The options for the fiber pool.
@@ -285,7 +285,7 @@ export class FiberPool extends EventEmitter<IFiberPoolEvents> {
         }
         catch (e) {
 
-            if (e instanceof TimeoutError) {
+            if (e instanceof E_TIMEOUT) {
 
                 const idx = this._fiberWaits.indexOf(pc);
 

@@ -15,7 +15,8 @@
  */
 
 import type { IConstructor, IDict, IFunction } from '@litert/utils-ts-types';
-import { E_RATE_LIMITED, ISyncRateLimiterManager } from '../Types.js';
+import type { ISyncRateLimiterManager } from '../Typings.js';
+import * as Errors from '../Errors.js';
 
 /**
  * The options for `TokenBucketRateLimiter`.
@@ -95,7 +96,7 @@ export class TokenBucketRateLimiterManager implements ISyncRateLimiterManager {
         this._refillIntervalMs = opts.refillIntervalMs;
         this._initialTokens = opts.initialTokens ?? opts.capacity;
         this._cleanDelayMs = opts.cleanDelayMs ?? 0;
-        this._errCtor = opts.errorCtorOnLimited ?? E_RATE_LIMITED;
+        this._errCtor = opts.errorCtorOnLimited ?? Errors.E_RATE_LIMITED;
 
         for (const k of ['capacity', 'refillIntervalMs'] as const) {
 

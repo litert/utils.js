@@ -27,4 +27,5 @@ export * from './Classes/MemoryMutex.js';
 export * from './Classes/FiberPool.js';
 export * from './Classes/ManualBreaker.js';
 export * from './Classes/CircuitBreaker.js';
-export * from './Types.js';
+export type * from './Typings.js';
+export * from './Errors.js';

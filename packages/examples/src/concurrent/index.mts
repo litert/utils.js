@@ -25,6 +25,12 @@ import {
     ThrottleController,
     TokenBucketRateLimiter,
     TokenBucketRateLimiterManager,
+    DEFAULT_MIN_IDLE_FIBERS,
+    DEFAULT_MAX_IDLE_FIBERS,
+    DEFAULT_IDLE_TIMEOUT,
+    DEFAULT_WAIT_TIMEOUT,
+    DEFAULT_MAX_WAITS,
+    E_LOCK_FAILED,
 } from '@litert/concurrent';
 
 // ── 2. Individual sub-path exports ────────────────────────────────────────────
@@ -46,7 +52,35 @@ import { TokenBucketRateLimiterManager as TBRLM2 } from '@litert/concurrent/clas
 import * as ConcurrentNS from '@litert/utils/namespaces/Concurrent';
 
 // ── Type-only imports (verifies interface exports from Types.ts) ───────────────
-import type { ICounter, IBreaker, ISyncRateLimiter } from '@litert/concurrent';
+import type {
+    ICounter,
+    IBreaker,
+    ISyncRateLimiter,
+    IAsyncRateLimiter,
+    ISyncRateLimiterManager,
+    IAsyncRateLimiterManager,
+    ISimpleFn,
+    IBatchBufferOptions,
+    ICircuitBreakerEvents,
+    ICircuitBreakerOptions,
+    ICountingRateLimiterOptions,
+    IDebouncingFunction,
+    IDebounceOptions,
+    IDebounceControllerEvents,
+    IFiberPoolOptions,
+    IFiberPoolEvents,
+    IFiberFunction,
+    IRunOptions,
+    ILeakyBucketRateLimiterManagerOptions,
+    ILeakyBucketRateLimiterOptions,
+    IMemoryMutexOptions,
+    ISlideWindowCounterOptions,
+    ITokenBucketRateLimiterManagerOptions,
+    ITokenBucketRateLimiterOptions,
+} from '@litert/concurrent';
+
+// ── Error imports ─────────────────────────────────────────────────────────────
+import { E_RATE_LIMITED, E_BREAKER_OPENED } from '@litert/concurrent';
 
 // ── ManualBreaker ─────────────────────────────────────────────────────────────
 console.log('\n=== ManualBreaker ===');
@@ -286,4 +320,160 @@ console.log('\n=== FiberPool ===');
     console.log('namespace FiberPool:', r2); // 20
     fp2.close();
     fpNS.close();
+}
+
+// ── ISimpleFn type ────────────────────────────────────────────────────────────
+console.log('\n=== ISimpleFn ===');
+{
+    // ISimpleFn = IFunction<[]> — a zero-argument function
+    const fn: ISimpleFn = (): number => 42;
+    console.log('ISimpleFn call:', fn()); // 42
+}
+
+// ── Options/Events interface type verification ────────────────────────────────
+console.log('\n=== Options/Events interface types ===');
+{
+    // IBatchBufferOptions<T> — requires maxSize and callback
+    const bbOpts: IBatchBufferOptions<number> = {
+        delayMs: 10,
+        maxSize: 5,
+        callback: (items: number[]): void => { console.log('batch flush:', items); },
+    };
+    const bb = new BatchBuffer<number>(bbOpts);
+    console.log('IBatchBufferOptions ok, instanceof BatchBuffer:', bb instanceof BatchBuffer);
+
+    // ICircuitBreakerOptions — all fields optional
+    const cbOpts: ICircuitBreakerOptions = { breakThreshold: 3, cooldownTimeMs: 100 };
+    const cbEvt: ICircuitBreakerEvents = { error: [new Error('x')], opened: [], half_opened: [], closed: [] };
+    const cb = new CircuitBreaker(cbOpts);
+    console.log('ICircuitBreakerOptions ok:', cb instanceof CircuitBreaker, 'events shape ok:', Array.isArray(cbEvt.opened));
+
+    // ICountingRateLimiterOptions — needs limits (number) and counter (ICounter)
+    const counter: ICounter = new SlideWindowCounter();
+    const crlOpts: ICountingRateLimiterOptions = { limits: 5, counter };
+    const crl: ISyncRateLimiter = new CountingRateLimiter(crlOpts);
+    crl.challenge();
+    console.log('ICountingRateLimiterOptions ok');
+
+    // IDebouncingFunction / IDebounceOptions — function is part of options
+    const debouncedFn: IDebouncingFunction = (): void => {};
+    const dcOpts: IDebounceOptions = { function: debouncedFn, delayMs: 10 };
+    const dcEvt: IDebounceControllerEvents = { error: [new Error('x')], triggered: [] };
+    const dc = new DebounceController(dcOpts);
+    dc.schedule();
+    console.log('IDebouncingFunction / IDebounceOptions ok, events shape ok:', Array.isArray(dcEvt.triggered));
+
+    // IFiberPoolOptions / IFiberPoolEvents / IFiberFunction / IRunOptions / FiberPool consts
+    console.log('FiberPool consts — MIN_IDLE:', DEFAULT_MIN_IDLE_FIBERS,
+        'MAX_IDLE:', DEFAULT_MAX_IDLE_FIBERS,
+        'IDLE_TIMEOUT:', DEFAULT_IDLE_TIMEOUT,
+        'WAIT_TIMEOUT:', DEFAULT_WAIT_TIMEOUT,
+        'MAX_WAITS:', DEFAULT_MAX_WAITS);
+    const fpOpts: IFiberPoolOptions = { maxFibers: DEFAULT_MIN_IDLE_FIBERS, defaultWaitTimeout: DEFAULT_WAIT_TIMEOUT };
+    const fp = new FiberPool(fpOpts);
+    const fn2: IFiberFunction<number, number> = async (n: number): Promise<number> => n * 2;
+    const runOpts: IRunOptions<number, number> = { function: fn2, data: 5 };
+    const fpResult = await fp.run(runOpts);
+    console.log('IFiberFunction / IRunOptions result:', fpResult); // 10
+    fp.close();
+    const fpEvt: IFiberPoolEvents = { error: [new Error('x')] };
+    console.log('IFiberPoolEvents ok:', Array.isArray(fpEvt.error));
+
+    // ILeakyBucketRateLimiterOptions / ILeakyBucketRateLimiterManagerOptions
+    const lbrlOpts: ILeakyBucketRateLimiterOptions = { capacity: 3, leakIntervalMs: 50 };
+    const lbrl: IAsyncRateLimiter = new LeakyBucketRateLimiter(lbrlOpts);
+    await lbrl.challenge();
+    console.log('ILeakyBucketRateLimiterOptions ok');
+
+    const lbrlmOpts: ILeakyBucketRateLimiterManagerOptions = { capacity: 2, leakIntervalMs: 100 };
+    const lbrlm: IAsyncRateLimiterManager = new LeakyBucketRateLimiterManager(lbrlmOpts);
+    await lbrlm.challenge('key1');
+    console.log('ILeakyBucketRateLimiterManagerOptions ok');
+
+    // IMemoryMutexOptions / E_LOCK_FAILED
+    // lock() returns boolean; run() throws E_LOCK_FAILED if lock not held
+    const mmOpts: IMemoryMutexOptions = { reentrant: false };
+    const mm = new MemoryMutex(mmOpts);
+    const mm2 = mm.share();
+    mm.lock();
+    let lockFailed = false;
+    try { mm2.run((): void => {}); } catch (e) { lockFailed = e instanceof E_LOCK_FAILED; }
+    console.log('IMemoryMutexOptions / E_LOCK_FAILED thrown:', lockFailed); // true
+    mm.unlock();
+
+    // ISlideWindowCounterOptions — windowSizeMs/windowQty both optional
+    const swcOpts: ISlideWindowCounterOptions = { windowSizeMs: 1000, windowQty: 10 };
+    const swc = new SlideWindowCounter(swcOpts);
+    swc.increase();
+    console.log('ISlideWindowCounterOptions ok, total:', swc.getTotal()); // 1
+
+    // ITokenBucketRateLimiterOptions / ITokenBucketRateLimiterManagerOptions
+    const tbrlOpts: ITokenBucketRateLimiterOptions = { capacity: 5, refillIntervalMs: 1000 };
+    const tbrl: ISyncRateLimiter = new TokenBucketRateLimiter(tbrlOpts);
+    tbrl.challenge();
+    console.log('ITokenBucketRateLimiterOptions ok');
+
+    const tbrlmOpts: ITokenBucketRateLimiterManagerOptions = { capacity: 3, refillIntervalMs: 1000 };
+    const tbrlm: ISyncRateLimiterManager = new TokenBucketRateLimiterManager(tbrlmOpts);
+    tbrlm.challenge('u1');
+    console.log('ITokenBucketRateLimiterManagerOptions ok');
+}
+
+// ── IAsyncRateLimiter structural verification ─────────────────────────────────
+console.log('\n=== IAsyncRateLimiter ===');
+{
+    // Assign LeakyBucketRateLimiter to IAsyncRateLimiter to verify compatibility
+    const rl: IAsyncRateLimiter = new LeakyBucketRateLimiter({ capacity: 2, leakIntervalMs: 10 });
+    await rl.challenge();
+    console.log('IAsyncRateLimiter.isBlocking():', await rl.isBlocking()); // false (1 slot used)
+    console.log('IAsyncRateLimiter.isIdle():',     await rl.isIdle());     // false
+    rl.reset();
+}
+
+// ── ISyncRateLimiterManager structural verification ───────────────────────────
+console.log('\n=== ISyncRateLimiterManager ===');
+{
+    // Assign TokenBucketRateLimiterManager to ISyncRateLimiterManager
+    const mgr: ISyncRateLimiterManager = new TokenBucketRateLimiterManager({
+        capacity: 3,
+        refillIntervalMs: 100,
+    });
+    mgr.challenge('u1');
+    console.log('ISyncRateLimiterManager.isBlocking(u1):', mgr.isBlocking('u1')); // false
+    mgr.reset('u1');
+    mgr.clean();
+}
+
+// ── IAsyncRateLimiterManager structural verification ──────────────────────────
+console.log('\n=== IAsyncRateLimiterManager ===');
+{
+    // Assign LeakyBucketRateLimiterManager to IAsyncRateLimiterManager
+    const mgr: IAsyncRateLimiterManager = new LeakyBucketRateLimiterManager({
+        capacity: 3,
+        leakIntervalMs: 10,
+    });
+    await mgr.challenge('u1');
+    console.log('IAsyncRateLimiterManager.isBlocking(u1):', await mgr.isBlocking('u1')); // false
+    await mgr.reset('u1');
+    await mgr.clean();
+}
+
+// ── E_RATE_LIMITED / E_BREAKER_OPENED ─────────────────────────────────────────
+console.log('\n=== E_RATE_LIMITED / E_BREAKER_OPENED ===');
+{
+    // E_RATE_LIMITED is thrown when the rate limit is exceeded
+    const tb = new TokenBucketRateLimiter({ capacity: 1, refillIntervalMs: 10_000 });
+    tb.challenge(); // consumes the 1 token
+    let rateLimited: unknown;
+    try { tb.challenge(); } catch (e) { rateLimited = e; }
+    console.log('E_RATE_LIMITED thrown:', rateLimited instanceof E_RATE_LIMITED); // true
+    console.log('E_RATE_LIMITED.name:',   (rateLimited as E_RATE_LIMITED).name);  // 'rate_limited'
+
+    // E_BREAKER_OPENED is thrown when a circuit breaker is open
+    const cb2 = new ManualBreaker();
+    cb2.open();
+    let breakerOpened: unknown;
+    try { cb2.call(() => {}); } catch (e) { breakerOpened = e; }
+    console.log('E_BREAKER_OPENED thrown:', breakerOpened instanceof E_BREAKER_OPENED); // true
+    console.log('E_BREAKER_OPENED.name:',   (breakerOpened as E_BREAKER_OPENED).name);  // 'breaker_opened'
 }

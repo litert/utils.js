@@ -15,7 +15,8 @@
  */
 
 import type { IConstructor, IDict, IFunction } from '@litert/utils-ts-types';
-import { E_RATE_LIMITED, IAsyncRateLimiterManager } from '../Types.js';
+import { IAsyncRateLimiterManager } from '../Typings.js';
+import * as Errors from '../Errors.js';
 import { sleep } from '@litert/utils-async';
 
 /**
@@ -92,7 +93,7 @@ export class LeakyBucketRateLimiterManager implements IAsyncRateLimiterManager {
         this._maxWaitMs = opts.capacity * opts.leakIntervalMs;
         this._leakIntervalMs = opts.leakIntervalMs;
         this._cleanDelayMs = opts.cleanDelayMs ?? 0;
-        this._errCtor = opts.errorCtorOnLimited ?? E_RATE_LIMITED;
+        this._errCtor = opts.errorCtorOnLimited ?? Errors.E_RATE_LIMITED;
 
         if (!Number.isSafeInteger(this._cleanDelayMs) || this._cleanDelayMs < 0) {
 

@@ -17,7 +17,8 @@
 import type { IConstructor } from '@litert/utils-ts-types';
 import { EventEmitter } from 'node:events';
 import { SlideWindowCounter } from './SlideWindowCounter.js';
-import { E_BREAKER_OPENED, IBreaker, ICounter, ISimpleFn } from '../Types.js';
+import type { IBreaker, ICounter, ISimpleFn } from '../Typings.js';
+import * as Errors from '../Errors.js';
 
 /**
  * The events emitted by `CircuitBreaker`.
@@ -101,7 +102,7 @@ const DEFAULT_OPTIONS: Required<ICircuitBreakerOptions> = {
     'breakThreshold': 5,
     'warmupThreshold': 3,
     'isFailure': () => true,
-    'errorCtorOnOpen': E_BREAKER_OPENED,
+    'errorCtorOnOpen': Errors.E_BREAKER_OPENED,
     'counter': null as unknown as ICounter,
 };
 

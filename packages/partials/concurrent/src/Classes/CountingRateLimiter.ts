@@ -15,7 +15,8 @@
  */
 
 import type { IConstructor, IFunction } from '@litert/utils-ts-types';
-import { E_RATE_LIMITED, ICounter, ISyncRateLimiter } from '../Types.js';
+import { ICounter, ISyncRateLimiter } from '../Typings.js';
+import * as Errors from '../Errors.js';
 
 /**
  * The options for `CountingRateLimiter`.
@@ -56,7 +57,7 @@ export class CountingRateLimiter implements ISyncRateLimiter {
 
         this._limits = opts.limits;
         this._counter = opts.counter;
-        this._errCtor = opts.errorCtorOnLimited ?? E_RATE_LIMITED;
+        this._errCtor = opts.errorCtorOnLimited ?? Errors.E_RATE_LIMITED;
     }
 
     /**

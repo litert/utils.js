@@ -276,25 +276,3 @@ export interface IAsyncRateLimiterManager {
             ReturnType<T>
     >;
 }
-
-/**
- * The default error thrown when the rate limit is exceeded.
- */
-export const E_RATE_LIMITED = class extends Error {
-
-    public constructor() {
-        super('The rate limit has been exceeded.');
-        this.name = 'rate_limited';
-    }
-};
-
-/**
- * The error thrown when a breaker is open.
- */
-export const E_BREAKER_OPENED = class extends Error {
-
-    public constructor() {
-        super('The breaker is open.');
-        this.name = 'breaker_opened';
-    }
-};

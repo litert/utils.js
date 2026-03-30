@@ -16,7 +16,8 @@
 
 import { EventEmitter } from 'node:events';
 import type { IConstructor } from '@litert/utils-ts-types';
-import { E_BREAKER_OPENED, IBreaker, ISimpleFn } from '../Types.js';
+import { IBreaker, ISimpleFn } from '../Typings.js';
+import * as Errors from '../Errors.js';
 
 /**
  * A manual breaker implementation, which can be used to control the flow of
@@ -36,7 +37,7 @@ export class ManualBreaker extends EventEmitter implements IBreaker {
      */
     public constructor(
         closedByDefault: boolean = true,
-        errorCtor: IConstructor<Error> = E_BREAKER_OPENED
+        errorCtor: IConstructor<Error> = Errors.E_BREAKER_OPENED,
     ) {
         super();
         this._closed = !!closedByDefault;
