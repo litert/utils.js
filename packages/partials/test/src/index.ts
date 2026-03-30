@@ -16,3 +16,4 @@
 
 export * from './Functions/AutoTick.js';
 export * from './Functions/AutoTickMs.js';
+export * from './Functions/WithEnv.js';
