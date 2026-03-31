@@ -134,12 +134,11 @@ parser.parse('$.a[1,000]');
 // Returns: ['a', 1000]
 ```
 
-**Dot-escaped identifiers inside bracket string keys:**
+**escaped characters inside bracket string keys:**
 
 ```ts
-parser.parse('$.a[key\\.escaped]');
-// The backslash escapes the dot, yielding the key 'key.escaped'
-// Returns: ['a', 'key.escaped']
+parser.parse('$.a["key\\"escaped"]');
+// Returns: ['a', 'key"escaped']
 ```
 
 **Error — path does not start with `$`:**
