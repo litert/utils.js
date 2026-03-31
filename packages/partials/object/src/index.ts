@@ -22,5 +22,5 @@ export * from './Functions/HasProperties.js';
 export * from './Functions/PickProperties.js';
 export * from './Functions/IsSubclassOf.js';
 export * from './Functions/IsClassConstructor.js';
-export * from './Functions/ExtractPropertyByPath.js';
+export * from './Functions/GetPropertyByPath.js';
 export * from './Classes/PropertyPathParser.js';

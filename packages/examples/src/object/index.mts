@@ -37,7 +37,7 @@ import { isSubclassOf       as isco2 } from '@litert/utils-object/functions/IsSu
 import { pickProperties     as pp2   } from '@litert/utils-object/functions/PickProperties';
 import { isClassConstructor as icc2  } from '@litert/utils-object/functions/IsClassConstructor';
 import { PropertyPathParser as PPP2  } from '@litert/utils-object/class/PropertyPathParser';
-import { extractPropertyByPath as epbp2 } from '@litert/utils-object/functions/ExtractPropertyByPath';
+import { getPropertyByPath as epbp2 } from '@litert/utils-object/functions/GetPropertyByPath';
 
 // ── 3. Bundle namespace ───────────────────────────────────────────────────────
 import * as ObjectNS from '@litert/utils/namespaces/Object';
@@ -47,7 +47,7 @@ import type {
     IDeepMergeOptions,
     IMergeObject,
     IMergeArray,
-    IExtractPropertyByPathOptions,
+    IGetPropertyByPathOptions,
 } from '@litert/utils-object';
 
 // ── copyProperties ────────────────────────────────────────────────────────────
@@ -178,14 +178,14 @@ console.log(parser2.parse('$.items[1]'));    // ['items', 1]
 
 console.log(new ObjectNS.PropertyPathParser().parse('$.foo')); // ['foo']
 
-// ── extractPropertyByPath ─────────────────────────────────────────────────────
-// extractPropertyByPath is sub-path only — NOT in the main entry or bundle namespace
-console.log('\n=== extractPropertyByPath ===');
+// ── getPropertyByPath ─────────────────────────────────────────────────────
+// getPropertyByPath is sub-path only — NOT in the main entry or bundle namespace
+console.log('\n=== getPropertyByPath ===');
 
 const deep = { a: { b: [{ c: 42 }, { c: 99 }] } };
 
-// IExtractPropertyByPathOptions exercises the exported options type
-const epOpts: IExtractPropertyByPathOptions = { defaultValue: 'missing' };
+// IGetPropertyByPathOptions exercises the exported options type
+const epOpts: IGetPropertyByPathOptions = { defaultValue: 'missing' };
 
 console.log(epbp2(deep, '$'));               // the deep object itself
 console.log(epbp2(deep, '$.a.b[0].c'));     // 42

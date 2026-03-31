@@ -63,10 +63,10 @@
         "default": "./lib/Functions/DeepMerge.js"
       }
     },
-    "./functions/ExtractPropertyByPath": {
+    "./functions/GetPropertyByPath": {
       "default": {
-        "types": "./lib/Functions/ExtractPropertyByPath.d.ts",
-        "default": "./lib/Functions/ExtractPropertyByPath.js"
+        "types": "./lib/Functions/GetPropertyByPath.d.ts",
+        "default": "./lib/Functions/GetPropertyByPath.js"
       }
     },
     "./functions/GetConstructor": {

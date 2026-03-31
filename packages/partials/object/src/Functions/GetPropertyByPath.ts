@@ -19,7 +19,7 @@ import { PropertyPathParser } from '../Classes/PropertyPathParser.js';
 
 let parser: PropertyPathParser | null = null;
 
-export interface IExtractPropertyByPathOptions {
+export interface IGetPropertyByPathOptions {
 
     /**
      * @default `undefined`
@@ -58,18 +58,18 @@ export interface IExtractPropertyByPathOptions {
  *     }
  * };
  *
- * console.log(extractPropertyByPath(obj, '$')); // Output: the `obj` itself
- * console.log(extractPropertyByPath(obj, '$.a.b[0].c')); // Output: 42
- * console.log(extractPropertyByPath(obj, '$.a.b[1].c')); // Output: undefined
- * console.log(extractPropertyByPath(obj, '$.a.b[1].c', { defaultValue: 'hello' })); // Output: 'hello'
- * console.log(extractPropertyByPath(obj, '$.a.b[0].d', { defaultValue: 'hello' })); // Output: 'hello'
- * console.log(extractPropertyByPath(obj, '$.a.b[0].c.d', { defaultValue: 'default' })); // Throws an error
+ * console.log(getPropertyByPath(obj, '$')); // Output: the `obj` itself
+ * console.log(getPropertyByPath(obj, '$.a.b[0].c')); // Output: 42
+ * console.log(getPropertyByPath(obj, '$.a.b[1].c')); // Output: undefined
+ * console.log(getPropertyByPath(obj, '$.a.b[1].c', { defaultValue: 'hello' })); // Output: 'hello'
+ * console.log(getPropertyByPath(obj, '$.a.b[0].d', { defaultValue: 'hello' })); // Output: 'hello'
+ * console.log(getPropertyByPath(obj, '$.a.b[0].c.d', { defaultValue: 'default' })); // Throws an error
  * ```
  */
-export function extractPropertyByPath<T extends IObject>(
+export function getPropertyByPath<T extends IObject>(
     obj: T,
     path: string | Array<string | number>,
-    options: IExtractPropertyByPathOptions = {},
+    options: IGetPropertyByPathOptions = {},
 ): unknown {
 
     parser ??= new PropertyPathParser();

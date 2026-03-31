@@ -41,7 +41,7 @@ LibObject.deepMerge(a, b);
 |------|-------------|
 | [`copyProperties`](./functions/copyProperties.md) | Copies specified properties from a source object to a destination object. |
 | [`deepMerge`](./functions/deepMerge.md) | Recursively merges two objects into a new object. |
-| [`extractPropertyByPath`](./functions/extractPropertyByPath.md) | Extracts the value at a given property path from an object. |
+| [`getPropertyByPath`](./functions/getPropertyByPath.md) | Extracts the value at a given property path from an object. |
 | [`getConstructor`](./functions/getConstructor.md) | Returns the constructor function of an object. |
 | [`getPropertyNames`](./functions/getPropertyNames.md) | Returns all own property names and symbols of an object. |
 | [`hasProperties`](./functions/hasProperties.md) | Checks whether all specified properties exist on an object. |

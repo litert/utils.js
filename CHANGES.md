@@ -9,7 +9,7 @@
 - feat(pkg:string): added API `String.parseKeyValue`
 - feat(pkg:string): added API `String.parseBooleanValue`
 - feat(pkg:object): added class `Object.PropertyPathParser`
-- feat(pkg:object): added API `Object.extractPropertyByPath`
+- feat(pkg:object): added API `Object.getPropertyByPath`
 - feat(pkg:test): added new API `Test.autoTickMs` to tick timers by a specified ms interval instead of ticking all timers immediately.
 - feat(pkg:test): added new API `Test.withEnv` to run tests with temporary environment variables.
 
