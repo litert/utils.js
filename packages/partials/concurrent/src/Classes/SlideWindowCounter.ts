@@ -48,8 +48,6 @@ const EMPTY_RING_INDEX = -1;
 /**
  * A counter that based on a slide time window.
  * The counts are divided into several windows, which are organized in a circular array (ring)
- *
- * @noInheritDoc
  */
 export class SlideWindowCounter {
 

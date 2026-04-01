@@ -20,12 +20,20 @@ import { IBreaker, ISimpleFn } from '../Typings.js';
 import * as Errors from '../Errors.js';
 
 /**
+ * The events emitted by `ManualBreaker`.
+ */
+export interface IManualBreakerEvents {
+
+    'error': [error: unknown];
+}
+
+/**
  * A manual breaker implementation, which can be used to control the flow of
  * function calls, by manually open or close the breaker.
  *
- * @noInheritDoc
+ * @event `error` Emitted when an error occurs, this event MUST be always listened on.
  */
-export class ManualBreaker extends EventEmitter implements IBreaker {
+export class ManualBreaker extends EventEmitter<IManualBreakerEvents> implements IBreaker {
 
     private _closed: boolean;
 

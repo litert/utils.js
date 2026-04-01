@@ -92,6 +92,21 @@ invocation.
 
 ---
 
+## Events
+
+### Event `'error'`
+
+The `'error'` event is emitted when an internal error occurs that the breaker cannot handle by itself.
+
+> [!WARNING]
+> To prevent unhandled exceptions that may crash the program, you MUST ALWAYS listen on the `'error'` event.
+
+```ts
+type IErrorEventCallback = (error: unknown) => void;
+```
+
+---
+
 ## Example
 
 ```ts

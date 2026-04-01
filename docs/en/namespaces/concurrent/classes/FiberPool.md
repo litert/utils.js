@@ -90,11 +90,16 @@ Returns `true` if the pool has been closed.
 
 ## Events
 
-See [`IFiberPoolEvents`](#interface-ifiberpoolevents).
+### Event `'error'`
 
-| Event | Description |
-| --- | --- |
-| `'error'` | Emitted on internal unhandled fiber errors |
+The `'error'` event is emitted when an internal error occurs that the fiber pool cannot handle by itself.
+
+> [!WARNING]
+> To prevent unhandled exceptions that may crash the program, you MUST ALWAYS listen on the `'error'` event.
+
+```ts
+type IErrorEventCallback = (error: unknown) => void;
+```
 
 ---
 

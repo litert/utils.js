@@ -115,14 +115,40 @@ Returns a wrapper function that passes each call through the breaker.
 
 ## Events
 
-See [`ICircuitBreakerEvents`](#interface-icircuitbreakerevents).
+### Event `'error'`
 
-| Event | Description |
-| --- | --- |
-| `'opened'` | Emitted when the breaker transitions to open state |
-| `'half_opened'` | Emitted when the breaker enters half-open state |
-| `'closed'` | Emitted when the breaker closes |
-| `'error'` | Emitted when the guarded function throws (does not prevent the error from propagating) |
+The `'error'` event is emitted when an internal error occurs that the breaker cannot handle by itself.
+
+> [!WARNING]
+> To prevent unhandled exceptions that may crash the program, you MUST ALWAYS listen on the `'error'` event.
+
+```ts
+type IErrorEventCallback = (error: unknown) => void;
+```
+
+### Event `'opened'`
+
+The `'opened'` event is emitted when the breaker transitions into the OPENED state, either because `open()` is called or because failures reached the configured threshold.
+
+```ts
+type IOpenedEventCallback = () => void;
+```
+
+### Event `'half_opened'`
+
+The `'half_opened'` event is emitted when the breaker leaves the OPENED state after the cooldown period and starts allowing warm-up calls.
+
+```ts
+type IHalfOpenedEventCallback = () => void;
+```
+
+### Event `'closed'`
+
+The `'closed'` event is emitted when the breaker transitions back to the CLOSED state, either because `close()` is called or because enough warm-up calls succeeded.
+
+```ts
+type IClosedEventCallback = () => void;
+```
 
 ---
 

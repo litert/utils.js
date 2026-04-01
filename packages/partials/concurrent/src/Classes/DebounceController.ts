@@ -57,7 +57,8 @@ export interface IDebounceControllerEvents {
 /**
  * The wrapper class for debouncing a function call.
  *
- * @noInheritDoc
+ * @event `error` Emitted when an error occurs, this event MUST be always listened on.
+ * @event `triggered` Emitted when the debounced function is triggered.
  */
 export class DebounceController extends EventEmitter<IDebounceControllerEvents> {
 

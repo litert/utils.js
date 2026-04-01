@@ -24,12 +24,6 @@ new BackgroundRunner(opts?: IBackgroundRunnerOptions)
 
 - Parameter `opts?: IBackgroundRunnerOptions` (default: `{}`) — See [`IBackgroundRunnerOptions`](#interface-ibackgroundrunneroptions).
 
-## Events
-
-| Event | Arguments | Description |
-|-------|-----------|-------------|
-| `'error'` | `(error: unknown)` | Emitted when a background callback throws or rejects. |
-
 ## Methods
 
 ### `run`
@@ -52,6 +46,19 @@ Schedules `callback` to run after the `wait` function resolves. By default, `wai
 
 - `callback` — The async callback to run in the background.
 - `wait?` — Override the wait function for this specific invocation.
+
+## Events
+
+### Event `'error'`
+
+The `'error'` event is emitted when a background callback throws synchronously or rejects. The payload is the original error value thrown or passed to `Promise.reject()`.
+
+> [!WARNING]
+> To prevent unhandled exceptions that may crash the program, you MUST ALWAYS listen on the `'error'` event.
+
+```ts
+type IErrorEventCallback = (error: unknown) => void;
+```
 
 ## Scoped Types
 

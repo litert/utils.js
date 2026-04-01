@@ -94,12 +94,24 @@ equivalent to calling `schedule()` on a `DebounceController` instance.
 
 ## Events
 
-See [`IDebounceControllerEvents`](#interface-idebouncecontrollerevents).
+### Event `'error'`
 
-| Event | Description |
-| --- | --- |
-| `'triggered'` | Emitted after the debounced function runs successfully |
-| `'error'` | Emitted when the debounced function throws |
+The `'error'` event is emitted when the wrapped function throws during a scheduled execution triggered by `schedule()`. Errors thrown by `callNow()` are rethrown directly instead of being emitted.
+
+> [!WARNING]
+> To prevent unhandled exceptions that may crash the program, you MUST ALWAYS listen on the `'error'` event.
+
+```ts
+type IErrorEventCallback = (error: unknown) => void;
+```
+
+### Event `'triggered'`
+
+The `'triggered'` event is emitted after the wrapped function has been invoked by `schedule()` or `callNow()`. It is emitted in a `finally` block, so it still fires even if the wrapped function throws.
+
+```ts
+type ITriggeredEventCallback = () => void;
+```
 
 ---
 

@@ -53,7 +53,8 @@ export const DEFAULT_BG_RUNNER_WAIT_FN = (): Promise<void> => sleep(0);
  *
  * Anyway, even if you forget to handle the errors insides the callback, this class will
  * emit an `error` event with the error thrown by the callback, just don't forget to listen to it.
- * @noInheritDoc
+ *
+ * @event `error` Emitted when an error occurs, this event MUST be always listened on.
  */
 export class BackgroundRunner extends EventEmitter<IBackgroundRunnerEvents> {
 

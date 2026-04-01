@@ -109,6 +109,11 @@ const DEFAULT_OPTIONS: Required<ICircuitBreakerOptions> = {
 /**
  * A circuit breaker implementation, which can be used to control the flow of
  * function calls, based on the success/failure of the calls.
+ *
+ * @event `error` Emitted when an error occurs, this event MUST be always listened on.
+ * @event `opened` Emitted when the circuit breaker transitions to the OPEN state.
+ * @event `half_opened` Emitted when the circuit breaker transitions to the HALF-OPEN state.
+ * @event `closed` Emitted when the circuit breaker transitions to the CLOSED state.
  */
 export class CircuitBreaker
     extends EventEmitter<ICircuitBreakerEvents>

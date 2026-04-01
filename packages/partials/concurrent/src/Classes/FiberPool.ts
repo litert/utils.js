@@ -118,7 +118,7 @@ export interface IRunOptions<TData, TResult> {
 /**
  * The class for managing a pool of fibers.
  *
- * @noInheritDoc
+ * @event `error` Emitted when an error occurs, this event MUST be always listened on.
  */
 export class FiberPool extends EventEmitter<IFiberPoolEvents> {
 
