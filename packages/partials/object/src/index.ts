@@ -15,6 +15,7 @@
  */
 
 export * from './Functions/CopyProperties.js';
+export * from './Functions/DeepFreeze.js';
 export * from './Functions/DeepMerge.js';
 export * from './Functions/GetConstructor.js';
 export * from './Functions/GetPropertyNames.js';

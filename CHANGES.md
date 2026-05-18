@@ -4,6 +4,7 @@
 
 ### New Features
 
+- feat(pkg:object): added API `Object.deepFreeze`.
 - feat(pkg:ts-types): added utility type `IDeepReadonly<T>` to recursively make
   all properties of an object type readonly.
 
