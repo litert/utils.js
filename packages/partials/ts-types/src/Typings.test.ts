@@ -2,9 +2,80 @@
 import type * as dTS from './Typings.js';
 import * as NodeTest from 'node:test';
 import * as NodeAssert from 'node:assert';
+import * as ts from 'typescript';
+import * as NodePath from 'node:path';
 
 /** Consumes variables so noUnusedLocals does not fire on type-check-only locals. */
 function use(..._args: unknown[]): void { /* no-op */ }
+
+const _tcSrcDir = import.meta.dirname;
+const _tcConfigPath = NodePath.join(import.meta.dirname, '..', 'tsconfig.json');
+
+function testTypeScriptCompilation(moduleSrc: string): 'ok' | 'syntax_error' | 'unknown' {
+
+    try {
+
+        const virtualFileName = NodePath.join(_tcSrcDir, '__virtual_test__.ts');
+
+        const configFile = ts.readConfigFile(_tcConfigPath, ts.sys.readFile);
+        if (configFile.error) { return 'unknown'; }
+
+        const parsedConfig = ts.parseJsonConfigFileContent(
+            configFile.config,
+            ts.sys,
+            NodePath.dirname(_tcConfigPath),
+        );
+
+        parsedConfig.options.noEmit = true;
+        parsedConfig.options.composite = false;
+        parsedConfig.options.incremental = false;
+
+        const defaultHost = ts.createCompilerHost(parsedConfig.options);
+        const customHost: ts.CompilerHost = {
+            ...defaultHost,
+            getSourceFile(fileName, languageVersionOrOptions) {
+                if (NodePath.normalize(fileName) === NodePath.normalize(virtualFileName)) {
+                    return ts.createSourceFile(fileName, moduleSrc, languageVersionOrOptions);
+                }
+                return defaultHost.getSourceFile(fileName, languageVersionOrOptions);
+            },
+            fileExists(fileName) {
+                if (NodePath.normalize(fileName) === NodePath.normalize(virtualFileName)) {
+                    return true;
+                }
+                return defaultHost.fileExists(fileName);
+            },
+            readFile(fileName) {
+                if (NodePath.normalize(fileName) === NodePath.normalize(virtualFileName)) {
+                    return moduleSrc;
+                }
+                return defaultHost.readFile(fileName);
+            },
+        };
+
+        const program = ts.createProgram(
+            [...parsedConfig.fileNames, virtualFileName],
+            parsedConfig.options,
+            customHost,
+        );
+
+        const allDiagnostics = ts.getPreEmitDiagnostics(program);
+
+        const virtualFileDiagnostics = [...allDiagnostics].filter(
+            (d) => d.file !== undefined
+                && NodePath.normalize(d.file.fileName) === NodePath.normalize(virtualFileName),
+        );
+
+        if (virtualFileDiagnostics.length > 0) {
+            return 'syntax_error';
+        }
+
+        return 'ok';
+    }
+    catch {
+        return 'unknown';
+    }
+}
 
 NodeTest.describe('Module ts-types - Typings', () => {
 
@@ -510,5 +581,109 @@ NodeTest.describe('Module ts-types - Typings', () => {
         const wrong: dTS.IInstanceOf<BarCtor> = 'not a Bar';
         use(wrong);
         NodeAssert.ok(true);
+    });
+
+    NodeTest.it('B-M-00063: IDeepReadonly should process simple object well', () => {
+
+        const obj: dTS.IDeepReadonly<{
+            a: string;
+            b?: {
+                c: string;
+                d?: number;
+                e: [number, { f: string; g: string[] }, 'ffff'];
+            };
+        }> = {
+            a: 'hello',
+            b: {
+                c: 'world',
+                d: 42,
+                e: [1, { f: 'nested', g: ['a', 'b'] }, 'ffff'],
+            }
+        };
+
+        use(obj);
+        use(obj.a);
+        use(obj.b);
+        use(obj.b?.c);
+        use(obj.b?.d);
+        use(obj.b?.e[1].g[0]);
+        NodeAssert.ok(true);
+    });
+
+    NodeTest.it('B-M-00064: IDeepReadonly should allow reading properties without compile error', () => {
+
+        NodeAssert.strictEqual(testTypeScriptCompilation([
+            "import type * as dTS from './Typings.js';",
+            "const obj: dTS.IDeepReadonly<{ a: string; b: { c: string } }> = { a: 'hello', b: { c: 'world' } };",
+            "void obj.a;",
+            "void obj.b.c;",
+        ].join('\n')), 'ok');
+
+        NodeAssert.strictEqual(testTypeScriptCompilation([
+            "import type * as dTS from './Typings.js';",
+            "const arr: dTS.IDeepReadonly<Array<{ a: string; b: number }>> = [",
+            "    { a: 'hello', b: 42 },",
+            "    { a: 'world', b: 99 },",
+            "];",
+            "void arr[0].a;",
+        ].join('\n')), 'ok');
+    });
+
+    NodeTest.it('B-M-00065: IDeepReadonly should prevent nested object property assignment', () => {
+
+        NodeAssert.strictEqual(testTypeScriptCompilation([
+            "import type * as dTS from './Typings.js';",
+            "const obj: dTS.IDeepReadonly<{ b: { c: string } }> = { b: { c: 'world' } };",
+            "obj.b.c = 'changed';",
+        ].join('\n')), 'syntax_error');
+
+        NodeAssert.strictEqual(testTypeScriptCompilation([
+            "import type * as dTS from './Typings.js';",
+            "const obj: dTS.IDeepReadonly<{",
+            "    a: string;",
+            "    b?: {",
+            "        c: string;",
+            "        d?: number;",
+            "        e: [number, { f: string; g: string[] }, 'ffff'];",
+            "    };",
+            "}> = {",
+            "    a: 'hello',",
+            "    b: {",
+            "        c: 'world',",
+            "        d: 42,",
+            "        e: [1, { f: 'nested', g: ['a', 'b'] }, 'ffff'],",
+            "    }",
+            "};",
+            "obj.b?.e[1].g[0] = 'changed';",
+        ].join('\n')), 'syntax_error');
+
+        NodeAssert.strictEqual(testTypeScriptCompilation([
+            "import type * as dTS from './Typings.js';",
+            "const arr: dTS.IDeepReadonly<Array<{ a: string; b: number }>> = [",
+            "    { a: 'hello', b: 42 },",
+            "    { a: 'world', b: 99 },",
+            "];",
+            "arr[0].a = 'changed';",
+        ].join('\n')), 'syntax_error');
+
+        NodeAssert.strictEqual(testTypeScriptCompilation([
+            "import type * as dTS from './Typings.js';",
+            "const arr: dTS.IDeepReadonly<Array<{ a: string; b: number }>> = [",
+            "    { a: 'hello', b: 42 },",
+            "    { a: 'world', b: 99 },",
+            "];",
+            "arr.push({ a: 'changed', b: 0 });",
+        ].join('\n')), 'syntax_error');
+    });
+
+    NodeTest.it('B-M-00066: IDeepReadonly should prevent direct top-level property assignment', () => {
+
+        const result = testTypeScriptCompilation([
+            "import type * as dTS from './Typings.js';",
+            "const obj: dTS.IDeepReadonly<{ a: string }> = { a: 'hello' };",
+            "obj.a = 'world';",
+        ].join('\n'));
+
+        NodeAssert.strictEqual(result, 'syntax_error');
     });
 });

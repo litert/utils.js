@@ -11,7 +11,7 @@ import type {
     IObject, IDict, IFunction, IAsyncFunction, IDeepPartial,
     IConstructor, IBasicType, IAdvancedType, IElementOfArray,
     IMaybeAsync, IMaybeArray, IToPromise,
-    IfIsAny, IfIsNever, IInstanceOf,
+    IfIsAny, IfIsNever, IInstanceOf, IDeepReadonly,
 } from '@litert/utils-ts-types';
 ```
 
@@ -295,4 +295,41 @@ type IInstanceOf<T> = T extends IConstructor<infer U> ? U : never;
 class MyClass {}
 type IMyClassCtor = IConstructor<MyClass>;
 type IMyClass = IInstanceOf<IMyClassCtor>; // MyClass
+```
+
+---
+
+## Type Alias `IDeepReadonly`
+
+Source: [Typings.ts](https://github.com/litert/utils.js/blob/master/packages/partials/ts-types/src/Typings.ts#L145)
+
+A recursive version of the built-in `Readonly<T>` that makes all nested properties and array elements readonly as well. Accepts both object types and array types.
+
+### Definition
+
+```ts
+type IDeepReadonly<T extends IObject | any[]> = {
+    readonly [P in keyof T]: T[P] extends IObject ?
+        IDeepReadonly<T[P]>
+        : T[P] extends Array<infer U> ?
+            U extends IObject ? ReadonlyArray<IDeepReadonly<U>> : readonly U[]
+            : T[P];
+};
+```
+
+### Parameters
+
+| Parameter | Constraint | Description |
+| --- | --- | --- |
+| `T` | `IObject \| any[]` | The object or array type to make deeply readonly. |
+
+**Example:**
+
+```ts
+interface IConfig { server: { host: string; ports: number[] }; debug: boolean; }
+type IReadonlyConfig = IDeepReadonly<IConfig>;
+// {
+//   readonly server: { readonly host: string; readonly ports: readonly number[] };
+//   readonly debug: boolean;
+// }
 ```

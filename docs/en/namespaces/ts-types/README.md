@@ -59,3 +59,4 @@ See [Typings.md](./Typings.md) for all exported interfaces and type aliases.
 | [`IfIsAny<T, TYes, TNo>`](./Typings.md#type-alias-ifisany) | Conditional type: resolves to `TYes` if `T` is `any`. |
 | [`IfIsNever<T, TYes, TNo>`](./Typings.md#type-alias-ifisnever) | Conditional type: resolves to `TYes` if `T` is `never`. |
 | [`IInstanceOf<T>`](./Typings.md#type-alias-iinstanceof) | Extracts the instance type from a constructor type. |
+| [`IDeepReadonly<T>`](./Typings.md#type-alias-ideepreadonly) | Recursively makes all properties and array elements of `T` readonly. |

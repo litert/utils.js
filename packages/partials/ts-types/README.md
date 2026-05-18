@@ -151,6 +151,27 @@ try {
 }
 ```
 
+### Type `IDeepReadonly`
+
+The `IDeepReadonly<T>` type is a recursive version of the built-in `Readonly<T>` type.
+It makes all properties of an object type `T` readonly, including nested properties.
+For an array type, it makes the array itself readonly and also makes all elements of the array deeply readonly.
+
+```ts
+const obj: IDeepReadonly<{ a: string; b: { c: string; e: Array<{ f: number }> } }> = {
+    a: 'hello',
+    b: {
+        c: 'world',
+        e: [
+            { f: 42 },
+            { f: 99 },
+        ],
+    },
+};
+obj.b.c = 'changed'; // Error: Cannot assign to 'c' because it is a read-only property.
+obj.b.e[1].f = 100; // Error: Cannot assign to 'f' because it is a read-only property.
+```
+
 ## Documentation
 
 - [en-US](https://litert.org/projects/utils.js/en/api/namespaces/ts-types/)

@@ -2,6 +2,11 @@
 
 ## v2.1.0
 
+### New Features
+
+- feat(pkg:ts-types): added utility type `IDeepReadonly<T>` to recursively make
+  all properties of an object type readonly.
+
 ### Other Changes
 
 - chore: upgraded dev dependencies to latest versions.
