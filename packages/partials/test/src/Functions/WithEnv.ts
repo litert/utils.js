@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import type * as _ from '@litert/utils-ts-types';
-
 /**
  * Temporarily set environment variables for the duration of the callback, and restore them afterward.
  *
@@ -38,9 +36,9 @@ import type * as _ from '@litert/utils-ts-types';
  * console.log(process.env.MY_VAR); // Output: undefined (restored to original state)
  * ```
  */
-export function withEnv<T extends () => any>(env: _.IDict, cb: T): ReturnType<T> {
+export function withEnv<T extends () => any>(env: Record<string, string | undefined>, cb: T): ReturnType<T> {
 
-    const backup: _.IDict = {};
+    const backup: Record<string, string | undefined> = {};
 
     for (const key in env) {
 

@@ -5,6 +5,7 @@
 ### Other Changes
 
 - chore: upgraded dev dependencies to latest versions.
+- build: removed all dependencies of `@litert/utils-test`.
 
 ## v2.0.0
 
