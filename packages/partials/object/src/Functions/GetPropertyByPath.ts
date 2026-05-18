@@ -76,6 +76,7 @@ export function getPropertyByPath<T extends IObject>(
 
     const pathSegment = Array.isArray(path) ? path : parser.parse(path);
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     let ret = obj as IDict;
 
     for (let i = 0; i < pathSegment.length; ++i) {

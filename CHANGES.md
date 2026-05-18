@@ -1,5 +1,11 @@
 # CHANGES
 
+## v2.1.0
+
+### Other Changes
+
+- chore: upgraded dev dependencies to latest versions.
+
 ## v2.0.0
 
 ### New Features
