@@ -22,6 +22,7 @@ import {
     isSubclassOf,
     isClassConstructor,
     PropertyPathParser,
+    deepFreeze,
 } from '@litert/utils-object';
 
 // pickProperties is only available via sub-path
@@ -37,7 +38,8 @@ import { isSubclassOf       as isco2 } from '@litert/utils-object/functions/IsSu
 import { pickProperties     as pp2   } from '@litert/utils-object/functions/PickProperties';
 import { isClassConstructor as icc2  } from '@litert/utils-object/functions/IsClassConstructor';
 import { PropertyPathParser as PPP2  } from '@litert/utils-object/class/PropertyPathParser';
-import { getPropertyByPath as epbp2 } from '@litert/utils-object/functions/GetPropertyByPath';
+import { getPropertyByPath  as epbp2 } from '@litert/utils-object/functions/GetPropertyByPath';
+import { deepFreeze         as df2   } from '@litert/utils-object/functions/DeepFreeze';
 
 // ── 3. Bundle namespace ───────────────────────────────────────────────────────
 import * as ObjectNS from '@litert/utils/namespaces/Object';
@@ -81,6 +83,30 @@ import type {
     console.log(dm2({ x: [1, 2] }, { x: [3] }, mergeOpts)); // { x: [3] }
 
     console.log(ObjectNS.deepMerge({ n: 1 }, { n: 2, m: 3 })); // { n: 2, m: 3 }
+
+    // ── deepFreeze ─────────────────────────────────────────────────────────────────
+
+    console.log('\n=== deepFreeze ===');
+
+    const frozen1 = deepFreeze({ a: 1, b: { c: 2 } });
+
+    try {
+        // @ts-expect-error
+        frozen1.a = 10; // Error in strict mode
+    }
+    catch (e) {
+        console.log('Cannot modify frozen.a'); // Expected
+    }
+
+    const frozen2 = df2({ x: [1, 2, 3] });
+
+    try {
+        // @ts-expect-error
+        frozen2.x.push(4); // Error in strict mode
+    }
+    catch (e) {
+        console.log('Cannot modify frozen.x'); // Expected
+    }
 
     // ── getConstructor ────────────────────────────────────────────────────────────
     console.log('\n=== getConstructor ===');

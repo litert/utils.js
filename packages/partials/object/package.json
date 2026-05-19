@@ -57,22 +57,28 @@
         "default": "./lib/Functions/CopyProperties.js"
       }
     },
+    "./functions/DeepFreeze": {
+      "default": {
+        "types": "./lib/Functions/DeepFreeze.d.ts",
+        "default": "./lib/Functions/DeepFreeze.js"
+      }
+    },
     "./functions/DeepMerge": {
       "default": {
         "types": "./lib/Functions/DeepMerge.d.ts",
         "default": "./lib/Functions/DeepMerge.js"
       }
     },
-    "./functions/GetPropertyByPath": {
-      "default": {
-        "types": "./lib/Functions/GetPropertyByPath.d.ts",
-        "default": "./lib/Functions/GetPropertyByPath.js"
-      }
-    },
     "./functions/GetConstructor": {
       "default": {
         "types": "./lib/Functions/GetConstructor.d.ts",
         "default": "./lib/Functions/GetConstructor.js"
+      }
+    },
+    "./functions/GetPropertyByPath": {
+      "default": {
+        "types": "./lib/Functions/GetPropertyByPath.d.ts",
+        "default": "./lib/Functions/GetPropertyByPath.js"
       }
     },
     "./functions/GetPropertyNames": {
