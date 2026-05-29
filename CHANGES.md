@@ -1,5 +1,12 @@
 # CHANGES
 
+## vNext
+
+### New Features
+
+- feat(pkg:string): `regexpEscape` API is now implemented using native
+  `RegExp.escape` if available, with a polyfill fallback for older environments.
+
 ## v2.1.0
 
 ### New Features

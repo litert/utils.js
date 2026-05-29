@@ -15,15 +15,23 @@
  */
 
 /**
- * Escape a string for use in a regular expression, all below characters will be escaped.
+ * Escape a string for use in a regular expression, all below characters will be
+ * escaped.
  *
  * > `[.*+?^${}()|[\]/\\]`
  *
- * @deprecated since 2025, the `RegExp.escape` method has been widely supported in modern environments.
+ * > Note: the `RegExp.escape` is already supported widely in modern JavaScript
+ * > engines, but this method still provides a polyfill for older environments,
+ * > so you can use it without concern about compatibility.
+ *
  * @param text The string to escape.
  * @returns The escaped string.
  */
-export function regexpEscape(text: string): string {
+export const regexpEscape: (text: string) => string = 'escape' in RegExp ?
+    RegExp.escape as (text: string) => string :
+    regexpEscapePolyfill;
 
-    return text.replace(/[.*+?^${}()|[\]/\\]/g, '\\$&');
+function regexpEscapePolyfill(text: string): string {
+
+    return text.replace(/[-.*+?^${}()|[\]/\\]/g, '\\$&');
 }
