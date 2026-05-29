@@ -7,6 +7,9 @@
 - feat(pkg:string): `regexpEscape` API is now implemented using native
   `RegExp.escape` if available, with a polyfill fallback for older environments.
 
+- feat(pkg:string): new class `WildcardCompiler` to compile wildcard patterns
+  into RegExp (string or object).
+
 ## v2.1.0
 
 ### New Features

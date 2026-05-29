@@ -51,6 +51,12 @@
         "default": "./lib/Classes/UnitParser.js"
       }
     },
+    "./class/WildcardCompiler": {
+      "default": {
+        "types": "./lib/Classes/WildcardCompiler.d.ts",
+        "default": "./lib/Classes/WildcardCompiler.js"
+      }
+    },
     "./functions/EvilWhitespace": {
       "default": {
         "types": "./lib/Functions/EvilWhitespace.d.ts",
