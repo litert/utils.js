@@ -25,3 +25,4 @@ export * from './Functions/IsEmailAddress.js';
 export * from './Functions/ToChunks.js';
 export * from './Functions/NameCase.js';
 export * from './Classes/UnitParser.js';
+export * from './Classes/WildcardCompiler.js';

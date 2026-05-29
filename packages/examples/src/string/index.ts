@@ -13,6 +13,7 @@
 // ── 1. Main entry ─────────────────────────────────────────────────────────────
 import {
     UnitParser,
+    WildcardCompiler,
     htmlEscape,
     includeEvilWhitespaceChars,
     replaceEvilWhitespaceChars,
@@ -38,8 +39,11 @@ import {
 } from '@litert/utils-string';
 
 // ── 2. Individual sub-path exports ────────────────────────────────────────────
-import { UnitParser          as UnitParser2 } from '@litert/utils-string/class/UnitParser';
-import { htmlEscape          as htmlEscape2 } from '@litert/utils-string/functions/Html';
+import { UnitParser as UnitParser2 } from '@litert/utils-string/class/UnitParser';
+import {
+    WildcardCompiler as WildcardCompiler2,
+} from '@litert/utils-string/class/WildcardCompiler';
+import { htmlEscape as htmlEscape2 } from '@litert/utils-string/functions/Html';
 import { includeEvilWhitespaceChars as iew2,
          replaceEvilWhitespaceChars as rew2 } from '@litert/utils-string/functions/EvilWhitespace';
 import { isEmailAddress      as isEmail2   } from '@litert/utils-string/functions/IsEmailAddress';
@@ -66,6 +70,7 @@ import type {
     IUnitParserOptions,
     IUnitInfo,
     IUnitParserResult,
+    IWildcardCompilerOptions,
     IEmailValidationOptions,
     IParseKeyValueOptions,
     IParseBooleanValueOptions,
@@ -186,6 +191,26 @@ import type {
     console.log(new RegExp(pattern).test('foo.bar[baz]')); // true
     console.log(re2('(x|y)').length > 0);                  // true
     console.log(StringNS.regexpEscape('a+b').length > 0);  // true
+
+    // ── WildcardCompiler ───────────────────────────────────────────────────────────
+    console.log('\n=== WildcardCompiler ===');
+
+    const wildcardOpts: IWildcardCompilerOptions = { disableQuestionMark: false };
+    const wildcardCompiler = new WildcardCompiler(wildcardOpts);
+    const wildcardMatcher = wildcardCompiler.compile('src/*.test.?s');
+    console.log(wildcardMatcher.test('src/string.test.ts'));  // true
+    console.log(wildcardMatcher.test('src/string.test.js'));  // true
+    console.log(wildcardMatcher.test('src/string.test.mts')); // false
+
+    const wildcardCompiler2 = new WildcardCompiler2({ disableQuestionMark: true });
+    const literalQuestionMatcher = wildcardCompiler2.compile('config?.json');
+    console.log(literalQuestionMatcher.test('config?.json')); // true
+    console.log(literalQuestionMatcher.test('config1.json')); // false
+
+    const wildcardPattern: string = new StringNS.WildcardCompiler()
+        .compileToString('*report-2026?.txt');
+    console.log(new RegExp(wildcardPattern).test('monthly-report-2026a.txt')); // true
+    console.log(new RegExp(wildcardPattern).test('report-2026.txt'));           // false
 
     // ── toChunks ──────────────────────────────────────────────────────────────────
     console.log('\n=== toChunks (string) ===');

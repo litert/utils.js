@@ -1,15 +1,16 @@
-# Function ~~`regexpEscape`~~ (⚠️Deprecated)
+# Function `regexpEscape`
 
 Source: [RegexpEscape.ts](https://github.com/litert/utils.js/blob/master/packages/partials/string/src/Functions/RegexpEscape.ts)
 
-Escapes all characters in a string that have special meaning in regular expressions, making the result safe to embed as a literal pattern inside a `RegExp`.
-
-> [!WARNING]
-> This function is deprecated since 2025. The `RegExp.escape` static method is now widely supported in modern environments (Node.js v24+, all major browsers). Use `RegExp.escape(text)` instead.
-
-The following characters are escaped: `. * + ? ^ $ { } ( ) | [ ] / \`
+Escapes a string so it can be embedded as literal text inside a `RegExp`. In
+modern runtimes it delegates to `RegExp.escape()`, and in older runtimes it
+falls back to the bundled polyfill.
 
 [TOC]
+
+The escaped output is intended for literal matching. The exact escaped text may
+vary between the native implementation and the fallback polyfill, but both are
+safe to pass to `new RegExp(...)`.
 
 ## Import
 
@@ -31,20 +32,22 @@ function regexpEscape(text: string): string;
 
 ## Return Value
 
-A new string with all regex special characters prefixed with a backslash.
+A string that can be embedded into a `RegExp` as literal text.
 
 ## Examples
 
 ```ts
 import { regexpEscape } from '@litert/utils-string';
 
-regexpEscape('Hello.World');      // 'Hello\\.World'
-regexpEscape('(1 + 2) * 3');     // '\\(1 \\+ 2\\) \\* 3'
-regexpEscape('price: $9.99');    // 'price: \\$9\\.99'
+const filePattern = new RegExp(`^${regexpEscape('file.txt')}$`);
+filePattern.test('file.txt');  // true
+filePattern.test('filextxt');  // false
 
-// Typical usage: build a RegExp from user input
-const userInput = 'file.txt';
-const pattern = new RegExp(regexpEscape(userInput));
-pattern.test('file.txt');  // true
-pattern.test('filextxt');  // false (dot is escaped)
+const literalUrl = 'https://example.com/path?q=1&x=2';
+const urlPattern = new RegExp(regexpEscape(literalUrl));
+urlPattern.test(literalUrl); // true
+
+// Use RegExp.escape() directly in new code when the runtime supports it.
+const nativePattern = new RegExp(RegExp.escape('price: $9.99'));
+nativePattern.test('price: $9.99'); // true
 ```

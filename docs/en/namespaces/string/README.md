@@ -34,6 +34,7 @@ LibString.nameCase(str);
 | Name | Description |
 |------|-------------|
 | [`UnitParser`](./classes/UnitParser.md) | Extracts a numeric value and a unit name from a string using a configurable format. |
+| [`WildcardCompiler`](./classes/WildcardCompiler.md) | Compiles shell-style wildcard patterns into `RegExp` strings or `RegExp` objects. |
 
 ### Functions
 
@@ -57,6 +58,6 @@ LibString.nameCase(str);
 | [`random`](./functions/random.md) | Generates a random string of specified length from a charset. |
 | [`parseKeyValue`](./functions/parseKeyValue.md) | Parses a key-value expression like `key=value` into a `[key, value]` tuple. |
 | [`parseBooleanValue`](./functions/parseBooleanValue.md) | Parses a string into a boolean value using a configurable mapping table. |
-| ~~[`regexpEscape`](./functions/regexpEscape.md)~~ | ⚠️ Deprecated. Escapes special characters for use inside a `RegExp`. Use `RegExp.escape` instead. |
+| [`regexpEscape`](./functions/regexpEscape.md) | Escapes literal text for safe use inside a `RegExp`; uses `RegExp.escape` when available. |
 | [`toChunks`](./functions/toChunks.md) | Splits a string into equal-sized chunks (left to right). |
 | [`toChunksBackward`](./functions/toChunksBackward.md) | Splits a string into equal-sized chunks (right to left). |

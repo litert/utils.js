@@ -1,6 +1,6 @@
 # CHANGES
 
-## vNext
+## v2.2.0
 
 ### New Features
 
