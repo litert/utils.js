@@ -20,3 +20,4 @@ tsconfig.tsbuildinfo
 /.agents/
 /.agent/
 /AGENTS.md
+/skills-lock.json

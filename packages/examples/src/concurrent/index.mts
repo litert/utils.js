@@ -61,8 +61,10 @@ import type {
     IAsyncRateLimiterManager,
     ISimpleFn,
     IBatchBufferOptions,
+    ICircuitBreakerCounter,
     ICircuitBreakerEvents,
     ICircuitBreakerOptions,
+    ICircuitBreakerOptionsLegacy,
     ICountingRateLimiterOptions,
     IDebouncingFunction,
     IDebounceOptions,
@@ -78,6 +80,9 @@ import type {
     ITokenBucketRateLimiterManagerOptions,
     ITokenBucketRateLimiterOptions,
 } from '@litert/concurrent';
+
+// ── CircuitBreaker counter imports ────────────────────────────────────────────
+import { LegacyCircuitBreakerCounter, ErrorRateCircuitBreakerCounter } from '@litert/concurrent';
 
 // ── Error imports ─────────────────────────────────────────────────────────────
 import { E_RATE_LIMITED, E_BREAKER_OPENED } from '@litert/concurrent';
@@ -101,10 +106,14 @@ console.log('\n=== ManualBreaker ===');
     console.log('sub-path & namespace:', mb2.isClosed(), mbNS.isClosed());
 }
 
-// ── CircuitBreaker ────────────────────────────────────────────────────────────
+// ── CircuitBreaker (new API: requestCounter) ──────────────────────────────────
 console.log('\n=== CircuitBreaker ===');
 {
-    const cb: IBreaker = new CircuitBreaker({ breakThreshold: 3, cooldownTimeMs: 100 });
+    // New API: use ICircuitBreakerCounter (e.g. LegacyCircuitBreakerCounter)
+    const cb: IBreaker = new CircuitBreaker({
+        requestCounter: new LegacyCircuitBreakerCounter(3),
+        cooldownTimeMs: 100,
+    });
     for (let i = 0; i < 3; i++) {
         try { cb.call(() => { throw new Error('fail'); }); } catch { /* expected */ }
     }
@@ -112,8 +121,22 @@ console.log('\n=== CircuitBreaker ===');
     try { cb.call(() => {}); } catch { tripped = true; }
     console.log('circuit tripped:', tripped); // true
 
-    const cb2  = new CB2({ breakThreshold: 2, cooldownTimeMs: 50 });
-    const cbNS = new ConcurrentNS.CircuitBreaker({ breakThreshold: 2, cooldownTimeMs: 50 });
+    // ErrorRateCircuitBreakerCounter — triggers by error rate instead of count
+    const cbRate = new CircuitBreaker({
+        requestCounter: new ErrorRateCircuitBreakerCounter({
+            errorRateThreshold: 0.5,
+            minRequest: 2,
+        }),
+        cooldownTimeMs: 200,
+    });
+    console.log('error-rate breaker created:', cbRate.isClosed()); // true
+
+    // Legacy API (deprecated) still works for backward compatibility
+    const cbLegacy = new CircuitBreaker({ breakThreshold: 2, cooldownTimeMs: 50 } as ICircuitBreakerOptionsLegacy);
+    console.log('legacy breaker created:', cbLegacy.isClosed()); // true
+
+    const cb2  = new CB2({ requestCounter: new LegacyCircuitBreakerCounter(2), cooldownTimeMs: 50 });
+    const cbNS = new ConcurrentNS.CircuitBreaker({ requestCounter: new LegacyCircuitBreakerCounter(2), cooldownTimeMs: 50 });
     console.log('sub-path & namespace CB:', typeof cb2, typeof cbNS);
 }
 
@@ -342,8 +365,14 @@ console.log('\n=== Options/Events interface types ===');
     const bb = new BatchBuffer<number>(bbOpts);
     console.log('IBatchBufferOptions ok, instanceof BatchBuffer:', bb instanceof BatchBuffer);
 
-    // ICircuitBreakerOptions — all fields optional
-    const cbOpts: ICircuitBreakerOptions = { breakThreshold: 3, cooldownTimeMs: 100 };
+    // ICircuitBreakerOptionsLegacy — backward-compatible options (deprecated)
+    const cbLegacyOpts: ICircuitBreakerOptionsLegacy = { breakThreshold: 3, cooldownTimeMs: 100 };
+    const cbLegacy = new CircuitBreaker(cbLegacyOpts);
+    console.log('ICircuitBreakerOptionsLegacy ok:', cbLegacy instanceof CircuitBreaker);
+
+    // ICircuitBreakerOptions — new API with requestCounter (required)
+    const cbCounter: ICircuitBreakerCounter = new LegacyCircuitBreakerCounter(5);
+    const cbOpts: ICircuitBreakerOptions = { requestCounter: cbCounter, cooldownTimeMs: 200 };
     const cbEvt: ICircuitBreakerEvents = { error: [new Error('x')], opened: [], half_opened: [], closed: [] };
     const cb = new CircuitBreaker(cbOpts);
     console.log('ICircuitBreakerOptions ok:', cb instanceof CircuitBreaker, 'events shape ok:', Array.isArray(cbEvt.opened));

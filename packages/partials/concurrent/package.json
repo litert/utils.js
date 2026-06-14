@@ -58,8 +58,8 @@
     },
     "./class/CircuitBreaker": {
       "default": {
-        "types": "./lib/Classes/CircuitBreaker.d.ts",
-        "default": "./lib/Classes/CircuitBreaker.js"
+        "types": "./lib/Classes/CircuitBreaker/index.d.ts",
+        "default": "./lib/Classes/CircuitBreaker/index.js"
       }
     },
     "./class/CountingRateLimiter": {

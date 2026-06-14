@@ -16,23 +16,10 @@
 
 import type { IConstructor } from '@litert/utils-ts-types';
 import { EventEmitter } from 'node:events';
-import { SlideWindowCounter } from './SlideWindowCounter.js';
-import type { IBreaker, ICounter, ISimpleFn } from '../Typings.js';
-import * as Errors from '../Errors.js';
-
-/**
- * The events emitted by `CircuitBreaker`.
- */
-export interface ICircuitBreakerEvents {
-
-    'error': [error: unknown];
-
-    'opened': [];
-
-    ['half_opened']: [];
-
-    'closed': [];
-}
+import type { IBreaker, ISimpleFn } from '../../Typings.js';
+import type * as dL from './CircuitBreaker.Typings.js';
+import * as Errors from '../../Errors.js';
+import { LegacyCircuitBreakerCounter } from './CircuitBreaker.LegacyCounter.js';
 
 enum EState {
     CLOSED,
@@ -40,70 +27,12 @@ enum EState {
     HALF_OPENED
 }
 
-/**
- * The options for `CircuitBreaker`.
- */
-export interface ICircuitBreakerOptions {
-
-    /**
-     * Cooldown time in milliseconds, after which the circuit breaker will
-     * try to recover from OPEN state.
-     *
-     * Default: 60000 (1 minute)
-     */
-    cooldownTimeMs?: number;
-
-    /**
-     * How many failures are needed to open the circuit breaker.
-     *
-     * Default: 5
-     */
-    breakThreshold?: number;
-
-    /**
-     * How many consecutive successful calls are needed to close the circuit
-     * breaker after it has been half-opened.
-     *
-     * Default: 3
-     */
-    warmupThreshold?: number;
-
-    /**
-     * A callback to determine whether the errors thrown by the target function
-     * should be treated as a failure or not.
-     *
-     * Only the failures are counted to trigger the circuit breaker.
-     *
-     * @default () => true
-     */
-    isFailure?: (error: unknown) => boolean;
-
-    /**
-     * An optional constructor to create the error object that will be thrown
-     * when the circuit breaker is open.
-     *
-     * @default E_BREAKER_OPENED
-     */
-    errorCtorOnOpen?: IConstructor<Error>;
-
-    /**
-     * The slide window counter to use for counting failures.
-     *
-     * @default new SlideWindowCounter({
-     *   windowSizeMs: 10000,
-     *   windowQty: 6
-     * })
-     */
-    counter?: ICounter;
-}
-
-const DEFAULT_OPTIONS: Required<ICircuitBreakerOptions> = {
+const DEFAULT_OPTIONS: Required<dL.ICircuitBreakerOptions> = {
     'cooldownTimeMs': 60000,
-    'breakThreshold': 5,
     'warmupThreshold': 3,
     'isFailure': () => true,
     'errorCtorOnOpen': Errors.E_BREAKER_OPENED,
-    'counter': null as unknown as ICounter,
+    'requestCounter': null as unknown as dL.ICircuitBreakerCounter,
 };
 
 /**
@@ -116,17 +45,12 @@ const DEFAULT_OPTIONS: Required<ICircuitBreakerOptions> = {
  * @event `closed` Emitted when the circuit breaker transitions to the CLOSED state.
  */
 export class CircuitBreaker
-    extends EventEmitter<ICircuitBreakerEvents>
+    extends EventEmitter<dL.ICircuitBreakerEvents>
     implements IBreaker {
 
     private readonly _cooldownTimeMs: number;
 
     private _nextAttemptAt: number = 0;
-
-    /**
-     * How many failures have occurred under CLOSED state.
-     */
-    private readonly _failureCount: ICounter;
 
     /**
      * How many successful calls have occurred under HALF_OPEN state.
@@ -143,11 +67,6 @@ export class CircuitBreaker
     private readonly _isFailure: (error: unknown) => boolean;
 
     /**
-     * The minimum number of failures to trigger the breaker.
-     */
-    private readonly _breakThreshold: number;
-
-    /**
      * The maximum number of calls allowed under HALF_OPEN state.
      *
      * This is to prevent too many calls being made when the service is still unstable.
@@ -161,14 +80,19 @@ export class CircuitBreaker
      */
     private readonly _errorCtorOnOpen: IConstructor<Error>;
 
-    public constructor(options: ICircuitBreakerOptions = {}) {
+    /**
+     * The counter of requests on CLOSED state.
+     */
+    private readonly _counter: dL.ICircuitBreakerCounter;
+
+    public constructor(options: dL.ICircuitBreakerOptions | dL.ICircuitBreakerOptionsLegacy = {}) {
 
         super();
         this._cooldownTimeMs = options.cooldownTimeMs ?? DEFAULT_OPTIONS.cooldownTimeMs;
-        this._breakThreshold = options.breakThreshold ?? DEFAULT_OPTIONS.breakThreshold;
+
         this._warmupThreshold = options.warmupThreshold ?? DEFAULT_OPTIONS.warmupThreshold;
 
-        for (const p of ['cooldownTimeMs', 'breakThreshold', 'warmupThreshold'] as const) {
+        for (const p of ['cooldownTimeMs', 'warmupThreshold'] as const) {
 
             const v = this[`_${p}`];
 
@@ -190,11 +114,28 @@ export class CircuitBreaker
                 throw new TypeError(`The option "${p}" must be a function.`);
             }
         }
+        if ('requestCounter' in options) {
 
-        this._failureCount = options.counter ?? new SlideWindowCounter({
-            windowSizeMs: 10000,
-            windowQty: 6,
-        });
+            this._counter = options.requestCounter;
+        }
+        else {
+
+            if (
+                typeof options.breakThreshold !== 'undefined' && (
+                    typeof options.breakThreshold !== 'number' ||
+                    !Number.isSafeInteger(options.breakThreshold) ||
+                    options.breakThreshold < 1
+                )
+            ) {
+
+                throw new TypeError(`The option "breakThreshold" must be a positive integer.`);
+            }
+
+            this._counter = new LegacyCircuitBreakerCounter(
+                options.breakThreshold,
+                options.counter,
+            );
+        }
     }
 
     /**
@@ -228,7 +169,7 @@ export class CircuitBreaker
         this._nextAttemptAt = until;
         this._warmUpCallCount = 0;
         this._warmUpOkCount = 0;
-        this._failureCount.reset();
+        this._counter.reset();
 
         if (this._state !== EState.OPENED) {
 
@@ -246,7 +187,7 @@ export class CircuitBreaker
         this._warmUpBatchCount++;
         this._warmUpCallCount = 0;
         this._warmUpOkCount = 0;
-        this._failureCount.reset();
+        this._counter.reset();
         this._state = EState.HALF_OPENED;
         this.emit('half_opened');
     }
@@ -259,7 +200,7 @@ export class CircuitBreaker
      */
     public close(): void {
 
-        this._failureCount.reset();
+        this._counter.reset();
         this._warmUpOkCount = 0;
         this._warmUpCallCount = 0;
 
@@ -278,11 +219,16 @@ export class CircuitBreaker
 
             if (result instanceof Promise) {
 
-                result.catch(
+                result.then(
+                    () => { this._counter.record(true); },
                     (err) => { this._handleFailureOnClosed(err); }
                 );
 
                 return result as unknown as ReturnType<TFn>;
+            }
+            else {
+
+                this._counter.record(true);
             }
 
             return result as ReturnType<TFn>;
@@ -298,10 +244,13 @@ export class CircuitBreaker
 
         if (!this._isFailure(err)) {
 
+            this._counter.record(true);
             return;
         }
 
-        if (this._failureCount.increase() >= this._breakThreshold) {
+        this._counter.record(false);
+
+        if (this._counter.isBlocked()) {
 
             this.open();
         }

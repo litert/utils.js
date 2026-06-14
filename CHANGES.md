@@ -1,5 +1,14 @@
 # CHANGES
 
+## v2.3.0
+
+### New Features
+
+- fix(pkg:concurrent): introduced new counting strategy abstraction for CircuitBreaker.
+- feat(pkg:concurrent): a new `ErrorRateCircuitBreakerCounter` is implemented for `CircuitBreaker` to count the error rate of requests.
+- deprecate(pkg:concurrent): the old logics are kept in `LegacyCircuitBreakerCounter` and will be removed in future releases.
+    > The old options will still be supported and the `LegacyCircuitBreakerCounter` will be used internally when the old options are used.
+
 ## v2.2.0
 
 ### New Features
