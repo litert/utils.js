@@ -97,3 +97,5 @@ Class-specific option and event interfaces are documented on each class's page.
 | --- | --- |
 | [`ManualBreaker`](./classes/ManualBreaker.md) | Manually controlled circuit breaker |
 | [`CircuitBreaker`](./classes/CircuitBreaker.md) | Automatic circuit breaker with half-open recovery |
+| [`ErrorRateCircuitBreakerCounter`](./classes/ErrorRateCircuitBreakerCounter.md) | Error-rate-based counter for `CircuitBreaker` (recommended) |
+| ~~[`LegacyCircuitBreakerCounter`](./classes/LegacyCircuitBreakerCounter.md)~~ (⚠️Deprecated) | Failure-count-based counter for `CircuitBreaker` (backward-compatible) |

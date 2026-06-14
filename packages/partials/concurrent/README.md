@@ -100,16 +100,24 @@ catch (err) {
 ### CircuitBreaker
 
 The `CircuitBreaker` class can be used to control the flow of function calls,
-by automatically open or close the breaker based on the success or failure of the function calls.
+by automatically opening or closing the breaker based on the success or failure of the function calls.
+
+Failure counting is delegated to an `ICircuitBreakerCounter` implementation.
+Two built-in counters are provided:
+
+- `ErrorRateCircuitBreakerCounter` — triggers based on error rate (recommended).
+- `LegacyCircuitBreakerCounter` — triggers based on absolute failure count (backward-compatible).
 
 ```ts
-import NodeTimers from 'node:timers/promises';
-import { CircuitBreaker } from '@litert/concurrent';
+import { CircuitBreaker, ErrorRateCircuitBreakerCounter } from '@litert/concurrent';
 
 const breaker = new CircuitBreaker({
-    'cooldownTimeMs': 30000, // Cooldown for 30 seconds when opened
-    'breakThreshold': 3, // Break the circuit after 3 failures (in counter)
-    'warmupThreshold': 2, // Close the circuit after 2 consecutive successes
+    requestCounter: new ErrorRateCircuitBreakerCounter({
+        errorRateThreshold: 0.5,  // Open when error rate >= 50%
+        minRequest: 10,           // Require at least 10 requests
+    }),
+    cooldownTimeMs: 30000,
+    warmupThreshold: 2,
 });
 
 breaker.call(() => {
