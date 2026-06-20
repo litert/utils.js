@@ -462,21 +462,53 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00049: Should wrap a non-Promise type in Promise', () => {
+    NodeTest.it('B-M-00049: Should accept a direct value or undefined for IMaybeVoid', () => {
+
+        const value: dTS.IMaybeVoid<string> = 'hello';
+        const empty: dTS.IMaybeVoid<string> = undefined;
+        use(value, empty);
+        NodeAssert.ok(true);
+    });
+
+    NodeTest.it('B-M-00050: Should not accept null for IMaybeVoid<string>', () => {
+
+        // @ts-expect-error null is not assignable to IMaybeVoid<string>
+        const bad: dTS.IMaybeVoid<string> = null;
+        use(bad);
+        NodeAssert.ok(true);
+    });
+
+    NodeTest.it('B-M-00051: Should accept a direct value or null for INullable', () => {
+
+        const value: dTS.INullable<string> = 'hello';
+        const empty: dTS.INullable<string> = null;
+        use(value, empty);
+        NodeAssert.ok(true);
+    });
+
+    NodeTest.it('B-M-00052: Should not accept undefined for INullable<string>', () => {
+
+        // @ts-expect-error undefined is not assignable to INullable<string>
+        const bad: dTS.INullable<string> = undefined;
+        use(bad);
+        NodeAssert.ok(true);
+    });
+
+    NodeTest.it('B-M-00053: Should wrap a non-Promise type in Promise', () => {
 
         const v: dTS.IToPromise<string> = Promise.resolve('hello');
         use(v);
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00050: Should pass an already-Promise type through unchanged (no double-wrapping)', () => {
+    NodeTest.it('B-M-00054: Should pass an already-Promise type through unchanged (no double-wrapping)', () => {
 
         const v: dTS.IToPromise<Promise<string>> = Promise.resolve('world');
         use(v);
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00051: Should not accept a Promise with the wrong inner type', () => {
+    NodeTest.it('B-M-00055: Should not accept a Promise with the wrong inner type', () => {
 
         // @ts-expect-error Promise<number> is not assignable to Promise<string>
         const bad: dTS.IToPromise<Promise<string>> = Promise.resolve(42);
@@ -484,7 +516,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00052: Should not accept a bare non-Promise value', () => {
+    NodeTest.it('B-M-00056: Should not accept a bare non-Promise value', () => {
 
         // @ts-expect-error string is not assignable to Promise<string>
         const bad: dTS.IToPromise<string> = 'not a promise';
@@ -492,7 +524,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00053: Should resolve to TYes when T is any', () => {
+    NodeTest.it('B-M-00057: Should resolve to TYes when T is any', () => {
 
         const yes: dTS.IfIsAny<any, 'yes', 'no'> = 'yes';
         // @ts-expect-error 'no' is not assignable to 'yes'
@@ -501,7 +533,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00054: Should resolve to TNo when T is a concrete type', () => {
+    NodeTest.it('B-M-00058: Should resolve to TNo when T is a concrete type', () => {
 
         const no: dTS.IfIsAny<string, 'yes', 'no'> = 'no';
         // @ts-expect-error 'yes' is not assignable to 'no'
@@ -510,7 +542,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00055: Should resolve to TNo when T is unknown', () => {
+    NodeTest.it('B-M-00059: Should resolve to TNo when T is unknown', () => {
 
         const no: dTS.IfIsAny<unknown, 'yes', 'no'> = 'no';
         // @ts-expect-error 'yes' is not assignable to 'no'
@@ -519,7 +551,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00056: Should resolve to TNo when T is never', () => {
+    NodeTest.it('B-M-00060: Should resolve to TNo when T is never', () => {
 
         const no: dTS.IfIsAny<never, 'yes', 'no'> = 'no';
         // @ts-expect-error 'yes' is not assignable to 'no'
@@ -528,7 +560,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00057: Should resolve to TYes when T is never', () => {
+    NodeTest.it('B-M-00061: Should resolve to TYes when T is never', () => {
 
         const yes: dTS.IfIsNever<never, 'yes', 'no'> = 'yes';
         // @ts-expect-error 'no' is not assignable to 'yes'
@@ -537,7 +569,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00058: Should resolve to TNo when T is a concrete type', () => {
+    NodeTest.it('B-M-00062: Should resolve to TNo when T is a concrete type', () => {
 
         const no: dTS.IfIsNever<string, 'yes', 'no'> = 'no';
         // @ts-expect-error 'yes' is not assignable to 'no'
@@ -546,7 +578,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00059: Should resolve to TNo when T is unknown', () => {
+    NodeTest.it('B-M-00063: Should resolve to TNo when T is unknown', () => {
 
         const no: dTS.IfIsNever<unknown, 'yes', 'no'> = 'no';
         // @ts-expect-error 'yes' is not assignable to 'no'
@@ -559,14 +591,14 @@ NodeTest.describe('Module ts-types - Typings', () => {
         public readonly value = 99;
     }
 
-    NodeTest.it('B-M-00060: Should extract the instance type from an IConstructor type', () => {
+    NodeTest.it('B-M-00064: Should extract the instance type from an IConstructor type', () => {
 
         type BarCtor = dTS.IConstructor<Bar>;
         const inst: dTS.IInstanceOf<BarCtor> = new Bar();
         NodeAssert.strictEqual(inst.value, 99);
     });
 
-    NodeTest.it('B-M-00061: Should yield never for a non-constructor type', () => {
+    NodeTest.it('B-M-00065: Should yield never for a non-constructor type', () => {
 
         // @ts-expect-error any value is not assignable to never
         const bad: dTS.IInstanceOf<string> = 'anything';
@@ -574,7 +606,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00062: Should not accept a value of the wrong instance type', () => {
+    NodeTest.it('B-M-00066: Should not accept a value of the wrong instance type', () => {
 
         type BarCtor = dTS.IConstructor<Bar>;
         // @ts-expect-error string is not assignable to Bar
@@ -583,7 +615,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00063: IDeepReadonly should process simple object well', () => {
+    NodeTest.it('B-M-00067: IDeepReadonly should process simple object well', () => {
 
         const obj: dTS.IDeepReadonly<{
             a: string;
@@ -610,7 +642,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         NodeAssert.ok(true);
     });
 
-    NodeTest.it('B-M-00064: IDeepReadonly should allow reading properties without compile error', () => {
+    NodeTest.it('B-M-00068: IDeepReadonly should allow reading properties without compile error', () => {
 
         NodeAssert.strictEqual(testTypeScriptCompilation([
             "import type * as dTS from './Typings.js';",
@@ -629,7 +661,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         ].join('\n')), 'ok');
     });
 
-    NodeTest.it('B-M-00065: IDeepReadonly should prevent nested object property assignment', () => {
+    NodeTest.it('B-M-00069: IDeepReadonly should prevent nested object property assignment', () => {
 
         NodeAssert.strictEqual(testTypeScriptCompilation([
             "import type * as dTS from './Typings.js';",
@@ -676,7 +708,7 @@ NodeTest.describe('Module ts-types - Typings', () => {
         ].join('\n')), 'syntax_error');
     });
 
-    NodeTest.it('B-M-00066: IDeepReadonly should prevent direct top-level property assignment', () => {
+    NodeTest.it('B-M-00070: IDeepReadonly should prevent direct top-level property assignment', () => {
 
         const result = testTypeScriptCompilation([
             "import type * as dTS from './Typings.js';",
