@@ -108,6 +108,25 @@ export type IMaybeAsync<T> = Promise<T> | T;
 export type IMaybeArray<T> = T[] | T;
 
 /**
+ * A utility type that represents a value that can be either of type `T` or
+ * `void`.
+ *
+ * This type is useful for function return types that can either return a value
+ * or not return anything (i.e., `void`).
+ */
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+export type IMaybeVoid<T> = T | void;
+
+/**
+ * A utility type that represents a value that can be either of type `T` or
+ * `null`.
+ *
+ * This type is useful for function return types or variables that can either
+ * hold a value or be `null`.
+ */
+export type INullable<T> = T | null;
+
+/**
  * Converts a type to a `Promise` type, if it's already a `Promise`, it will
  * return the same type.
  */

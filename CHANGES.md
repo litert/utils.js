@@ -1,5 +1,12 @@
 # CHANGES
 
+## v2.4.0
+
+### New Features
+
+- feat(pkg:ts-types): added utility type `INullable<T>` to make a type nullable.
+- feat(pkg:ts-types): added utility type `IMaybeVoid<T>` to make a type possibly void.
+
 ## v2.3.0
 
 ### New Features
