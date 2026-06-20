@@ -10,7 +10,7 @@ This module exports static TypeScript utility types. All declarations are compil
 import type {
     IObject, IDict, IFunction, IAsyncFunction, IDeepPartial,
     IConstructor, IBasicType, IAdvancedType, IElementOfArray,
-    IMaybeAsync, IMaybeArray, IToPromise,
+    IMaybeAsync, IMaybeArray, IMaybeVoid, INullable, IToPromise,
     IfIsAny, IfIsNever, IInstanceOf, IDeepReadonly,
 } from '@litert/utils-ts-types';
 ```
@@ -231,6 +231,66 @@ A value that can be either a single `T` or an array `T[]`. Useful for function p
 
 ```ts
 type IMaybeArray<T> = T[] | T;
+```
+
+---
+
+## Type Alias `IMaybeVoid`
+
+Source: [Typings.ts](https://github.com/litert/utils.js/blob/master/packages/partials/ts-types/src/Typings.ts#L117)
+
+A value that can be either `T` or `void`. Use it for APIs that may return a value in some cases and return nothing in others.
+
+### Definition
+
+```ts
+type IMaybeVoid<T> = T | void;
+```
+
+### Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `T` | The value type that may be returned when the result is not `void`. |
+
+**Example:**
+
+```ts
+function getDisplayName(found: boolean): IMaybeVoid<string> {
+    return found ? 'Alice' : undefined;
+}
+```
+
+---
+
+## Type Alias `INullable`
+
+Source: [Typings.ts](https://github.com/litert/utils.js/blob/master/packages/partials/ts-types/src/Typings.ts#L127)
+
+A value that can be either `T` or `null`. Use it when `null` is the explicit sentinel for "no value".
+
+### Definition
+
+```ts
+type INullable<T> = T | null;
+```
+
+### Parameters
+
+| Parameter | Description |
+| --- | --- |
+| `T` | The non-null value type. |
+
+**Example:**
+
+```ts
+interface IUser {
+    id: string;
+}
+
+type IUserRecord = INullable<IUser>;
+
+const user: IUserRecord = Math.random() > 0.5 ? { id: 'u-1' } : null;
 ```
 
 ---

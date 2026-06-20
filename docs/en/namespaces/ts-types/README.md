@@ -55,6 +55,8 @@ See [Typings.md](./Typings.md) for all exported interfaces and type aliases.
 | [`IElementOfArray<T>`](./Typings.md#type-alias-ielementofarray) | Extracts the element type from an array type. |
 | [`IMaybeAsync<T>`](./Typings.md#type-alias-imayebeasync) | `T` or `Promise<T>`. |
 | [`IMaybeArray<T>`](./Typings.md#type-alias-imaybearray) | `T` or `T[]`. |
+| [`IMaybeVoid<T>`](./Typings.md#type-alias-imaybevoid) | `T` or `void`. |
+| [`INullable<T>`](./Typings.md#type-alias-inullable) | `T` or `null`. |
 | [`IToPromise<T>`](./Typings.md#type-alias-itopromise) | Wraps `T` in `Promise<T>` unless already a `Promise`. |
 | [`IfIsAny<T, TYes, TNo>`](./Typings.md#type-alias-ifisany) | Conditional type: resolves to `TYes` if `T` is `any`. |
 | [`IfIsNever<T, TYes, TNo>`](./Typings.md#type-alias-ifisnever) | Conditional type: resolves to `TYes` if `T` is `never`. |
