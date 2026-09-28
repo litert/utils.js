@@ -150,12 +150,18 @@ export class FiberPool extends EventEmitter<IFiberPoolEvents> {
     /**
      * The number of idle fibers in the pool.
      */
-    public get idleFibers(): number { return this._idleFibers.length; }
+    public get idleFibers(): number {
+
+        return this._idleFibers.length;
+    }
 
     /**
      * The number of busy fibers in the pool, which are currently executing functions.
      */
-    public get busyFibers(): number { return this._busyFibers; }
+    public get busyFibers(): number {
+
+        return this._busyFibers;
+    }
 
     /**
      * Close all idle fibers in the pool.

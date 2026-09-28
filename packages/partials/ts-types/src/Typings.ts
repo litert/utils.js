@@ -163,13 +163,9 @@ export type IInstanceOf<T> = T extends IConstructor<infer U> ? U : never;
 
 export type IDeepReadonly<T extends IObject | any[]> = {
 
-    /* eslint-disable @stylistic/indent */
-
     readonly [P in keyof T]: T[P] extends IObject ?
         IDeepReadonly<T[P]>
         : T[P] extends Array<infer U> ?
             U extends IObject ? ReadonlyArray<IDeepReadonly<U>> : readonly U[]
             : T[P];
-
-    /* eslint-enable @stylistic/indent */
 };

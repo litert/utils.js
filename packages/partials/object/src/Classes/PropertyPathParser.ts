@@ -111,7 +111,9 @@ class ParserForSegmentStart implements IStateProcessor {
         }
     }
 
-    public onEnding(): void { return; }
+    public onEnding(): void {
+        return;
+    }
 }
 
 class ParserForIdentifier implements IStateProcessor {

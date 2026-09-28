@@ -21,6 +21,8 @@ import { E_TIMEOUT } from '../Errors.js';
 /**
  * The controller for promises, which allows you to decouple the resolver/rejecter with the
  * promise object.
+ *
+ * For the promises without timeout, it's recommended to use `Promise.withResolvers` instead.
  */
 export class PromiseController<T = unknown, TError = unknown> {
 
@@ -55,8 +57,10 @@ export class PromiseController<T = unknown, TError = unknown> {
      * The controller for promises, which allows you to decouple the resolver/rejecter with the
      * promise object.
      *
+     * For the promises without timeout, it's recommended to use `Promise.withResolvers` instead.
+     *
      * @param timeoutMs The timeout in milliseconds. If zero is provided, the promise will not
-     *                  have a timeout.
+     *                  have a timeout. [default: 0]
      *
      * @throws {TypeError} If the `timeoutMs` is not a safe integer.
      * @throws {E_TIMEOUT} If the promise is not resolved or rejected within the timeout.
